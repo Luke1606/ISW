@@ -1,5 +1,5 @@
-import jwtDecode from "jwt-decode"
-import eceApi from "../../../management/components/helpers/APIHelpers"
+import { jwtDecode } from "jwt-decode"
+import eceApi from "./API"
 
 export const setToken = (TOKEN_KEY, token) => localStorage.setItem(TOKEN_KEY, token)
 

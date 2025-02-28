@@ -2,11 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class Student(User):
+class CustomUser(User):
+    pic = models.BinaryField()
+
+
+class Student(CustomUser):
     group = models.IntegerField()
 
 
-class Professor(User):
+class Professor(CustomUser):
     class Type(models.TextChoices):
         NINGUNO = 'Ninguno', 'Ninguno'
         DPTO_INF = 'Dpto Inf', 'Departamento de Informática'

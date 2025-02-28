@@ -1,7 +1,7 @@
 import { createContext, useState } from 'react'
 import { Outlet, Navigate } from 'react-router-dom'
-import LoginService from '../services/UserService'
-import datatypes from "../js-files/Datatypes"
+import UserService from '../services/UserService'
+import { datatypes } from "../js-files/Datatypes"
 
 const UserContext = createContext()
 
@@ -11,7 +11,7 @@ const UserProvider = () => {
 
     const login = async (username, password) => {
         try {            
-            const userData = await LoginService.login(username, password)
+            const userData = await UserService.login(username, password)
             setUser (userData)
 
             if(user.getUserType() === datatypes.student)
@@ -24,7 +24,7 @@ const UserProvider = () => {
     }
 
     const logout = () => {
-        LoginService.logout()
+        UserService.logout()
         setUser (null)
     }
 
@@ -35,4 +35,4 @@ const UserProvider = () => {
     )
 }
 
-export { UserProvider as LoginProvider, UserContext as LoginContext }
+export { UserProvider, UserContext }

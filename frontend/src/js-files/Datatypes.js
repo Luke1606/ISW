@@ -9,4 +9,11 @@ const datatypes = {
     defense_act: 'defense_act'
 }
 
-export default datatypes
+const usertypes = {
+    student: "student",
+    professor: "professor",
+    dptoInf: "dptoInf",
+    decan: "decan"
+}
+
+export { datatypes, usertypes }

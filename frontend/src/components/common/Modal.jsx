@@ -1,43 +1,41 @@
 import PropTypes from 'prop-types'
-import { AcceptButton, CancelButton } from './Buttons'
 
-const ConfirmModal = ({action, isOpen, onClose, onConfirm}) => {
+const ConfirmModal = ({title, isOpen, onClose, onConfirm}) => {
     if (!isOpen) return null
 
     return (
             <div>
-                <div>
-                    <h2>Confirmar {action}</h2>
-                    <p>Está seguro de que desea continuar?</p>
-                    <AcceptButton onClick={(onConfirm)}></AcceptButton>
-                    <CancelButton onClick={onClose}></CancelButton>
-                </div>
+                <h2>{title}</h2>
+                <p>Está seguro de que desea continuar?</p>
+                <button className="accept-button" onClick={(onConfirm)}>Aceptar</button>
+                <button className="cancel-button" onClick={onClose}>Cancelar</button>
             </div>    
     )
 }
 
 ConfirmModal.propTypes = {
-    action: PropTypes.string,
+    title: PropTypes.string,
     isOpen: PropTypes.bool,
     onClose: PropTypes.func,
     onConfirm: PropTypes.func,
 }
 
-const MessageModal = ({message, isOpen, onClose}) => {
+const MessageModal = ({title, message, isOpen, onClose}) => {
     if (!isOpen) return null
 
     return (
             <div>
                 <div>
-                    <h2>Atención</h2>
+                    <h2>{title}</h2>
                     <p>{message}</p>
-                    <AcceptButton onClick={onClose}></AcceptButton>
+                    <button className="accept-button" onClick={onClose}>Aceptar</button>
                 </div>
             </div>    
     )
 }
 
 MessageModal.propTypes = {
+    title: PropTypes.string,
     message: PropTypes.string,
     isOpen: PropTypes.bool,
     onClose: PropTypes.func,
