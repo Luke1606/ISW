@@ -3,7 +3,7 @@ import { UserContext } from "../../contexts/UserContext"
 import { useFormik } from "formik"
 import LoadingSpinner from "../common/LoadingSpinner"
 
-const UserComponent = () => {
+const LoginComponent = () => {
     const { login } = useContext(UserContext)
     const [ error, setError ] = useState(null)
     const [ loading, setLoading ] = useState(false)
@@ -69,8 +69,8 @@ const UserComponent = () => {
                     {formik.touched.password && formik.errors.password && <span className="error">{formik.errors.password}</span> }
 
                     <div className="button-container">
-                        <button className="accept-button">Aceptar</button>
-                        <button className="cancel-button">Cancelar</button>
+                        <button type="submit" className="accept-button">Aceptar</button>
+                        <button type="submit" className="cancel-button">Cancelar</button>
                     </div>
                 </form>
                 {error && <span className="error">{error}</span>}
@@ -80,5 +80,5 @@ const UserComponent = () => {
             )
 }
 
-export default UserComponent
+export default LoginComponent
 
