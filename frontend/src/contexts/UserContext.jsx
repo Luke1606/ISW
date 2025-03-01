@@ -1,11 +1,12 @@
 import { createContext, useState } from 'react'
-import { Outlet, Navigate } from 'react-router-dom'
+import PropTypes from "prop-types"
+import { Navigate } from 'react-router-dom'
 import UserService from '../services/UserService'
 import { datatypes } from "../js-files/Datatypes"
 
 const UserContext = createContext()
 
-const UserProvider = () => {
+const UserProvider = ({children}) => {
     const [user, setUser ] = useState(null)
     const [redirect, setRedirect] = useState(null)
 
@@ -30,9 +31,17 @@ const UserProvider = () => {
 
     return (
         <UserContext.Provider value={{ user, login, logout }}>
-            {redirect ? <Navigate to={redirect} /> : <Outlet /> }
+            {redirect ? (
+                console.log("Redirigiendo a:", redirect), <Navigate to={redirect} />
+            ) : (
+                children
+            )}
         </UserContext.Provider>
     )
+}
+
+UserProvider.propTypes = {
+    children: PropTypes.node,
 }
 
 export { UserProvider, UserContext }
