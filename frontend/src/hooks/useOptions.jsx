@@ -17,13 +17,13 @@ const useSideMenuOptions = () => {
     let options=['No hay opciones disponibles']
 
     switch (currentPath) {
-        case "/radar":
+        case "/tree":
             options = [
                 "Filtrar",
                 "Ordenar"
             ]
             break
-        case "/options":
+        case "/form":
             options = [
                 "General",
                 "Apariencia",
@@ -37,6 +37,13 @@ const useSideMenuOptions = () => {
 
 const useHeaderOptions = () => {
     let options = []
+
+    if (!options || options.length === 0)
+        options[0] = {
+            title: "No hay optiones",
+            action: "#",
+            icon: null,
+        }
 
     return options
 }
