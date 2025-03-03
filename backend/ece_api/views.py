@@ -5,12 +5,91 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.views import APIView
 from rest_framework import status, viewsets
+from django.core.cache import cache
+from django.core.paginator import Paginator
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.db.models import Q
 from . import models
 from . import serializers
 
 
 class LoginTokenObtainPairView(TokenObtainPairView):
     serializer_class = serializers.LoginTokenObtainPairSerializer
+
+
+
+
+# class UserListView(APIView):
+#     def get(self, request):
+#         cache_key = f"users_{request.query_params.get('search', '')}"
+#         cached_data = cache.get(cache_key)
+
+#         if cached_data:
+#             return Response(cached_data)
+
+#         page_size = 10
+#         queryset = User.objects.all().select_related('related_model')
+
+#         # Filtrado
+#         search_term = request.query_params.get('search', '')
+#         if search_term:
+#             queryset = queryset.filter(Q(username__icontains=search_term) | ...)
+
+#  # Paginación
+#         paginator = Paginator(queryset, page_size)
+#         page_number = int(request.query_params.get('page', 1))
+#         page = paginator.get_page(page_number)
+
+#         # Serialización
+#         serializer = UserReadOnlySerializer(page.object_list, many=True)
+
+#         # Cache
+#         response_data = {
+#             'users': [serializer.data],
+#             'total_pages': paginator.num_pages,
+#             'current_page': page_number - 1
+#         }
+#         cache.set(cache_key, response_data, timeout=300)
+
+#         return Response(response_data)
+
+
+# class UserListView(APIView):
+#     def get(self, request):
+#         search_term = request.query_params.get('search', '')
+#         queryset = User.objects.all()
+
+#         if search_term:
+#             queryset = queryset.filter(
+#                 Q(username__icontains=search_term) |
+#                 Q(age__icontains=search_term) |
+#                 Q(type__icontains=search_term)
+#             )
+
+#         total_users = queryset.count()
+
+#         if total_users <= 8000:
+#             # Enviar todos los datos
+#             serializer = UserReadOnlySerializer(queryset, many=True)
+#             return Response({
+#                 'users': serializer.data,
+#                 'total_pages': 1,
+#                 'current_page': 0
+#             })
+#         else:
+#             # Paginación híbrida
+#             page_size = 10
+#             paginator = Paginator(queryset, page_size)
+#             page_number = request.query_params.get('page', 1)
+#             page = paginator.get_page(page_number)
+#             serializer = UserReadOnlySerializer(page.object_list, many=True)
+
+#             return Response({
+#                 'users': serializer.data,
+#                 'total_pages': paginator.num_pages,
+#                 'current_page': page.number - 1
+#             })
 
 
 # class SuperView(viewsets.ModelViewSet):
