@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../../contexts/UserContext"
-import LoadingSpinner from "../common/LoadingSpinner"
 import useDataForm from '../../hooks/useDataForm'
 import Modal from "../common/Modal"
 
@@ -36,17 +35,17 @@ const LoginComponent = () => {
 
     useEffect(() => {
         // Abrir el modal si hay un error general o si la autenticación fue exitosa
-        if (formik.errors.general || formState.success) {
+        if (formik.errors.general || formState.success || formState.pending) {
             setIsModalOpen(true)
         }
-    }, [formik.errors.general, formState.success])
+    }, [formik.errors.general, formState])
 
     return (
-            <div className="container">
+            <>
                 <form 
+                    className="form-container"
                     onSubmit={formik.handleSubmit} 
-                    className="form-container">
-
+                    >
                     <h1>Autenticación</h1>
                     <label 
                         className="form-label" 
@@ -99,7 +98,7 @@ const LoginComponent = () => {
                         </button>
 
                         <button 
-                            type="button" 
+                            type="button"
                             className="cancel-button"
                             onClick={() => navigate('/')}>
                             Cancelar
@@ -114,22 +113,22 @@ const LoginComponent = () => {
                             {formik.errors.general}
                     </span>}
 
-                {formState.pending && <LoadingSpinner/>}
-
                 <Modal 
                     isOpen={isModalOpen}
-                    title={formState.success? "Autenticación exitosa" : "Error de autenticación" }
+                    title={formState.pending? "Cargando..." : formState.success? "Autenticación exitosa" : "Error de autenticación" }
                     >
                     <p>
                         {formState.success? formState.message : formik.errors.general}
                     </p>
+                    
                     <button 
+                        className="button"
                         onClick={() => setIsModalOpen(false)}
                         >
                         Cerrar
                     </button>
                 </Modal>  
-            </div>
+            </>
         )
 }
 
