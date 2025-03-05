@@ -20,7 +20,7 @@ class ErrorBoundary extends React.Component {
         if (this.state.hasError) {
             return (
                 <Error 
-                    errorTitle="Algo salió mal" 
+                    errorTitle="Algo salió mal"
                     errorDescription={this.state.message || "Ha ocurrido un error inesperado. Por favor, inténtelo de nuevo más tarde."} 
                 />
             );
