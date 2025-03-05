@@ -10,17 +10,24 @@ const UserProvider = ({children}) => {
     const [user, setUser ] = useState(null)
     const [redirect, setRedirect] = useState(null)
 
-    const login = async (username, password) => {
+    const login = async (userFormData) => {
         try {            
-            const userData = await UserService.login(username, password)
+            const userData = await UserService.login(userFormData)
             setUser (userData)
 
             if(user.getUserType() === datatypes.student)
-                setRedirect(`/tree/${datatypes.evidence}/${user.id}/`) 
-            else
-            setRedirect(`/tree/${datatypes.student}/`)
+                setRedirect(`/list/${datatypes.evidence}/${user.id}/`) 
+            else{
+                setRedirect(`/list/${datatypes.student}/`)
+            }
+            return { success: true, message: "El usuario " + userData.name + " se ha autenticado correctamente." }
         } catch (error) {
-            throw new Error("Error durante la autenticación: " + error.message)
+            const authError = {
+                title: "Error durante la autenticación",
+                response: error.response || undefined,
+                data: error.data || undefined,
+            }
+            return { success: false, error: authError}
         }
     }
 
