@@ -4,9 +4,10 @@ import HomeComponent from "./components/HomeComponent"
 import LoginComponent from "./components/login/LoginComponent"
 import { UserProvider } from "./contexts/UserContext"
 import ProtectedRoutesComponent from "./components/ProtectedRoutesComponent"
-import ListComponent from "./components/management/ListComponent"
+// import ListComponent from "./components/management/ListComponent"
 import FormComponent from "./components/management/FormComponent"
 import Error from "./components/common/Error"
+import ErrorBoundary from "./components/common/ErrorBoundary"
 
 const App = () => {
     const router = createBrowserRouter(
@@ -17,7 +18,7 @@ const App = () => {
                 <Route path="login" element={ <LoginComponent /> } />
                 
                 <Route element={ <ProtectedRoutesComponent /> }>      
-                    <Route path="list" element={ <ListComponent /> } />
+                    {/* <Route path="list" element={ <ListComponent /> } /> */}
                     <Route path="form" element={ <FormComponent /> } />
                 </Route>
 
@@ -33,7 +34,9 @@ const App = () => {
 
     return (
         <UserProvider>
-            <RouterProvider router={router} />
+            <ErrorBoundary>
+                <RouterProvider router={router} />
+            </ErrorBoundary>
         </UserProvider>
         )
 }

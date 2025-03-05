@@ -9,7 +9,6 @@ const LoginComponent = () => {
     const { login } = useContext(UserContext)
     const navigate = useNavigate()
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const { formik, formState } = useDataForm(login, initialValues, extraValidations)
 
     const initialValues = {
         username: '',
@@ -27,6 +26,8 @@ const LoginComponent = () => {
         
         return errors
     }
+
+    const { formik, formState } = useDataForm(login, initialValues, extraValidations)
 
     useEffect(() => {
         // Ejecutar la validación inicial
