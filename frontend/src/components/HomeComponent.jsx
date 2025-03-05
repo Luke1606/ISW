@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 const HomeComponent = () => {
+    const navigate = useNavigate()
     return (
         <>
             <h1>
@@ -8,8 +9,8 @@ const HomeComponent = () => {
             <p>
                 Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolorem, expedita cupiditate doloribus tenetur ab quo minima blanditiis soluta doloremque cumque provident tempore ex, rerum distinctio itaque corporis, reprehenderit eos totam!
             </p>
-            <button>
-                <Link to="/login">Acceder</Link>
+            <button onClick={() => {navigate("/login")}}>
+                Acceder
             </button>
         </>
     )
