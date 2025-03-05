@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { UserContext } from "../contexts/UserContext"
 
 const useSideMenuOptions = () => {
     const location = useLocation()
@@ -37,15 +38,20 @@ const useSideMenuOptions = () => {
 
 const useHeaderOptions = () => {
     let options = []
+    const { user } = useContext(UserContext)
 
-    if (!options || options.length === 0)
-        options[0] = {
-            title: "No hay optiones",
-            action: "#",
-            icon: null,
-        }
+    if(user)
+        options.push({
+            title: "Notificaciones",
+            action: "#"
+        },
+        {
+            title: "Generar Reporte",
+            action: "#"
+        })
 
     return options
 }
 
-export { useSideMenuOptions, useHeaderOptions}
+export { useSideMenuOptions, useHeaderOptions }
+
