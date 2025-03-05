@@ -1,44 +1,26 @@
 import PropTypes from 'prop-types'
+import { createPortal } from 'react-dom'
 
-const ConfirmModal = ({title, isOpen, onClose, onConfirm}) => {
+const Modal = ({ title, children, isOpen }) => {
     if (!isOpen) return null
+    const parentDiv = document.getElementById("modal")
 
-    return (
-            <div>
-                <h2>{title}</h2>
-                <p>Está seguro de que desea continuar?</p>
-                <button className="accept-button" onClick={(onConfirm)}>Aceptar</button>
-                <button className="cancel-button" onClick={onClose}>Cancelar</button>
-            </div>    
-    )
+    return createPortal(
+        <div className='modal-overlay'>
+            <div className='modal-container'>
+                <h1 className='modal-title'>
+                    {title}
+                </h1>
+                
+                {children}
+            </div>
+        </div>, parentDiv)
 }
 
-ConfirmModal.propTypes = {
-    title: PropTypes.string,
-    isOpen: PropTypes.bool,
-    onClose: PropTypes.func,
-    onConfirm: PropTypes.func,
+Modal.propTypes = {
+    title: PropTypes.string.isRequired,
+    children: PropTypes.node.isRequired,
+    isOpen: PropTypes.bool.isRequired
 }
 
-const MessageModal = ({title, message, isOpen, onClose}) => {
-    if (!isOpen) return null
-
-    return (
-            <div>
-                <div>
-                    <h2>{title}</h2>
-                    <p>{message}</p>
-                    <button className="accept-button" onClick={onClose}>Aceptar</button>
-                </div>
-            </div>    
-    )
-}
-
-MessageModal.propTypes = {
-    title: PropTypes.string,
-    message: PropTypes.string,
-    isOpen: PropTypes.bool,
-    onClose: PropTypes.func,
-}
-
-export { ConfirmModal, MessageModal }
+export default Modal
