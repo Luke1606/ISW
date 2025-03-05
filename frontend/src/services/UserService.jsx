@@ -3,8 +3,8 @@ import { USER_TOKEN_KEY, ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "../js-files
 import { setToken, deleteToken } from "../js-files/TokenHelpers"
 
 class LoginService {
-    async login(username, password) {
-        const response = await eceApi.post('/token/', { username, password })            
+    async login(userFormData) {
+        const response = await eceApi.post('/token/', userFormData)            
         setToken(USER_TOKEN_KEY, JSON.stringify(response.user))
         setToken(ACCESS_TOKEN_KEY, response.data.access)
         setToken(REFRESH_TOKEN_KEY, response.data.refresh)
