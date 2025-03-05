@@ -1,16 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom"
-import { useFormik } from "formik"
 import { datatypes } from "../../js-files/Datatypes"
-import { useForm } from "../../hooks/useManagement"
+import useDataForm from "../../hooks/useDataForm"
 
 const FormComponent = () => {
     const { dataType, }= useParams()
     const { idData, onSubmit } = useParams() || undefined
     const { readOnly } = useParams() || false
     const { prevValues } = useForm(dataType, idData) || undefined
-    const formik = useFormik({
-            onSubmit: onSubmit,
-        })
     
     const navigate = useNavigate()
 
@@ -58,6 +54,7 @@ const FormComponent = () => {
 export default FormComponent
 
 const EvidenceForm = (prevValues, readOnly, formik) => {
+    
     const initialValues = {
         nombre: prevValues.nombre,
         descripcion: prevValues.descripcion,
