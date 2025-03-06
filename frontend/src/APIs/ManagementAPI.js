@@ -17,7 +17,6 @@ export const getAllData = async (datatype, superId) => {
     } catch (error) {
         throw new Error("Error en la petición: " + error)
     }
-    
 }
 
 

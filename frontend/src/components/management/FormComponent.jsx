@@ -3,9 +3,7 @@ import { datatypes } from "../../js-files/Datatypes"
 import useDataForm from "../../hooks/useDataForm"
 
 const FormComponent = () => {
-    const { dataType, }= useParams()
-    const { idData, onSubmit } = useParams() || undefined
-    const { readOnly } = useParams() || false
+    const { dataType, idData, readOnly }= useParams()
     const { prevValues } = useForm(dataType, idData) || undefined
     
     const navigate = useNavigate()
@@ -129,7 +127,7 @@ const RequestForm = (prevValues, formik, readOnly) => {
 
             <label style={styles.label} htmlFor="cargo-select"> Seleccione el ejercicio deseado: </label>
             <select id="cargo-select">
-                <option value=""> -- Escoja una opción -- </option>
+                <option disabled value=""> -- Escoja una opción -- </option>
                 <option value="estudiante">  </option>
                 <option value="profesor">  </option>
                 <option value="dptoInformatica"> </option>
