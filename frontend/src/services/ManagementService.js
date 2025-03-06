@@ -1,8 +1,8 @@
 import * as managementApi from "../APIs/ManagementAPI"
 
 class ManagementService {
-    async getAllData(datatype, superId) {
-        return await managementApi.getAllData(datatype, superId)
+    async fetchData(datatype, searchTerm, superId) {
+        return await managementApi.getAllData(datatype, searchTerm, superId)
     }
     
     async getData(datatype, id, superId) {

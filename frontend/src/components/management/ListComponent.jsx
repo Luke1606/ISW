@@ -1,246 +1,156 @@
-import { useState, useContext, useEffect } from "react"
-import { useParams, Link } from "react-router-dom"
+import { useParams } from "react"
 import { useList } from "../../hooks/useManagement"
-import { UserContext } from "../../contexts/UserContext"
-import LoadingSpinner from "../common/LoadingSpinner"
-import { ConfirmModal } from "../common/Modal"
-import { datatypes, usertypes } from "../../js-files/Datatypes"
+import Modal from "../common/Modal"
 
-const ListComponent = () => {
+const List = () => {
     const { datatype, id } = useParams()
-    const { items, loading, handleDelete } = useList(datatype, id)
-    const [ selectedItemId, setSelectedItemId ] = useState(0)
-    const [
-        isModalOpen, setModalOpen,
-        optionsVisibility, setOptionsVisibility
-    ] = useState(false)
-    const { user } = useContext(UserContext)
 
-    useEffect(() => {
-        if(selectedItemId !== 0)
-            setOptionsVisibility(false)
-    }, [selectedItemId])
+    const { formik, state, setState, permissions, options, handlePageChange, handleDelete, handleOptions, navigate } = useList(datatype, id)
 
-    const itemize = (item, index) => {
-
-        const permissions = {
-            edit: false,
-            del: false,
-        }
-        
-        return (
-            <li 
-            key={index}
-            className="list-item">
-            {item.name}
     
-            <div className="list-button-container">
-                {permissions.edit && 
-                    <button className="edit-button" onClick={() => setSelectedItemId(item.id)}>
-                        <Link to='/form'
-                            id={item.id}
-                            datatype={datatype}
-                            >
-                            Editar
-                        </Link>
-                    </button> }
-    
-                {permissions.del &&
-                    <button 
-                    className="delete-button" onClick={() => { setModalOpen(true) }}>
-                        Eliminar
-                    </button>}
-                
-                <button onClick={() => setSelectedItemId(item.id)}>
-                    <Link
-                        to="/form"
-                        id={selectedItemId}
-                        readOnly={true}
-                        >
-                        Ver detalles
-                    </Link>
-                </button>
-                { datatype==datatypes.student && <button onClick={() => {setOptionsVisibility(true)}}>Opciones</button> }
-                { optionsVisibility && showOptions() }
-            </div>
-        </li>
-        )
-    }
-
-    const IndexButtons = () => {
-        const [ index, setIndex ] = useState(0)
-        
-        const handleIndexClick = (index) => setIndex(index)
-        
-        return (
-    
-            <ul className="button-container">
-                {index > 0 &&
-                    <li>
-                        <button 
-                            className="index-button"
-                            onClick={() => handleIndexClick(index - 1)}>
-                            Anterior
-                        </button>
-                    </li>}
-    
-                {Array.from({ length : items.length }, (_, idx) => (
-                    <li key={idx}>
-                        <button
-                            className="button"
-                            onClick={() => handleIndexClick(idx)}> 
-                                {idx + 1} 
-                            </button>
-                    </li>))}
-    
-                {index < (items.length - 1) &&
-                    <li>
-                        <button 
-                            className="index-button"
-                            onClick={() => handleIndexClick(index + 1)}>
-                            Siguiente
-                        </button>
-                    </li>}
-            </ul>
-        )
-    }
-
-    const showOptions = async () => {
-        return (
-            <>
-            { datatype==datatypes.student && optionsVisibility && 
-                <div className="list-options">
-                    <ul>
-                        <li>
-                            <Link
-                                to="/tree"
-                                id={selectedItemId}
-                                datatype={datatypes.evidence}>
-                                Listar Evidencias
-                            </Link>
-                        </li>
-    
-                        { user.type === usertypes.dptoInf && await hasPendingRequests(selectedItemId) &&
-                        <li>
-                            <Link 
-                                to="/form"
-                                id={selectedItemId}
-                                datatype={datatypes.request}>
-                                Aprobar solicitud
-                            </Link>
-                        </li>}
-    
-                        { user.type === usertypes.dptoInf && await hasUnconfiguredDefenseTribunal(selectedItemId) &&
-                        <li>
-                            <Link
-                                to="/form"
-                                id={selectedItemId}
-                                datatype={datatypes.defense_tribunal}>
-                                Configurar defensa y tribunal
-                            </Link>
-                        </li>}
-    
-                        { user.type !== usertypes.dptoInf && await !hasUnconfiguredDefenseTribunal(selectedItemId) &&
-                        <li>
-                            <Link
-                                to="/form"
-                                id={selectedItemId}
-                                datatype={datatypes.defense_tribunal}
-                                readOnly={true}>
-                                Ver datos de defensa y tribunal
-                            </Link>
-                        </li>}
-    
-                        { user.type === usertypes.decan && await hasPendingTribunal(selectedItemId) &&
-                        <li>
-                            <Link
-                                to="/form"
-                                id={selectedItemId}
-                                datatype={datatypes.tribunal}>
-                                Aprobar tribunal
-                            </Link>
-                        </li>}
-    
-                        { user.type !== usertypes.professor &&
-                        <li>
-                            <Link
-                                to="/tree"
-                                id={selectedItemId}
-                                datatype={datatypes.defense_act}>
-                                Listar actas de defensa
-                            </Link>
-                        </li>}
-    
-                        { user.type === usertypes.professor &&
-                        <li>
-                            <Link
-                                to="/tree"
-                                id={selectedItemId}
-                                datatype={datatypes.defense_act}>
-                                Gestionar actas de defensa
-                            </Link>
-                        </li>}
-                    </ul>
-                </div> }
-            </>
-        )
-    }
-
     return (
-        <div className="manage-container">  
-            <SearchBar />          
-            <button className="add-button" > 
-                <Link to='../pages/Form'
-                    datatype={datatype}>
-                    Agregar
-                </Link> 
-            </button>
+        <div>
+            {/* Barra de busqueda */}
+            <form 
+                role="search" 
+                onSubmit={formik.handleSubmit}
+                >
+                <input
+                    type="text"
+                    placeholder="Buscar en Akademos..."
+                    {...formik.getFieldProps("search")}/>
 
-            {items.length > 0 ? (
-                items.map((itemGroup, rowIndex) => (
-                    <ul key={rowIndex} className="manage-list">
-                        {itemGroup.map((item, index) => (
-                            itemize(item, index)
-                        ))}
-                    </ul>
-                ))
-            ) : (
-                <li key="no-items">No hay elementos que mostrar.</li>
+                <button 
+                    type="submit"
+                    >
+                    Buscar
+                </button>
+            </form>
+            
+            {/* elemento de carga */}
+            { state.loading &&
+                <span className='spinner'/> }
+            
+            {/* mensaje de error */}
+            { state.error && 
+                <span className='error'>
+                    Error: {state.error.message}
+                </span> }
+            
+            { permissions.add &&
+                <button 
+                    className="add-button"
+                    onClick={() => navigate(`/form/${datatype}`)}>
+                    Agregar
+                </button>}
+
+            {/* Lista de elementos */}
+            { state.data[state.currentPage].map((item, index) =>  (
+                    <div key={item.id} className='list-item'>
+                        <h3 className='list-item-title'>
+                            {item.name}
+                        </h3>
+
+                        <div className='button-group'>
+                            { permissions.edit && 
+                                <button 
+                                    className="edit-button"
+                                    onClick={() => navigate(`/form/${datatype}/${index}`)}>
+                                    Editar
+                                </button>}
+
+                            { permissions.del && 
+                                <button 
+                                    className="delete-button"
+                                    onClick={() => {
+                                        setState((prev) => ({
+                                            ...prev, 
+                                            selectedItemId: index,
+                                            deleteConfirmationModalVisibility: true
+                                        }))   
+                                    }}>
+                                    Eliminar
+                                </button>}
+
+                            <button
+                                className="details-button"
+                                onClick={() => navigate(`/form/${datatype}/${index}/${true}`)}>
+                                Ver detalles
+                            </button>
+
+                            <select 
+                                className="options-button" 
+                                onChange={handleOptions}>
+                                {options.map((option, index) => (
+                                    <option
+                                        key={index} 
+                                        className="option-element"
+                                        value={option.value}
+                                        >
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+
+                        </div>
+                    </div>
+                )
             )}
 
-            <IndexButtons/>
+            <Modal isOpen={state.deleteConfirmationModalVisibility}>
+                <h2 className="modal-title">
+                    Confirmar eliminación
+                </h2>
 
-            {loading && <LoadingSpinner>Loading...</LoadingSpinner>}
-            <ConfirmModal isOpen={isModalOpen} onConfirm={handleDelete} onClose={ setModalOpen(false) }></ConfirmModal>
+                <p className="modal-content">
+                    ¿Está seguro de que desea continuar?
+                </p>
+
+                <button 
+                    className="accept-button"
+                    onClick={() => handleDelete(datatype, state.selectedItemId, id)}>
+                    Aceptar
+                </button>
+                
+                <button 
+                    className="cancel-button"
+                    onClick={() => setState(
+                        (prev) => ({ ...prev, deleteConfirmationModalVisibility: false })
+                    )}>
+                    Cancelar
+                </button>
+            </Modal>
+
+            {/* botones de paginado */}
+            <div className='button-group pagination-button-group'>
+                <button 
+                    onClick={() => handlePageChange(state.currentPage - 1)}
+                    disabled={state.currentPage===0}>
+                        Anterior
+                </button>
+
+                <select 
+                    onChange={(e) => handlePageChange(Number(e.target.value))}
+                    value={state.currentPage}
+                    >
+                    <option value="" disabled>Ir a página...</option>
+
+                    {Array.from({ length: state.totalPages }, (_, index) => (
+                        <option key={index} value={index}>
+                            {index + 1}
+                        </option>
+                    ))}
+                </select>
+
+                <button 
+                    onClick={() => handlePageChange(state.currentPage + 1)}
+                    disabled={state.currentPage >= state.totalPages - 1}
+                    >
+                    Siguiente
+                </button>
+            </div>
         </div>
     )
 }
 
-export default ListComponent
-
-const SearchBar = () => {
-    const { SearchTerm, setSearchTerm } = useList()
-    return (
-        <form role="search" 
-            className="search-form">
-            <input 
-                type="text" 
-                placeholder="Buscar en Akademos..." 
-                value={SearchTerm}
-                onChange={(e) => { setSearchTerm(e.target.value) }} 
-                />
-        </form>
-    )
-}
-
-const hasPendingRequests = async (studentId) => {
-    return await this.getData(`/solicitud_pendiente/${studentId}`).data
-}
-
-const hasUnconfiguredDefenseTribunal = async (studentId) => {
-    return await this.getData(`/defensa_tribunal_sin_configurar/${studentId}`).data
-}
-
-const hasPendingTribunal = async (studentId) => {
-    return await this.getData(`/tribunal_pendiente/${studentId}`).data
-}
+export default List
