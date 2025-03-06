@@ -1,18 +1,18 @@
-import { createContext, useState } from 'react'
 import PropTypes from "prop-types"
+import { createContext, useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import UserService from '../services/UserService'
-import { datatypes } from "../js-files/Datatypes"
+import AuthService from "../services/AuthService"
+import datatypes from "../js-files/Datatypes"
 
-const UserContext = createContext()
+const AuthContext = createContext()
 
-const UserProvider = ({children}) => {
+const AuthProvider = ({children}) => {
     const [user, setUser ] = useState(null)
     const [redirect, setRedirect] = useState(null)
 
     const login = async (userFormData) => {
         try {            
-            const userData = await UserService.login(userFormData)
+            const userData = await AuthService.login(userFormData)
             setUser (userData)
 
             if(user.getUserType() === datatypes.student)
@@ -32,23 +32,23 @@ const UserProvider = ({children}) => {
     }
 
     const logout = () => {
-        UserService.logout()
+        AuthService.logout()
         setUser (null)
     }
 
     return (
-        <UserContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout }}>
             {redirect ? (
                 console.log("Redirigiendo a:", redirect), <Navigate to={redirect} />
             ) : (
                 children
             )}
-        </UserContext.Provider>
+        </AuthContext.Provider>
     )
 }
 
-UserProvider.propTypes = {
+AuthProvider.propTypes = {
     children: PropTypes.node,
 }
 
-export { UserProvider, UserContext }
+export { AuthProvider, AuthContext }

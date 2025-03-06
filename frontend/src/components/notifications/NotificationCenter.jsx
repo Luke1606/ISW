@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import Notification from './Notification';
-import { getAllNotifications } from '../../API';
+import NotificationService from "../../services/NotificationService"
 
 const NotificationCenter = () => {
-    const [notifications, setNotifications] = useState([]);
+    const [notifications, setNotifications] = useState([])
 
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const data = await getAllNotifications()
+                const data = await NotificationService.getAllNotifications
                 setNotifications(data)
             } catch (error) {
                 console.error(error)
