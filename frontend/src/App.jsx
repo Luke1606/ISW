@@ -4,7 +4,7 @@ import HomeComponent from "./components/HomeComponent"
 import LoginComponent from "./components/login/LoginComponent"
 import { UserProvider } from "./contexts/UserContext"
 import ProtectedRoutesComponent from "./components/ProtectedRoutesComponent"
-// import ListComponent from "./components/management/ListComponent"
+import ListComponent from "./components/management/ListComponent"
 import FormComponent from "./components/management/FormComponent"
 import Error from "./components/common/Error"
 import ErrorBoundary from "./components/common/ErrorBoundary"
@@ -18,8 +18,8 @@ const App = () => {
                 <Route path="login" element={ <LoginComponent /> } />
                 
                 <Route element={ <ProtectedRoutesComponent /> }>      
-                    {/* <Route path="list" element={ <ListComponent /> } /> */}
-                    <Route path="form" element={ <FormComponent /> } />
+                    <Route path="list/:datatype/:index" element={ <ListComponent /> } />
+                    <Route path="form/:datatype/:index/:view" element={ <FormComponent /> } />
                 </Route>
 
                 <Route path="*" element={ 
