@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    'ece_api'
+    'ece_api',
+    'authentication',
+    'notification'
 ]
 
 MIDDLEWARE = [

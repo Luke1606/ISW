@@ -1,6 +1,4 @@
 from django.shortcuts import render
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.views import APIView
@@ -12,11 +10,6 @@ from rest_framework.views import APIView
 from django.db.models import Q
 from . import models
 from . import serializers
-
-
-class LoginTokenObtainPairView(TokenObtainPairView):
-    serializer_class = serializers.LoginTokenObtainPairSerializer
-
 
 
 
@@ -104,7 +97,7 @@ class LoginTokenObtainPairView(TokenObtainPairView):
 #         return Response(serializer.data)
 
 
-class SuperView(APIView):
+class ManagementView(APIView):
     def get_viewset(self, datatype, super_id):
         match datatype:
             case 'estudiante':
@@ -185,24 +178,3 @@ class DefenseTribunalViewSet(viewsets.ModelViewSet):
 class DefenseActViewSet(viewsets.ModelViewSet):
     queryset = models.DefenseAct.objects.all()
     serializer_class = serializers.DefenseActSerializer
-
-
-class NotificationViewSet(viewsets.ModelViewSet):
-    queryset = models.Notification.objects.all()
-    serializer_class = serializers.NotificationSerializer
-
-    @action(detail=False, methods=['post'])
-    def notificate(self, request):
-        header = request.data.get('header')
-        description = request.data.get('description')
-        on_click = request.data.get('onClick')  # Aquí puedes definir cómo manejar el onClick
-
-        notification = models.Notification.objects.create(
-            header=header,
-            description=description,
-            on_click=on_click
-        )
-
-        # Aquí puedes agregar la lógica para enviar un correo
-
-        return Response(serializers.NotificationSerializer(notification).data)

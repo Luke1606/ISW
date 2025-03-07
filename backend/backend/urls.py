@@ -16,13 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from rest_framework_simplejwt.views import TokenObtainPairView
-from ece_api.views import SuperView, NotificationViewSet
+from authentication.views import LoginTokenObtainPairView
+from notification.views import NotificationViewSet
+from ece_api.views import ManagementView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/< str:datatype >/< int:super_id >/', SuperView.as_view(), name='SuperView'),
-    path('api/notifications', NotificationViewSet.as_view(), name='NotificationViewSet'),
-    path('api/notifications/notificate', NotificationViewSet.notificate.as_view(), name='NotificationViewSet')
+    path('authentication/token/', LoginTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('management/< str:datatype >/< int:super_id >/', ManagementView.as_view(), name='ManagementView'),
+    path('notification/< int:notification_id >', NotificationViewSet.as_view(), name='NotificationViewSet'),
 ]

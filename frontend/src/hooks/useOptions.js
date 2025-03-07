@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom'
 import { useContext, useEffect, useState } from 'react'
-import { UserContext } from "../contexts/UserContext"
+import { AuthContext } from "../contexts/AuthContext"
 
 const useSideMenuOptions = () => {
     const location = useLocation()
@@ -38,7 +38,7 @@ const useSideMenuOptions = () => {
 
 const useHeaderOptions = () => {
     let options = []
-    const { user } = useContext(UserContext)
+    const { user } = useContext(AuthContext)
 
     if(user)
         options.push({

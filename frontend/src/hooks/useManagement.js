@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import useDebouncedApiCall from './useDebouncedApiCall'
 import ManagementService from '../services/ManagementService'
-import AuthContext from "../contexts/AuthContext"
+import { AuthContext } from "../contexts/AuthContext"
 import datatypes from '../js-files/Datatypes'
 
 const useList = (datatype, id) => {
@@ -12,7 +12,6 @@ const useList = (datatype, id) => {
         currentPage: 0,
         totalPages: 0,
         searchTerm: '',
-        loading: false,
         error: null,
         deleteConfirmationModalVisibility: false,
         selectedItemId: null,
@@ -20,7 +19,7 @@ const useList = (datatype, id) => {
     const navigate = useNavigate()
     const { user } = useContext(AuthContext)
     const permissions = usePermisions(datatype, user)
-    const [ options,setOptions ] = useState([])
+    const [ options, setOptions ] = useState([])
 
     const formik = useFormik({
         initialValues: {search: ""},
@@ -40,7 +39,7 @@ const useList = (datatype, id) => {
                 totalPages: response.data.total_pages,
                 currentPage: response.data.current_page,
                 loading: false,
-            }));
+            }))
         } catch (error) {
             setState(prev => ({ ...prev, error, loading: false }))
         }
@@ -167,26 +166,26 @@ const hasPendingTribunal = async (studentId) => {
     return false
 }
 
-const useForm = (dataType, idData) => {
-    // const navigate = useNavigate()
+// const useForm = (dataType, idData) => {
+//     // const navigate = useNavigate()
     
-    // const getPrevValues = async (dataType, id) => {
-    //     const response = await ManagementService.getData(dataType, id)
-    //     return response? response.data : null
-    // }
+//     // const getPrevValues = async (dataType, id) => {
+//     //     const response = await ManagementService.getData(dataType, id)
+//     //     return response? response.data : null
+//     // }
 
-    // const form = Array.from(new FormData(e.target))
-    // const data = Object.fromEntries(form)
+//     // const form = Array.from(new FormData(e.target))
+//     // const data = Object.fromEntries(form)
 
-    // if (idData === 0)
-    //     createData(dataType, data)
-    // else
-    //     updateData(dataType, data)
-}
+//     // if (idData === 0)
+//     //     createData(dataType, data)
+//     // else
+//     //     updateData(dataType, data)
+// }
 
 
 
-export { useList, useForm }
+export { useList }
 
 
 

@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { NavLink, useNavigate, useLocation } from "react-router-dom"
-import { UserContext } from "../../../contexts/UserContext"
+import { AuthContext } from "../../../contexts/AuthContext"
 import { useHeaderOptions } from "../../../hooks/useOptions"
 
 const Header = () => {
@@ -42,7 +42,7 @@ const Header = () => {
 export default Header
 
 const Profile = () => {
-    const { user, logout } = useContext(UserContext)
+    const { user, logout } = useContext(AuthContext)
     const navigate = useNavigate()
     const location = useLocation()
     const currentPath = location.pathname

@@ -15,10 +15,10 @@ const AuthProvider = ({children}) => {
             const userData = await AuthService.login(userFormData)
             setUser (userData)
 
-            if(user.getUserType() === datatypes.student)
+            if(user.type === datatypes.user.student)
                 setRedirect(`/list/${datatypes.evidence}/${user.id}/`) 
             else{
-                setRedirect(`/list/${datatypes.student}/`)
+                setRedirect(`/list/${datatypes.user.student}/`)
             }
             return { success: true, message: "El usuario " + userData.name + " se ha autenticado correctamente." }
         } catch (error) {

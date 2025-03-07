@@ -1,11 +1,21 @@
-import { useParams } from "react"
+import { useParams, Suspense } from "react"
 import { useList } from "../../hooks/useManagement"
 import Modal from "../common/Modal"
 
 const List = () => {
     const { datatype, id } = useParams()
 
-    const { formik, state, setState, permissions, options, handlePageChange, handleDelete, handleOptions, navigate } = useList(datatype, id)
+    const { 
+        formik, 
+        state, 
+        setState,
+        permissions, 
+        options, 
+        handlePageChange, 
+        handleDelete, 
+        handleOptions, 
+        navigate 
+    } = useList(datatype, id)
 
     
     return (
@@ -27,10 +37,6 @@ const List = () => {
                 </button>
             </form>
             
-            {/* elemento de carga */}
-            { state.loading &&
-                <span className='spinner'/> }
-            
             {/* mensaje de error */}
             { state.error && 
                 <span className='error'>
@@ -45,23 +51,26 @@ const List = () => {
                 </button>}
 
             {/* Lista de elementos */}
-            { state.data[state.currentPage].map((item, index) =>  (
-                    <div key={item.id} className='list-item'>
-                        <h3 className='list-item-title'>
+            <Suspense 
+                fallback={<span className="spinner"/>}
+                >
+                { state.data[state.currentPage].map((item, index) =>  (
+                    <div key={item.id} className="list-item">
+                        <h3 className="list-item-title">
                             {item.name}
                         </h3>
 
-                        <div className='button-group'>
+                        <div className="list-button-group button-group">
                             { permissions.edit && 
                                 <button 
-                                    className="edit-button"
+                                    className="edit-button list-button"
                                     onClick={() => navigate(`/form/${datatype}/${index}`)}>
                                     Editar
                                 </button>}
 
                             { permissions.del && 
                                 <button 
-                                    className="delete-button"
+                                    className="delete-button list-button"
                                     onClick={() => {
                                         setState((prev) => ({
                                             ...prev, 
@@ -73,13 +82,13 @@ const List = () => {
                                 </button>}
 
                             <button
-                                className="details-button"
+                                className="details-button list-button"
                                 onClick={() => navigate(`/form/${datatype}/${index}/${true}`)}>
                                 Ver detalles
                             </button>
 
                             <select 
-                                className="options-button" 
+                                className="options-button list-button" 
                                 onChange={handleOptions}>
                                 {options.map((option, index) => (
                                     <option
@@ -91,12 +100,41 @@ const List = () => {
                                     </option>
                                 ))}
                             </select>
-
                         </div>
                     </div>
-                )
-            )}
+                ))}
 
+                {/* botones de paginado */}
+                <div className="button-group pagination-button-group">
+                    <button 
+                        onClick={() => handlePageChange(state.currentPage - 1)}
+                        disabled={state.currentPage===0}>
+                            Anterior
+                    </button>
+
+                    <select 
+                        onChange={(e) => handlePageChange(Number(e.target.value))}
+                        value={state.currentPage}
+                        >
+                        <option value="" disabled>Ir a página...</option>
+
+                        {Array.from({ length: state.totalPages }, (_, index) => (
+                            <option key={index} value={index}>
+                                {index + 1}
+                            </option>
+                        ))}
+                    </select>
+
+                    <button 
+                        onClick={() => handlePageChange(state.currentPage + 1)}
+                        disabled={state.currentPage >= state.totalPages - 1}
+                        >
+                        Siguiente
+                    </button>
+                </div>
+            </Suspense>
+            
+            {/* modal de confirmacion de eliminado */}
             <Modal isOpen={state.deleteConfirmationModalVisibility}>
                 <h2 className="modal-title">
                     Confirmar eliminación
@@ -106,49 +144,22 @@ const List = () => {
                     ¿Está seguro de que desea continuar?
                 </p>
 
-                <button 
-                    className="accept-button"
-                    onClick={() => handleDelete(datatype, state.selectedItemId, id)}>
-                    Aceptar
-                </button>
-                
-                <button 
-                    className="cancel-button"
-                    onClick={() => setState(
-                        (prev) => ({ ...prev, deleteConfirmationModalVisibility: false })
-                    )}>
-                    Cancelar
-                </button>
+                <div className="modal-button-group button-group">
+                    <button 
+                        className="accept-button modal-button"
+                        onClick={() => handleDelete(datatype, state.selectedItemId, id)}>
+                        Aceptar
+                    </button>
+                    
+                    <button 
+                        className="cancel-button modal-button"
+                        onClick={() => setState(
+                            (prev) => ({ ...prev, deleteConfirmationModalVisibility: false })
+                        )}>
+                        Cancelar
+                    </button>
+                </div>
             </Modal>
-
-            {/* botones de paginado */}
-            <div className='button-group pagination-button-group'>
-                <button 
-                    onClick={() => handlePageChange(state.currentPage - 1)}
-                    disabled={state.currentPage===0}>
-                        Anterior
-                </button>
-
-                <select 
-                    onChange={(e) => handlePageChange(Number(e.target.value))}
-                    value={state.currentPage}
-                    >
-                    <option value="" disabled>Ir a página...</option>
-
-                    {Array.from({ length: state.totalPages }, (_, index) => (
-                        <option key={index} value={index}>
-                            {index + 1}
-                        </option>
-                    ))}
-                </select>
-
-                <button 
-                    onClick={() => handlePageChange(state.currentPage + 1)}
-                    disabled={state.currentPage >= state.totalPages - 1}
-                    >
-                    Siguiente
-                </button>
-            </div>
         </div>
     )
 }

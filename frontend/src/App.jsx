@@ -2,7 +2,7 @@ import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } 
 import Layout from "./components/common/layout/Layout"
 import HomeComponent from "./components/HomeComponent"
 import LoginComponent from "./components/login/LoginComponent"
-import { UserProvider } from "./contexts/UserContext"
+import { AuthProvider } from "./contexts/AuthContext"
 import ProtectedRoutesComponent from "./components/ProtectedRoutesComponent"
 import ListComponent from "./components/management/ListComponent"
 import FormComponent from "./components/management/FormComponent"
@@ -33,11 +33,11 @@ const App = () => {
     )
 
     return (
-        <UserProvider>
+        <AuthProvider>
             <ErrorBoundary>
                 <RouterProvider router={router} />
             </ErrorBoundary>
-        </UserProvider>
+        </AuthProvider>
         )
 }
 

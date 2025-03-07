@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { UserContext } from "../../contexts/UserContext"
+import { AuthContext } from "../../contexts/AuthContext"
 import useDataForm from '../../hooks/useDataForm'
 import Modal from "../common/Modal"
 
 const LoginComponent = () => {
-    const { login } = useContext(UserContext)
+    const { login } = useContext(AuthContext)
     const navigate = useNavigate()
     const [isModalOpen, setIsModalOpen] = useState(false)
 
