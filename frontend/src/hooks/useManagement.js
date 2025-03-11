@@ -166,26 +166,19 @@ const hasPendingTribunal = async (studentId) => {
     return false
 }
 
-// const useForm = (dataType, idData) => {
-//     // const navigate = useNavigate()
-    
-//     // const getPrevValues = async (dataType, id) => {
-//     //     const response = await ManagementService.getData(dataType, id)
-//     //     return response? response.data : null
-//     // }
+const useForm = (datatype, idData) => {
+    const getPrevValues = useDebouncedApiCall(async (datatype, id) => {
+        const response = await ManagementService.getData(datatype, id)
+        return response? response.data : null
+    })
+    const prevValues = getPrevValues(datatype, idData)
 
-//     // const form = Array.from(new FormData(e.target))
-//     // const data = Object.fromEntries(form)
-
-//     // if (idData === 0)
-//     //     createData(dataType, data)
-//     // else
-//     //     updateData(dataType, data)
-// }
+    return { prevValues }
+}
 
 
 
-export { useList }
+export { useList, useForm }
 
 
 
