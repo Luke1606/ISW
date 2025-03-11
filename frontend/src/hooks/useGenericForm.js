@@ -1,27 +1,15 @@
-import { useActionState } from 'react'
+import { useActionState, useState, useEffect } from 'react'
 import { useFormik } from 'formik'
 
-const useDataForm = (submitFunction, initialValues, extraValidations = () => ({})) => {
+const useGenericForm = (submitFunction, initialValues, validationSchema = {}) => {
     const [formState, formAction] = useActionState(submitFunction, { success: false })
+    const [isResponseModalOpen, setResponseModalOpen] = useState(false)
 
-    const validate = (values) => {
-        const clientErrors = {}
-        
-        // Validación por defecto: ningún campo debe estar vacío
-        Object.keys(values).forEach((key) => {
-            if (!values[key]) {
-                clientErrors[key] = 'Requerido'
-            }
-        })
-
-        // Agregar validaciones adicionales
-        const extraErrors = extraValidations(values)
-        return { ...clientErrors, ...extraErrors }
-    }
 
     const formik = useFormik({
         initialValues,
-        validate,
+        validationSchema,
+        validateOnChange: true,
         onSubmit: async (values) => {
             const result = await formAction(values)
             
@@ -42,10 +30,25 @@ const useDataForm = (submitFunction, initialValues, extraValidations = () => ({}
         }
     })
 
+    useEffect(() => {
+        // Ejecutar la validación inicial
+        formik.validateForm()
+    }, [])
+
+    useEffect(() => {
+        // Abrir el modal si hay un error general o si la autenticación fue exitosa
+        if (formik.errors.general || formState.success || formState.pending) {
+            setResponseModalOpen(true)
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [formik.errors.general, formState])
+
     return {
         formik,
         formState,
+        isResponseModalOpen, 
+        setResponseModalOpen
     }
 }
 
-export default useDataForm
+export default useGenericForm
