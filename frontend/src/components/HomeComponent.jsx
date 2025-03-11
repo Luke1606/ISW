@@ -1,5 +1,16 @@
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import icon from "../assets/option.png"
+import PropTypes from "prop-types"
+import evidence from "../assets/evidence.jpeg"
+import request from "../assets/request.avif"
+import defense_act from "../assets/defense_act.jpg"
+import info_persistance from "../assets/info_persistance.jpg"
+import tribunal from "../assets/tribunal.jpg"
+import roles from "../assets/roles.jpeg"
+import notification from "../assets/notification.png"
+import administration from "../assets/administration.png"
+import security from "../assets/security.jpg"
+import akademos from "../assets/akademos.png"
 
 const HomeComponent = () => {
     return (
@@ -24,7 +35,7 @@ const HeroSection = () => {
                     </h2>
 
                     <p className="home-hero-content">
-                        Una solución integral para la gestión de todo el proceso de ejercicios de culminación de estudios. Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur atque tenetur non quibusdam cum voluptates magnam voluptatem dolore sint! Saepe officia inventore ut distinctio, optio ipsum! Earum sit impedit quaerat.
+                        Una solución integral para la gestión de todo el proceso de ejercicios de culminación de estudios integrada con una herramienta multiplataforma que contribuye al perfeccionamiento de los procesos académicos de una institución. Su uso permite el desarrollo coherente de una estrategia organizacional que articule todos los niveles de decisión presentes en los procesos universitarios. Todos los roles del proceso educativo están involucrados en la solución, por lo que se permitirá el acceso a la información de forma segura a todos los niveles, facilitando la toma de decisiones.
                     </p>
         
                     <button 
@@ -40,21 +51,47 @@ const HeroSection = () => {
 }
 
 const FeaturesSection = () => {
+    const [overlay, setOverlay] = useState(false)
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const section = document.querySelector('.home-features-section')
+            if (section) {
+                const rect = section.getBoundingClientRect()
+                const windowHeight = window.innerHeight
+
+                if (rect.top <= windowHeight / 2 && rect.bottom >= windowHeight / 2) {
+                    setOverlay(true)
+                } else {
+                    setOverlay(false)
+                }
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll)
+        return () => {
+            window.removeEventListener('scroll', handleScroll)
+        }
+    }, [])
+
     return (
             <section 
-                className="home-features-section"
+                className= "home-features-section"
                 >
-                <h2 
-                    className="home-features-title"
-                    >
-                    Funcionalidades del Sistema
-                </h2>
+                <div 
+                    className={overlay? "home-features-section-overlay" : "home-features-overlay-hidden"}>
+                    <h2 
+                        className="home-features-title"
+                        >
+                        Funcionalidades del Sistema
+                    </h2>
 
-                <p 
-                    className="home-features-content"
-                    >
-                    Descubre cómo nuestro sistema puede ayudarte en la gestión del ECE.
-                </p>
+                    <p 
+                        className="home-features-content"
+                        >
+                        Descubre cómo Nuestra herramienta de gestión diseñada para facilitar el seguimiento de los procesos de ejercicios de culminación de estudios puede ayudarte.
+                    </p>
+                </div>
 
                 <div 
                     className="home-features-container"
@@ -63,67 +100,126 @@ const FeaturesSection = () => {
                     <Feature
                         icon={{
                             alt:"Gestión de evidencias con iconos de documentos y carpetas",
-                            src:{icon}}}
-                        title="Gestión de Evidencias"
-                        content="Permite a los estudiantes gestionar todas las evidencias
-                            necesarias para el ECE de manera eficiente y organizada."
-                        />
+                            src: evidence}}
+                        title="Gestión eficiente de evidencias"
+                        
+                        brief="Permite a los estudiantes una simple recopilación y organización todas las evidencias académicas y extensionistas necesarias para el ECE de manera eficiente y organizada."
+                        >
+                        La gestión de evidencias transforma la forma en que los estudiantes y administradores manejan la documentación necesaria para los procesos de culminación de estudios, desde reconocimientos hasta proyectos. Con una interfaz intuitiva, permite la carga, clasificación y seguimiento de evidencias de manera eficiente. Toda la información está siempre accesible y organizada, lo que reduce el tiempo de búsqueda y la mejora de la transparencia en el proceso educativo. Simplifica tu gestión académica y enfócate en lo que importa realmente
+                    </Feature>
+
+                    <Feature
+                        icon={{
+                            alt:"Aprobacion digital de solicitud",
+                            src: request}}
+                        title="Evaluación de solicitudes de ECE"
+                        
+                        brief="Facilita la evaluación de solicitudes de ejercicios de culminación de estudios con nuestro sistema, que agiliza el proceso y asegura una revisión justa y transparente para cada estudiante."
+                        
+                        >
+                        Nuestro sistema permite a los evaluadores revisar y aprobar o no las solicitudes de ejercicios de culminación de estudios de manera rápida y efectiva, asegurando que cada estudiante reciba la atención que merece, permitiendo optimizar el proceso educativo. La transparencia en la evaluación fomenta la confianza entre estudiantes y administradores, creando un ambiente académico más colaborativo.                         
+                    </Feature>
+
+                    <Feature
+                        icon={{
+                            alt:"Gestión de evidencias con iconos de documentos y carpetas",
+                            src: tribunal}}
+                        title="Asignación y aprobación de tribunales simplificada"
+                        
+                        brief="Agiliza la asignación y aprobación de tribunales con nuestra plataforma, que garantiza un proceso eficiente y transparente para la defensa de proyectos."
+                        >
+                        La asignación y aprobación de tribunales es un paso crucial en el proceso de ejercicios de culminación de estudios. Con nuestra herramienta, puedes gestionar este proceso de forma fluida y sin complicaciones. La plataforma permite la creación de tribunales de forma rápida y la asignación de miembros de tribunal según su especialidad y disponibilidad. El sistema asegura que todas las aprobaciones se realizan de manera transparente, facilitando la comunicación entre estudiantes y evaluadores. Haz de cada defensa una experiencia enriquecedora.
+                    </Feature>
+
+                    <Feature
+                        icon={{
+                            alt:"Gestion de actas de defensa",
+                            src: defense_act}}
+                        title="Gestión segura de actas de defensa"
+                        
+                        brief="Simplifica la gestión de las actas de defensa con nuestra solución, que permite un registro despejado y accesible de cada defensa realizada."
+                        >
+                        La gestión de las actas de defensa es fundamental para documentar el proceso de ejercicios de culminación de estudios. Nuestra herramienta te permite registrar, almacenar y acceder a las actas de manera sencilla y organizada. Con las funciones que facilitan la edición y el seguimiento de cada documento, podrás asegurarte de tener una visión clara del desempeño académico de los estudiantes.
+                    </Feature>
+
+                    <Feature
+                        icon={{
+                            alt:"Gestion de permisos por roles",
+                            src: roles}}
+                        title="Gestion de permisos por roles"
+                        
+                        brief="Controla el acceso y los permisos de los usuarios con nuestra herramienta de gestión por funciones, una administración una segura y eficiente."
+                        >
+                        La gestión de los permisos por roles es esencial para mantener la seguridad y la organización del sistema. Nuestra plataforma te permite definir y asignar roles específicos a cada usuario, permitiendo que tengan acceso solo a la información y funciones que necesitan. Mejoramos la seguridad de los datos y optimizamos la experiencia del usuario, con un sistema de permisos flexibles y fáciles de usar.
+                    </Feature>
+
+                    <Feature
+                        icon={{
+                            alt:"Gestión de evidencias con iconos de documentos y carpetas",
+                            src: notification}}
+                        title="Envío de notificaciones en tiempo real"
+                        
+                        brief="Mantén a los otros usuarios informados con nuestra funcionalidad de envío de notificaciones en tiempo real, que aseguran una comunicación fluida y oportuna entre estudiantes y administrativos."
+                        >
+                        La comunicación efectiva es clave en nuestro entorno educativo. Nuestro sistema de envío de notificaciones permite que tanto estudiantes como administradores se mantengan al tanto de eventos importantes, fechas y líneas regulares, asegurando que la información llegue de forma oportuna. No dejes que la de la comunicación confectara el éxito de tus estudiantes.
+                    </Feature>
 
                     <Feature
                         icon={{
                             alt:"Solicitud de tribunales con iconos de jueces y martillos",
-                            src:{icon}}}
-                        title="Solicitudes de Tribunales"
-                        content="Facilita la solicitud y asignación de tribunales para la
-                            defensa del ECE."
-                        />
+                            src: administration}}
+                        title="Panel de administración de usuarios"
+                        
+                        brief="Gestiona de manera eficiente a todos los usuarios de tu sistema con nuestro panel de administración, que ofrece un control total sobre roles y accesorios."
+                        >
+                        El panel de administración de usuarios es la herramienta que necesitas para tener un control total sobre la comunidad educativa. Con una interfaz intuitiva, puedes agregar, editar y eliminar usuarios, así como asignar roles y permisos específicos según las necesidades de cada miembro. Esto te permite personalizar la experiencia de cada usuario, que tiene acceso a la información y herramientas que realmente necesitan para desempeñar sus funciones. Con esta herramienta no solo optimizas la gestión de tu comunidad educativa, sino que también se fomenta un ambiente de colaboración y eficacia. Toma el control y transforma la administración de tu sistema educativo con facilidad.
+                    </Feature>
 
                     <Feature
                         icon={{
                             alt:"Gestión de defensas con iconos de presentaciones y micrófonos",
-                            src:{icon}}}
-                        title="Gestión de Defensas"
-                        content="Organiza y gestiona las defensas de los ejercicios de
+                            src: security}}
+                        title="Robusta seguridad y privacidad para documentos sensibles"
+                        
+                        brief="Organiza y gestiona las defensas de los ejercicios de
                             culminación de estudios de manera efectiva."
-                        />
+                        >
+
+                    </Feature>
 
                     <Feature
                         icon={{
                             alt:"Actas de defensa con iconos de documentos firmados",
-                            src:{icon}}}
-                        title="Actas de Defensa"
-                        content="Permite a los estudiantes acceder a los datos sobre el proceso
-                            que decidan los profesores."
-                        />
-                    <Feature
-                        icon={{
-                            alt:"Acceso a datos con iconos de gráficos y estadísticas",
-                            src:{icon}}}
-                        title="Acceso a Datos"
-                        content="Genera y gestiona las actas de defensa de manera automatizada
-                            y segura."
-                        />
+                            src: info_persistance}}
+                        title="Persistencia de la información incluso años después de la graduación"
+                        
+                        brief="Permite a los estudiantes acceder a los datos sobre el proceso que decidan los profesores."
+                        >
+
+                    </Feature>
 
                     <Feature
                         icon={{
                             alt:"Integración con Akademos con iconos de sistemas conectados",
-                            src:{icon}}}
+                            src: akademos}}
                         title="Integración con Akademos"
-                        content="Desarrollado por la Universidad de las Ciencias Informáticas
-                            (UCI) y concebido como un módulo integrado en el sistema de
-                            gestión universitaria Akademos."
-                        />    
+                        
+                        brief="Desarrollado por la Universidad de las Ciencias Informáticas (UCI) y concebido como un módulo integrado en el sistema de gestión universitaria Akademos."
+                        >
+
+                    </Feature>
                 </div>
             </section>
         )
 }
 
-const Feature = (icon, title, content) => {
+// eslint-disable-next-line no-unused-vars
+const Feature = ({icon, title, brief, children}) => {
     return(
             <div className="feature-card" data-aos="fade-left" data-aos-duration="1000">
                 <div className="feature-card-inner">
                     <div className="feature-card-front">
-                        <img alt={icon.alt} className="feature-icon" src={icon} />
+                        <img alt={icon.alt} className="feature-icon" src={icon.src} />
                     </div>
                 
                     <div className="feature-card-back">
@@ -134,12 +230,25 @@ const Feature = (icon, title, content) => {
                         </h3>
                         
                         <p 
+                            className="feature-card-brief"
+                            >
+                            {brief}
+                        </p>
+
+                        <div
                             className="feature-card-content"
                             >
-                            {content}
-                        </p>
+                            {children}
+                        </div>
                     </div>    
                 </div>
             </div>
         )                                
+}
+
+Feature.propTypes = {
+    icon: PropTypes.object,
+    title: PropTypes.string.isRequired,
+    brief: PropTypes.string.isRequired,
+    children: PropTypes.node.isRequired
 }

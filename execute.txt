@@ -1,0 +1,24 @@
+cd frontend
+
+npm install
+
+cd backend
+
+pip install
+
+cd ../
+
+cd .venv/scripts
+
+./activate
+
+cd ../../
+
+cd backend
+
+python manage.py runserver
+
+cd frontend
+
+npm run dev
+
