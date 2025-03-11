@@ -12,7 +12,7 @@ class LoginTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['name'] = user.name
         token['email'] = user.email
-        token[''] = user.pic
+        token['pic'] = user.pic
 
         return token
 
