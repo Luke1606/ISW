@@ -38,11 +38,7 @@ const AuthProvider = ({children}) => {
 
     return (
         <AuthContext.Provider value={{ user, login, logout }}>
-            {redirect ? (
-                console.log("Redirigiendo a:", redirect), <Navigate to={redirect} />
-            ) : (
-                children
-            )}
+            {redirect ? <Navigate to={redirect} /> : children}
         </AuthContext.Provider>
     )
 }
