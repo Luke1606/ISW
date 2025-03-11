@@ -1,44 +1,33 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
+import * as Yup from "yup"
 import { AuthContext } from "../../contexts/AuthContext"
-import useDataForm from '../../hooks/useDataForm'
+import useGenericForm from '../../hooks/useGenericForm'
 import Modal from "../common/Modal"
 
 const LoginComponent = () => {
     const { login } = useContext(AuthContext)
     const navigate = useNavigate()
-    const [isModalOpen, setIsModalOpen] = useState(false)
 
     const initialValues = {
         username: '',
         password: '',
     }
 
-    const extraValidations = (values) => {
-        const errors = {}
+    const validationSchema = useMemo(() => Yup.object().shape({
+        username: Yup.string()
+            .min(4, "El nombre de usuario debe tener al menos 4 caracteres")
+            .required("El nombre de usuario es obligatorio"),
+        password: Yup.string()
+            .min(12, "La contraseña debe tener al menos 12 caracteres")
+            .matches(/[a-z]/, "La contraseña debe contener al menos una letra minúscula")
+            .matches(/[A-Z]/, "La contraseña debe contener al menos una letra mayúscula")
+            .matches(/[0-9]/, "La contraseña debe contener al menos un número")
+            .matches(/[\W_]/, "La contraseña debe contener al menos un caracter especial")
+            .required("La contraseña es obligatoria")
+    }), [])
 
-        if (values.username && values.username.length < 5)
-            errors.username = 'El nombre de usuario es demasiado corto'
-        
-        if (values.password && values.password.length < 12)
-            errors.password = 'La contraseña es demasiado corta'
-        
-        return errors
-    }
-
-    const { formik, formState } = useDataForm(login, initialValues, extraValidations)
-
-    useEffect(() => {
-        // Ejecutar la validación inicial
-        formik.validateForm()
-    }, [])
-
-    useEffect(() => {
-        // Abrir el modal si hay un error general o si la autenticación fue exitosa
-        if (formik.errors.general || formState.success || formState.pending) {
-            setIsModalOpen(true)
-        }
-    }, [formik.errors.general, formState])
+    const { formik, formState, isResponseModalOpen, setResponseModalOpen } = useGenericForm(login, initialValues, validationSchema)
 
     return (
             <>
@@ -47,6 +36,7 @@ const LoginComponent = () => {
                     onSubmit={formik.handleSubmit} 
                     >
                     <h1>Autenticación</h1>
+                    
                     <label 
                         className="form-label" 
                         htmlFor="username">
@@ -60,8 +50,7 @@ const LoginComponent = () => {
                         placeholder="Ingrese su nombre de usuario"
                         {...formik.getFieldProps('username')}
                     />
-                    {formik.touched.username && 
-                        formik.errors.username && 
+                    {formik.errors.username && 
                         <span 
                             className="error">
                                 {formik.errors.username}
@@ -81,8 +70,7 @@ const LoginComponent = () => {
                         placeholder="Ingrese su contraseña"
                         {...formik.getFieldProps('password')}
                     />
-                    {formik.touched.password && 
-                        formik.errors.password && 
+                    {formik.errors.password && 
                         <span 
                             className="error">
                                 {formik.errors.password}
@@ -93,7 +81,7 @@ const LoginComponent = () => {
                             type="submit" 
                             className="accept-button" 
                             disabled={formState.pending || Object.keys(formik.errors).length > 0}
-                            onClick={() => setIsModalOpen(true)}>
+                            onClick={() => setResponseModalOpen(true)}>
                                 Aceptar
                         </button>
 
@@ -103,7 +91,6 @@ const LoginComponent = () => {
                             onClick={() => navigate('/')}>
                             Cancelar
                         </button>
-
                     </div>
                 </form>
 
@@ -114,19 +101,20 @@ const LoginComponent = () => {
                     </span>}
 
                 <Modal 
-                    isOpen={isModalOpen}
+                    isOpen={isResponseModalOpen}
                     title={formState.pending? "Cargando..." : formState.success? "Autenticación exitosa" : "Error de autenticación" }
                     >
                     <p>
                         {formState.success? formState.message : formik.errors.general}
                     </p>
                     
-                    <button 
-                        className="button"
-                        onClick={() => setIsModalOpen(false)}
-                        >
-                        Cerrar
-                    </button>
+                    {!formState.pending &&
+                        <button 
+                            className="button"
+                            onClick={() => setResponseModalOpen(false)}
+                            >
+                            Cerrar
+                        </button>}
                 </Modal>  
             </>
         )
