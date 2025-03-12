@@ -1,21 +1,38 @@
-import * as notificationApi from "../APIs/NotificationApi"
-
-class ManagementService {
-    async sendNotification(notification) {
-        return await notificationApi.sendNotification(notification)
+class NotificationService {
+    constructor(url) {
+        this.url = url
+        this.socket = null
+        this.listeners = []
     }
-
-    async setNotificatiosnSeen(userId, notificationIds) {
-        return await notificationApi.setNotificationsSeen(userId, notificationIds)
+  
+    connect() {
+        this.socket = new WebSocket(this.url)
+  
+        this.socket.onmessage = (event) => {
+            const newNotification = JSON.parse(event.data)
+            this.notifyListeners(newNotification)
+        }
     }
-    
-    async deleteNotifications(userId, notificationIds) {
-        return await notificationApi.deleteNotifications(userId, notificationIds)
+  
+    disconnect() {
+        if (this.socket) {
+            this.socket.close()
+        }
     }
-    
-    async getAllNotifications(userId) {
-        return await notificationApi.getAllNotifications(userId)
+  
+    addListener(callback) {
+        this.listeners.push(callback);
+    }
+  
+    removeListener(callback) {
+        this.listeners = this.listeners.filter((listener) => listener !== callback)
+    }
+  
+    notifyListeners(notification) {
+        this.listeners.forEach((callback) => callback(notification))
     }
 }
 
-export default new ManagementService()
+const baseURL = 'ws://localhost:8000/ws/notifications/'
+  
+export default new NotificationService(baseURL)
