@@ -99,7 +99,7 @@ const FeaturesSection = () => {
                 
                     <Feature
                         icon={{
-                            alt:"Gestión de evidencias con iconos de documentos y carpetas",
+                            alt:"Gran cantidad de carpetas",
                             src: evidence}}
                         title="Gestión eficiente de evidencias"
                         
@@ -110,7 +110,7 @@ const FeaturesSection = () => {
 
                     <Feature
                         icon={{
-                            alt:"Aprobacion digital de solicitud",
+                            alt:"Celular con mensaje aproval en pantalla",
                             src: request}}
                         title="Evaluación de solicitudes de ECE"
                         
@@ -122,7 +122,7 @@ const FeaturesSection = () => {
 
                     <Feature
                         icon={{
-                            alt:"Gestión de evidencias con iconos de documentos y carpetas",
+                            alt:"Varias personas reunidas escuchando la exposición de una específica",
                             src: tribunal}}
                         title="Asignación y aprobación de tribunales simplificada"
                         
@@ -133,18 +133,18 @@ const FeaturesSection = () => {
 
                     <Feature
                         icon={{
-                            alt:"Gestion de actas de defensa",
+                            alt:"Numerosas carpetas",
                             src: defense_act}}
                         title="Gestión segura de actas de defensa"
                         
-                        brief="Simplifica la gestión de las actas de defensa con nuestra solución, que permite un registro despejado y accesible de cada defensa realizada."
+                        brief="Simplifica la gestión de las actas de defensa con nuestra solución, que permite un registro despejado, seguro y accesible de cada defensa realizada."
                         >
                         La gestión de las actas de defensa es fundamental para documentar el proceso de ejercicios de culminación de estudios. Nuestra herramienta te permite registrar, almacenar y acceder a las actas de manera sencilla y organizada. Con las funciones que facilitan la edición y el seguimiento de cada documento, podrás asegurarte de tener una visión clara del desempeño académico de los estudiantes.
                     </Feature>
 
                     <Feature
                         icon={{
-                            alt:"Gestion de permisos por roles",
+                            alt:"Conjunto de personas sentadas usando dispositivos electrónicos",
                             src: roles}}
                         title="Gestion de permisos por roles"
                         
@@ -155,7 +155,7 @@ const FeaturesSection = () => {
 
                     <Feature
                         icon={{
-                            alt:"Gestión de evidencias con iconos de documentos y carpetas",
+                            alt:"Celular al recibir una notificación",
                             src: notification}}
                         title="Envío de notificaciones en tiempo real"
                         
@@ -166,7 +166,7 @@ const FeaturesSection = () => {
 
                     <Feature
                         icon={{
-                            alt:"Solicitud de tribunales con iconos de jueces y martillos",
+                            alt:"Captura de pantalla del panel de administración de usuarios del sistema",
                             src: administration}}
                         title="Panel de administración de usuarios"
                         
@@ -177,32 +177,31 @@ const FeaturesSection = () => {
 
                     <Feature
                         icon={{
-                            alt:"Gestión de defensas con iconos de presentaciones y micrófonos",
+                            alt:"Mapa del mundo con ícono de candado simulando seguridad",
                             src: security}}
                         title="Robusta seguridad y privacidad para documentos sensibles"
                         
-                        brief="Organiza y gestiona las defensas de los ejercicios de
-                            culminación de estudios de manera efectiva."
+                        brief="Garantiza un gran nivel de seguridad y confianza para el trabajo con todo tipo de documentos y adjuntos implicados en el proceso."
                         >
 
                     </Feature>
 
                     <Feature
                         icon={{
-                            alt:"Actas de defensa con iconos de documentos firmados",
+                            alt:"Varias carpetas etiquetadas con los años correspondientes",
                             src: info_persistance}}
                         title="Persistencia de la información incluso años después de la graduación"
                         
-                        brief="Permite a los estudiantes acceder a los datos sobre el proceso que decidan los profesores."
+                        brief="Permite a los profesores visualizar y organizar fácilmente los datos sobre el proceso de años anteriores incluso cuando el individuo ya se graduó."
                         >
 
                     </Feature>
 
                     <Feature
                         icon={{
-                            alt:"Integración con Akademos con iconos de sistemas conectados",
+                            alt:"Captura de pantalla del logo de AKADEMOS",
                             src: akademos}}
-                        title="Integración con Akademos"
+                        title="Integración con AKADEMOS"
                         
                         brief="Desarrollado por la Universidad de las Ciencias Informáticas (UCI) y concebido como un módulo integrado en el sistema de gestión universitaria Akademos."
                         >
