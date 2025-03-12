@@ -16,13 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from authentication.views import LoginTokenObtainPairView
-from notification.views import NotificationViewSet
+from users.views import AuthTokenObtainPairView
 from ece_api.views import ManagementView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('authentication/token/', LoginTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('users/token/', AuthTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('management/< str:datatype >/< int:super_id >/', ManagementView.as_view(), name='ManagementView'),
-    path('notification/< int:notification_id >', NotificationViewSet.as_view(), name='NotificationViewSet'),
 ]
