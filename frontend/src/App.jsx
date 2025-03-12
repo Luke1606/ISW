@@ -7,7 +7,6 @@ import ProtectedRoutesComponent from "./components/ProtectedRoutesComponent"
 import ListComponent from "./components/management/ListComponent"
 import FormComponent from "./components/management/FormComponent"
 import Error from "./components/common/Error"
-import ErrorBoundary from "./components/common/ErrorBoundary"
 
 const App = () => {
     const router = createBrowserRouter(
@@ -19,24 +18,23 @@ const App = () => {
                 
                 <Route element={ <ProtectedRoutesComponent /> }>      
                     <Route path="list/:datatype/:index" element={ <ListComponent /> } />
+                  
                     <Route path="form/:datatype/:index/:view" element={ <FormComponent /> } />
-                </Route>
-
-                <Route path="*" element={ 
+                  
+                    <Route path="*" element={ 
                     <Error 
                         errorTitle="Dirección no encontrada" 
                         errorDescription="La ruta especificada no corresponde a ninguna dirección. Verifique la ruta." 
                     /> }
                 />
+                </Route>
             </Route> 
         )
     )
 
     return (
         <AuthProvider>
-            <ErrorBoundary>
-                <RouterProvider router={router} />
-            </ErrorBoundary>
+            <RouterProvider router={router} />
         </AuthProvider>
         )
 }
