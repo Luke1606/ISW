@@ -43,9 +43,14 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    'ece_api',
-    'authentication',
-    'notification'
+    'channels',
+    'users',
+    'evidences',
+    'requests',
+    'defenses_tribunals',
+    'defense_acts',
+    'reports',
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -143,6 +148,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://localhost:8000',
+    'http://localhost:3000',
     '127.0.0.1',
 ]
 
@@ -152,3 +158,5 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+AUTH_USER_MODEL = 'users.CustomUser'
