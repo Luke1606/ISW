@@ -3,7 +3,7 @@ import { jwtDecode } from "jwt-decode"
 import { ACCESS_TOKEN_KEY } from './Constants'
 
 const authApi = axios.create({
-    baseURL: 'http://localhost:8000/authentication/',
+    baseURL: 'http://localhost:8000/users/',
 })
 
 authApi.interceptors.request.use(

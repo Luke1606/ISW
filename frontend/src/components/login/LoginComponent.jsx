@@ -1,5 +1,6 @@
 import { useContext, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
+import { User } from "lucide-react"
 import * as Yup from "yup"
 import { AuthContext } from "../../contexts/AuthContext"
 import useGenericForm from '../../hooks/useGenericForm'
@@ -27,7 +28,12 @@ const LoginComponent = () => {
             .required("La contraseña es obligatoria")
     }), [])
 
-    const { formik, formState, isResponseModalOpen, setResponseModalOpen } = useGenericForm(login, initialValues, validationSchema)
+    const {
+        formik,
+        formState, 
+        isResponseModalOpen, 
+        setResponseModalOpen 
+    } = useGenericForm(login, initialValues, validationSchema)
 
     return (
             <>
@@ -35,12 +41,19 @@ const LoginComponent = () => {
                     className="form-container"
                     onSubmit={formik.handleSubmit} 
                     >
+                    <div className="icon-container">
+                        <div className="icon-circle">
+                            <User className="icon" />
+                        </div>
+                    </div>
+                    
                     <h1>Autenticación</h1>
                     
                     <label 
                         className="form-label" 
-                        htmlFor="username">
-                            Nombre de usuario:
+                        htmlFor="username"
+                        >
+                        Nombre de usuario:
                     </label>
 
                     <input
@@ -52,14 +65,17 @@ const LoginComponent = () => {
                     />
                     {formik.errors.username && 
                         <span 
-                            className="error">
-                                {formik.errors.username}
+                            className="error"
+                            >
+                            {formik.errors.username}
                         </span>}
 
                     <label 
                         className="form-label" 
-                        htmlFor="password">
-                            Contraseña:
+                        htmlFor="password"
+                        id="label-password"
+                        >
+                        Contraseña:
                     </label>
 
                     <input
@@ -72,15 +88,24 @@ const LoginComponent = () => {
                     />
                     {formik.errors.password && 
                         <span 
-                            className="error">
-                                {formik.errors.password}
+                            className="error"
+                            >
+                            {formik.errors.password}
                         </span>}
 
                     <div className="button-container">
                         <button 
                             type="submit" 
                             className="accept-button" 
-                            disabled={formState.pending || Object.keys(formik.errors).length > 0}
+                            disabled={
+                                formState.pending || Object.keys(formik.errors).length > 0
+                            }
+                            style={
+                                formState.pending || Object.keys(formik.errors).length > 0?
+                                    {backgroundColor: "gray"} 
+                                    :
+                                    {}
+                            }
                             onClick={() => setResponseModalOpen(true)}>
                                 Aceptar
                         </button>
@@ -88,7 +113,8 @@ const LoginComponent = () => {
                         <button 
                             type="button"
                             className="cancel-button"
-                            onClick={() => navigate('/')}>
+                            onClick={() => navigate('/')}
+                            >
                             Cancelar
                         </button>
                     </div>
@@ -96,13 +122,17 @@ const LoginComponent = () => {
 
                 {formik.errors.general && 
                     <span 
-                        className="error">
-                            {formik.errors.general}
+                        className="error"
+                        >
+                        {formik.errors.general}
                     </span>}
 
                 <Modal 
                     isOpen={isResponseModalOpen}
-                    title={formState.pending? "Cargando..." : formState.success? "Autenticación exitosa" : "Error de autenticación" }
+                    title={
+                        formState.pending?
+                            "Cargando..." : formState.success?
+                                "Autenticación exitosa" : "Error de autenticación"}
                     >
                     <p>
                         {formState.success? formState.message : formik.errors.general}
