@@ -63,12 +63,13 @@ const LoginComponent = () => {
                         placeholder="Ingrese su nombre de usuario"
                         {...formik.getFieldProps('username')}
                     />
-                    {formik.errors.username && 
-                        <span 
-                            className="error"
-                            >
-                            {formik.errors.username}
-                        </span>}
+                    
+                    <span 
+                        className="error"
+                        style={formik.errors.username? {} : {visibility:"hidden"}}
+                        >
+                        {formik.errors.username}
+                    </span>
 
                     <label 
                         className="form-label" 
@@ -86,12 +87,13 @@ const LoginComponent = () => {
                         placeholder="Ingrese su contraseña"
                         {...formik.getFieldProps('password')}
                     />
-                    {formik.errors.password && 
-                        <span 
-                            className="error"
-                            >
-                            {formik.errors.password}
-                        </span>}
+                      
+                    <span 
+                        className="error"
+                        style={formik.errors.password? {} : {visibility:"hidden"}}
+                        >
+                        {formik.errors.password}
+                    </span>
 
                     <div className="button-container">
                         <button 

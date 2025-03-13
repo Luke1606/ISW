@@ -1,26 +1,30 @@
 @echo off
 
-REM Cambiar al directorio frontend
-cd frontend
+@REM REM Cambiar al directorio frontend
+@REM cd frontend
 
-REM Instalar dependencias de npm
-npm install
-IF ERRORLEVEL 1 (
-    echo Error al instalar dependencias de npm.
-    pause
-    exit /b 1
-)
+@REM echo todo bien
+@REM REM Instalar dependencias de npm
+@REM npm install --force
 
-REM Cambiar al directorio backend
-cd ../backend
+@REM echo wtf
 
-REM Instalar dependencias de pip
-pip install -r requirements.txt
-IF ERRORLEVEL 1 (
-    echo Error al instalar dependencias de pip.
-    pause
-    exit /b 1
-)
+@REM IF ERRORLEVEL 1 (
+@REM     echo Error al instalar dependencias de npm.
+@REM     pause
+@REM     exit /b 1
+@REM )
+
+@REM REM Cambiar al directorio backend
+@REM cd ../backend
+
+@REM REM Instalar dependencias de pip
+@REM pip install -r requirements.txt
+@REM IF ERRORLEVEL 1 (
+@REM     echo Error al instalar dependencias de pip.
+@REM     pause
+@REM     exit /b 1
+@REM )
 
 REM Activar el entorno virtual
 cd .venv\Scripts

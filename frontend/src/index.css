@@ -435,20 +435,21 @@ body {
 /* form */
 .form-container {
     background-color: rgba(230, 230, 230, .9);
-    border-radius: 50px;
+    height: 40rem;
     width: 35rem;
-    height: 45rem;
-    box-shadow: 0 0 20px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
     display: flex;
-    gap: 1rem;
     flex-direction: column;
+    gap: 1rem;
     align-items: center; 
     justify-content: center; 
     padding: 20px; 
-    position: relative;
     margin-top: 50px;
     margin-bottom: 50px;
     font-family: Arial, sans-serif; 
+    font-size: 1.3rem;
+    border-radius: 50px;
+    box-shadow: 0 0 20px 15px rgba(0, 0, 0, 0.2);
 }
 
 .form-label {
@@ -458,7 +459,7 @@ body {
 }
 
 #label-password {
-    margin-top: 40px;
+    margin-top: 2rem;
 }
 
 .form-input {
@@ -497,16 +498,16 @@ body {
 
 .button-container {
     display: flex; 
-    justify-content: flex-end;
-    margin-top: 80px; 
+    gap: 2rem;
+    margin-top: 3rem;
     width: 80%;
 }
 
 .accept-button, .cancel-button {
     flex: 1; 
-    margin: 0 5px; 
-    padding: 10px 20px;
+    padding: 10px;
     color: white;
+    font-size: 1.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
     border-radius: 10px;
@@ -556,7 +557,8 @@ body {
 
 
 .error {
-    color:rgb(200, 0, 0)
+    color:rgb(200, 0, 0);
+    height: 1rem;
 }
 
 .index-buton {
