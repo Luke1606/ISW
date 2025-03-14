@@ -67,18 +67,18 @@ class ManagementGateawayView(APIView):
         """
         Este método maneja la lógica de la solicitud GET.
         """
-        cache_key = self.get_cache_key(datatype, request)
+        cache_key = self.get_cache_key(datatype, super_id, request)
         cached_data = cache.get(cache_key)
 
         if cached_data:
             return Response(cached_data)
 
-        model, serializer_class = self.get_model_and_serializer(datatype, super_id)
+        model, serializer_class = self.get_model_and_serializer(datatype)
 
         if model is None or serializer_class is None:
             return Response({"error": "Invalid datatype"}, status=status.HTTP_400_BAD_REQUEST)
 
-        queryset = self.get_queryset(model, request)
+        queryset = self.get_queryset(model, super_id, request)
         page_data = self.paginate_queryset(queryset, request)
 
         # Serialización
@@ -94,27 +94,32 @@ class ManagementGateawayView(APIView):
 
         return Response(response_data)
 
-    def get_cache_key(self, datatype, request):
+    def get_cache_key(self, datatype, super_id, request):
         """
         Genera la clave de caché basada en el tipo de dato y los parámetros de búsqueda.
         """
-        return f"{datatype}_{request.query_params.get('search', '')}"
+        return f"{datatype}_{super_id}_{request.query_params.get('search', '')}"
 
-    def get_queryset(self, model, request):
+    def get_queryset(self, model, super_id, request):
         """
         Obtiene el queryset filtrado según los parámetros de búsqueda.
         """
         queryset = model.objects.all().select_related('related_model')
         search_term = request.query_params.get('search', '')
 
+        conditions = []
+
+        if super_id:
+            conditions.append(Q(student=super_id))
+
         if search_term:
-            query = Q()
             searchable_fields = model.get_searchable_fields()
 
             for field in searchable_fields:
-                query |= Q(**{f"{field.name}__icontains": search_term})
+                conditions.append(Q(**{f"{field.name}__icontains": search_term}))
 
-            queryset = queryset.filter(query)
+        if conditions:
+            queryset = queryset.filter(*conditions)
 
         return queryset
 
@@ -133,18 +138,18 @@ class ManagementGateawayView(APIView):
             'current_page': page_number - 1
         }
 
-    def get_model_and_serializer(self, datatype, super_id):
+    def get_model_and_serializer(self, datatype):
         """
         Este método es un auxiliar del método get para obtener la información necesaria del modelo específico.
         """
         match datatype:
             case DataTypes.User.student:
-                return StudentViewSet.get_model_and_serializer(super_id)
+                return StudentViewSet.get_model_and_serializer()
             case DataTypes.User.professor:
-                return ProfessorViewSet.get_model_and_serializer(super_id)
+                return ProfessorViewSet.get_model_and_serializer()
             case DataTypes.evidence:
-                return EvidenceViewSet.get_model_and_serializer(super_id)
+                return EvidenceViewSet.get_model_and_serializer()
             case DataTypes.defense_act:
-                return DefenseActViewSet.get_model_and_serializer(super_id)
+                return DefenseActViewSet.get_model_and_serializer()
             case _:
                 return None, None
