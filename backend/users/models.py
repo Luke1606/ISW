@@ -32,3 +32,9 @@ class Professor(CustomUser):
         DPTO_INF = 'Dpto Inf', 'Departamento de Informática'
         DECANO = 'Decano', 'Decano'
     role = models.CharField(max_length=20, choices=Roles.choices, default=Roles.NINGUNO)
+
+    def get_searchable_fields(self, cls):
+        """
+        Devuelve una lista de campos que son de tipo CharField o TextField.
+        """
+        return [field for field in cls._meta.get_fields() if isinstance(field, (models.CharField, models.TextField))]

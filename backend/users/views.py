@@ -2,7 +2,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from .serializers import AuthTokenObtainPairSerializer, StudentSerializer, ProfessorSerializer
-from .models import Student, Professor
+from .models import CustomUser, Student, Professor
 
 
 class AuthTokenObtainPairView(TokenObtainPairView):
@@ -11,6 +11,10 @@ class AuthTokenObtainPairView(TokenObtainPairView):
     """
     permission_classes = [permissions.AllowAny]
     serializer_class = AuthTokenObtainPairSerializer
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
 
 
 class StudentViewSet(viewsets.ModelViewSet):
@@ -47,9 +51,7 @@ class StudentViewSet(viewsets.ModelViewSet):
         return Response({"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
     @staticmethod
-    def get_model_and_serializer(super_id):
-        if (super_id):
-            pass
+    def get_model_and_serializer():
         return Student, StudentSerializer
 
 
@@ -58,7 +60,5 @@ class ProfessorViewSet(viewsets.ModelViewSet):
     serializer_class = ProfessorSerializer
 
     @staticmethod
-    def get_model_and_serializer(super_id):
-        if (super_id):
-            pass
+    def get_model_and_serializer():
         return Professor, ProfessorSerializer

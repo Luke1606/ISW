@@ -20,5 +20,8 @@ class DefenseAct(models.Model):
     description = models.TextField(blank=True, null=True)
     attachment = models.URLField()
 
-    def __str__(self):
-        return f"{self.name + ":" + self.description + ":" + self.attachment}"
+    def get_searchable_fields(self, cls):
+        """
+        Devuelve una lista de campos que son de tipo CharField o TextField.
+        """
+        return [field for field in cls._meta.get_fields() if isinstance(field, (models.CharField, models.TextField))]

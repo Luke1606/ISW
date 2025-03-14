@@ -1,6 +1,6 @@
 from django.db import models
-from users.models import Student
 from django.core.exceptions import ValidationError
+from users.models import Student
 
 
 class Evidence(models.Model):
@@ -12,12 +12,12 @@ class Evidence(models.Model):
                           auto_created=True,
                           verbose_name="ID")
 
-    owner = models.ForeignKey(to=Student,
-                              editable=False,
-                              blank=False,
-                              null=False,
-                              related_name='evidences',
-                              on_delete=models.CASCADE)
+    student = models.ForeignKey(to=Student,
+                                editable=False,
+                                blank=False,
+                                null=False,
+                                related_name='evidences',
+                                on_delete=models.CASCADE)
 
     name = models.CharField(max_length=255, db_index=True, verbose_name="Name")
 
@@ -41,6 +41,12 @@ class Evidence(models.Model):
             raise ValidationError('File field must be empty when attachment type is URL.')
         if self.attachment_type == self.Type.FILE and self.attachment_url:
             raise ValidationError('URL field must be empty when attachment type is FILE.')
+
+    def get_searchable_fields(self, cls):
+        """
+        Devuelve una lista de campos que son de tipo CharField o TextField.
+        """
+        return [field for field in cls._meta.get_fields() if isinstance(field, (models.CharField, models.TextField))]
 
 
 class Proyect(Evidence):

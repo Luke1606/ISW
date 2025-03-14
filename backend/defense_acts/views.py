@@ -8,7 +8,5 @@ class DefenseActViewSet(viewsets.ModelViewSet):
     serializer_class = DefenseActSerializer
 
     @staticmethod
-    def get_model_and_serializer(super_id):
-        if (super_id):
-            pass
+    def get_model_and_serializer():
         return DefenseAct, DefenseActSerializer

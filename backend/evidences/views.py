@@ -15,7 +15,5 @@ class EvidenceViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @staticmethod
-    def get_model_and_serializer(super_id):
-        if (super_id):
-            pass
+    def get_model_and_serializer():
         return Evidence, EvidenceSerializer
