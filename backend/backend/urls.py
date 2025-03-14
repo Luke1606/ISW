@@ -17,10 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from users.views import AuthTokenObtainPairView
-from .view_gateaway import GateawayView
+from .management_view_gateaway import ManagementGateawayView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/token/', AuthTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('management/< str:datatype >/< int:super_id >/', GateawayView.as_view(), name='gateaway_view'),
+    path('management/< str:datatype >/< int:super_id >/', ManagementGateawayView.as_view(), name='gateaway_view'),
 ]
