@@ -534,28 +534,6 @@ body {
     background-color: rgb(200, 0, 0);
 }
 
-/* Media Queries */
-@media (max-width: 600px) {
-    .form-container {
-        width: 95%;
-        margin: 20px auto;
-    }
-
-    .form-label {
-        font-size: 1.5rem;
-    }
-
-    .button-container {
-        flex-direction: column; 
-        margin-top: 20px; 
-    }
-
-    .accept-button, .cancel-button {
-        margin: 5px 0;
-    }
-}
-
-
 .error {
     color:rgb(200, 0, 0);
     height: 1rem;
