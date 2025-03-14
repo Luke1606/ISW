@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 
 class CustomUser(User):
-    pic = models.ImageField()
+    pic = models.ImageField(upload_to='images/')
 
 
 class Student(CustomUser):
@@ -18,6 +18,12 @@ class Student(CustomUser):
 
     faculty = models.CharField(max_length=50, choices=Faculties.choices, default=Faculties.NINGUNO)
     group = models.IntegerField()
+
+    def get_searchable_fields(self, cls):
+        """
+        Devuelve una lista de campos que son de tipo CharField o TextField.
+        """
+        return [field for field in cls._meta.get_fields() if isinstance(field, (models.CharField, models.TextField))]
 
 
 class Professor(CustomUser):
