@@ -17,6 +17,8 @@ const AuthProvider = ({children}) => {
 
             if(user.type === datatypes.user.student)
                 setRedirect(`/list/${datatypes.evidence}/${user.id}/`) 
+            else if(user.type === datatypes.user.professor)
+                setRedirect(`/list/${datatypes.user.student}/${user.id}`)
             else{
                 setRedirect(`/list/${datatypes.user.student}/`)
             }

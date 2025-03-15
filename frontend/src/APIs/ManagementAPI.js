@@ -5,14 +5,14 @@ const managementApi = axios.create({
 })
 
 
-const getUrl = (datatype, superId) => `${datatype}/${superId ? `${superId}/` : ''}`
+const getUrl = (datatype, relatedUserId) => `${datatype}/${relatedUserId ? `${relatedUserId}/` : ''}`
 
 
-export const getAllData = async (datatype, superId) => {
+export const getAllData = async (datatype, relatedUserId) => {
     if (!datatype) throw new Error('Datatype is required')
     
     try {
-        const response = await managementApi.get(getUrl(datatype, superId))
+        const response = await managementApi.get(getUrl(datatype, relatedUserId))
         return response.data    
     } catch (error) {
         throw new Error("Error en la petición: " + error)
@@ -20,11 +20,11 @@ export const getAllData = async (datatype, superId) => {
 }
 
 
-export const getData = async (datatype, id, superId) => {
+export const getData = async (datatype, id, relatedUserId) => {
     if (!datatype || !id) throw new Error('Datatype and id are required')
     
     try {
-        const response = await managementApi.get(getUrl(datatype, superId), { params: id })
+        const response = await managementApi.get(getUrl(datatype, relatedUserId), { params: id })
         return response.data    
     } catch (error) {
         throw new Error("Error en la petición: " + error)
@@ -33,11 +33,11 @@ export const getData = async (datatype, id, superId) => {
 }
 
 
-export const createData = async (datatype, data, superId) => {
+export const createData = async (datatype, data, relatedUserId) => {
     if (!datatype || !data) throw new Error('Datatype and data are required')
     
     try {
-        const response = await managementApi.post(getUrl(datatype, superId), data)
+        const response = await managementApi.post(getUrl(datatype, relatedUserId), data)
         return response.data    
     } catch (error) {
         throw new Error("Error en la petición: ", error)
@@ -46,11 +46,11 @@ export const createData = async (datatype, data, superId) => {
 }
 
 
-export const updateData = async (datatype, id, data, superId) => {
+export const updateData = async (datatype, id, data, relatedUserId) => {
     if (!datatype || !id || !data) throw new Error('Datatype, id and new data are required')
     
     try {
-        const response = await managementApi.put(getUrl(datatype, superId), { params: id }, data)
+        const response = await managementApi.put(getUrl(datatype, relatedUserId), { params: id }, data)
         return response.data    
     } catch (error) {
         throw new Error("Error en la petición: ", error)
@@ -59,11 +59,11 @@ export const updateData = async (datatype, id, data, superId) => {
 }
 
 
-export const deleteData = async (datatype, id, superId) => {
+export const deleteData = async (datatype, id, relatedUserId) => {
     if (!datatype || !id) throw new Error('Datatype and id are required')
     
     try {
-        const response = await managementApi.delete(getUrl(datatype, superId), { params: id })
+        const response = await managementApi.delete(getUrl(datatype, relatedUserId), { params: id })
         return response.data    
     } catch (error) {
         throw new Error("Error en la petición: ", error)

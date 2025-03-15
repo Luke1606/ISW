@@ -12,9 +12,9 @@ class Student(CustomUser):
         FTI = 'FTI', 'Facultad de Tecnologías Interactivas'
         FTE = 'FTE', 'Facultad de Tecnologías Educativas'
         CITEC = 'CITEC', 'Facultad de Ciencias y Tecnologías Computacionales'
-        FTL = 'Decano', 'Facultad de Tecnologías Libres'
-        DFP = 'Decano', 'Facultad de Ciberseguridad'
-        FIO = 'Decano', 'Facultad de Información Organizacional'
+        FTL = 'FTL', 'Facultad de Tecnologías Libres'
+        DFP = 'DFP', 'Facultad de Ciberseguridad'
+        FIO = 'FIO', 'Facultad de Información Organizacional'
 
     faculty = models.CharField(max_length=50, choices=Faculties.choices, default=Faculties.NINGUNO)
     group = models.IntegerField()

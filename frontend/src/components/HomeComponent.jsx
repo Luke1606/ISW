@@ -89,7 +89,7 @@ const FeaturesSection = () => {
                     <p 
                         className="home-features-content"
                         >
-                        Descubre cómo Nuestra herramienta de gestión diseñada para facilitar el seguimiento de los procesos de ejercicios de culminación de estudios puede ayudarte.
+                        Descubre cómo nuestra herramienta de gestión diseñada para facilitar el seguimiento de los procesos de ejercicios de culminación de estudios puede ayudarte.
                     </p>
                 </div>
 

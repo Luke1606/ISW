@@ -50,7 +50,7 @@ class Evidence(models.Model):
 
 
 class Proyect(Evidence):
-    class Roles(models.TextChoices):
+    class Roles(models.Model):
         NINGUNO = 'Ninguno'
         ANALYST = 'Analista', 'Analyst'
         PROGRAMMER = 'Programador', 'Programmer'
@@ -70,13 +70,13 @@ class Proyect(Evidence):
 
 
 class ScientificArticle(Evidence):
-    class ScienceFields(models.TextChoices):
+    class ScienceFields(models.Model):
         NINGUNO = 'Ninguno'
         SOFT_ENGINEERING_PROGRAMMING = 'Ingeniería de software y Programación', 'Software Engineering and Programming'
         ORGANIZATIONAL_INTEL = 'Inteligencia organizacional', 'Organizational Intelligence'
         INFORMATION_TECHS = 'Tecnologías de la información', 'Information Technologies'
 
-    class SubScienceFields(models.TextChoices):
+    class SubScienceFields(models.Model):
         NINGUNO = 'Ninguno'
         # Ingeniería de software y Programación
         REPRESENTACION_PROCESAMIENTO = '''Representación y procesamiento de la información y del conocimiento:

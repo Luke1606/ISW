@@ -89,9 +89,9 @@ const useList = (datatype, id) => {
         setState(prev => ({ ...prev, currentPage: newPage }))
     }
 
-    const handleDelete = async (datatype, id, superId) => {
+    const handleDelete = async (datatype, id, relatedUserId) => {
         try {
-            await ManagementService.deleteData(datatype, id, superId)
+            await ManagementService.deleteData(datatype, id, relatedUserId)
             fetchData(state.searchTerm)
         } catch (error) {
             setState(prev => ({ ...prev, error }))

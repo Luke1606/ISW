@@ -1,4 +1,6 @@
 from django.db import models
+from users.models import Student, Professor
+
 
 class DefenseTribunal(models.Model):
     id = models.AutoField(primary_key=True,
