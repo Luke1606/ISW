@@ -29,7 +29,7 @@ ALLOWED_HOSTS = [
     'http://localhost:5173',
     'http://localhost:8000',
     'http://localhost:3000',
-    '127.0.0.1',
+    '127.0.0.1', 'localhost'
 ]
 
 # Application definition
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'channels',
+    'django_filters',
     'users',
     'evidences',
     'requests',
@@ -150,7 +151,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://localhost:8000',
     'http://localhost:3000',
-    '127.0.0.1',
 ]
 
 REST_FRAMEWORK = {
@@ -164,3 +164,7 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+# Configuración para archivos de medios (imágenes)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
