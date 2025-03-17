@@ -3,14 +3,13 @@ import { createPortal } from 'react-dom'
 
 const Modal = ({ children, isOpen }) => {
     if (!isOpen) return null
-    const parentDiv = document.getElementById("modal")
 
     return createPortal(
         <div className='modal-overlay'>
             <div className='modal-container'>
                 {children}
             </div>
-        </div>, parentDiv)
+        </div>, document.body)
 }
 
 Modal.propTypes = {

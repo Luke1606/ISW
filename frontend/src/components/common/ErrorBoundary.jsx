@@ -13,8 +13,13 @@ class ErrorBoundary extends React.Component {
     }
 
     componentDidCatch(error, errorInfo) {
-        console.error("Error capturado en ErrorBoundary:", error, errorInfo, errorInfo.componentStack)
+        console.error("Error capturado en ErrorBoundary:", error, errorInfo);
+        
+        if (error.message.includes("navigation")) {
+            console.warn("Error relacionado con React Router detectado.");
+        }
     }
+    
 
     render() {
         if (this.state.hasError) {
@@ -23,9 +28,9 @@ class ErrorBoundary extends React.Component {
                     errorTitle="Algo salió mal"
                     errorDescription={this.state.message || "Ha ocurrido un error inesperado. Por favor, inténtelo de nuevo más tarde."} 
                 />
-            );
+            )
         }
-        return this.props.children;
+        return this.props.children
     }
 }
 

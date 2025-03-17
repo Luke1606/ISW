@@ -183,7 +183,7 @@ const FeaturesSection = () => {
                         
                         brief="Garantiza un gran nivel de seguridad y confianza para el trabajo con todo tipo de documentos y adjuntos implicados en el proceso."
                         >
-
+                        ola
                     </Feature>
 
                     <Feature
@@ -194,7 +194,7 @@ const FeaturesSection = () => {
                         
                         brief="Permite a los profesores visualizar y organizar fácilmente los datos sobre el proceso de años anteriores incluso cuando el individuo ya se graduó."
                         >
-
+                        ola
                     </Feature>
 
                     <Feature
@@ -205,14 +205,13 @@ const FeaturesSection = () => {
                         
                         brief="Desarrollado por la Universidad de las Ciencias Informáticas (UCI) y concebido como un módulo integrado en el sistema de gestión universitaria Akademos."
                         >
-
+                        ola
                     </Feature>
                 </div>
             </section>
         )
 }
 
-// eslint-disable-next-line no-unused-vars
 const Feature = ({icon, title, brief, children}) => {
     return(
             <div className="feature-card" data-aos="fade-left" data-aos-duration="1000">
