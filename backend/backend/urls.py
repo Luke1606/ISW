@@ -22,5 +22,5 @@ from .management_gateway_view import ManagementGatewayView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/token/', AuthTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('management/<str:datatype>/<int:super_id>/', ManagementGatewayView.as_view(), name='gateaway_view'),
+    path('management/<str:datatype>/<int:super_id>/', ManagementGatewayView.as_view(), name='gateway_view'),
 ]
