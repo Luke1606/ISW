@@ -1,46 +1,51 @@
 import PropTypes from "prop-types"
-import { createContext, useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { createContext, useState, startTransition } from "react"
 import AuthService from "../services/AuthService"
 import datatypes from "../js-files/Datatypes"
 
 const AuthContext = createContext()
 
-const AuthProvider = ({children}) => {
-    const [user, setUser ] = useState(null)
-    const [redirect, setRedirect] = useState(null)
-
+const AuthProvider = ({ children }) => {
+    const [user, setUser] = useState(null)
     const login = async (userFormData) => {
-        try {            
+        try {
             const userData = await AuthService.login(userFormData)
-            setUser (userData)
 
-            if(user.type === datatypes.user.student)
-                setRedirect(`/list/${datatypes.evidence}/${user.id}/`) 
-            else if(user.type === datatypes.user.professor)
-                setRedirect(`/list/${datatypes.user.student}/${user.id}`)
-            else{
-                setRedirect(`/list/${datatypes.user.student}/`)
+            let redirect
+
+            startTransition(() => {
+                setUser(userData)
+                if (userData?.role === datatypes.user.student)
+                    redirect = `/list/${datatypes.evidence}/${userData.id}/`
+                else if (userData?.role === datatypes.user.professor)
+                    redirect = `/list/${datatypes.user.student}/${userData.id}`
+                else
+                    redirect = `/list/${datatypes.user.student}/`
+            })
+
+            return {
+                success: true,
+                message: `El usuario ${userData.name} se ha autenticado correctamente.`,
+                redirect: redirect
             }
-            return { success: true, message: "El usuario " + userData.name + " se ha autenticado correctamente." }
         } catch (error) {
             const authError = {
                 title: "Error durante la autenticación",
                 response: error.response || undefined,
                 data: error.data || undefined,
             }
-            return { success: false, error: authError}
+            return { success: false, error: authError }
         }
     }
 
     const logout = () => {
         AuthService.logout()
-        setUser (null)
+        setUser(null)
     }
 
     return (
         <AuthContext.Provider value={{ user, login, logout }}>
-            {redirect ? <Navigate to={redirect} /> : children}
+            {children}
         </AuthContext.Provider>
     )
 }

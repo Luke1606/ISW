@@ -3,14 +3,23 @@ import * as tokens from "../APIs/Constants"
 
 class AuthService {
     async login(userFormData) {
-        const response = await authApi.authenticate(userFormData)     
-        if (response) {
-            authApi.setToken(tokens.USER_TOKEN_KEY, JSON.stringify(response.user))
-            authApi.setToken(tokens.ACCESS_TOKEN_KEY, response.data.access)
-            authApi.setToken(tokens.REFRESH_TOKEN_KEY, response.data.refresh)
-            return response.user
+        const response = await authApi.authenticate(userFormData)
+        if (response.tokens && response.userData) {
+            const user = {
+                id: response.userData.user_id,
+                name: response.userData.name,
+                pic: response.userData.pic,
+                role: response.userData.role,
+            }
+            console.log(user)
+            authApi.setToken(tokens.USER_TOKEN_KEY, user)
+            authApi.setToken(tokens.ACCESS_TOKEN_KEY, response.tokens.access)
+            authApi.setToken(tokens.REFRESH_TOKEN_KEY, response.tokens.refresh)
+
+            return user
         }
-    }
+        console.log('se mamo')
+    }    
 
     async logout() {
         authApi.deleteToken(tokens.USER_TOKEN_KEY)
