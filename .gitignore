@@ -1,7 +1,1 @@
-backend/backend/__pycache__/
-backend/notification/__pycache__/
-backend/users/__pycache__/
-backend/evidences/__pycache__/
-backend/requests/__pycache__/
-backend/defense_acts/__pycache__/
-backend/defenses_tribunals/__pycache__/
+*.pyc
