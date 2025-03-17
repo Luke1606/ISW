@@ -42,12 +42,6 @@ class Evidence(models.Model):
         if self.attachment_type == self.Type.FILE and self.attachment_url:
             raise ValidationError('URL field must be empty when attachment type is FILE.')
 
-    def get_searchable_fields(self, cls):
-        """
-        Devuelve una lista de campos que son de tipo CharField o TextField.
-        """
-        return [field for field in cls._meta.get_fields() if isinstance(field, (models.CharField, models.TextField))]
-
 
 class Proyect(Evidence):
     class Roles(models.Model):

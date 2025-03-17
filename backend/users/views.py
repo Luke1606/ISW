@@ -1,63 +1,61 @@
+"""
+Vistas de la aplicacion users
+"""
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import viewsets, permissions, status
-from rest_framework.response import Response
+from rest_framework import permissions
+
+from backend.base.base_model_viewset import BaseModelViewSet
 from .serializers import AuthTokenObtainPairSerializer, StudentSerializer, ProfessorSerializer
-from .models import CustomUser, Student, Professor
+from .permissions import IsDecano
+from .models import Student, Professor
 
 
 class AuthTokenObtainPairView(TokenObtainPairView):
     """
-    Esta vista maneja la logica de devolucion de tokens de autenticacion
+    Vista para manejar la lógica de autenticación basada en tokens JWT.
     """
-    permission_classes = [permissions.AllowAny]
     serializer_class = AuthTokenObtainPairSerializer
+    permission_classes = [permissions.AllowAny]
+    http_method_names = ['post']
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
-
-
-class StudentViewSet(viewsets.ModelViewSet):
+class StudentViewSet(BaseModelViewSet):
+    """
+    Vista para gestionar estudiantes:
+    - Listar estudiantes accesible por cualquier profesor autenticado.
+    - CRUD completo accesible solo para Decanos.
+    """
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data, "count": queryset.count()})
+    permission_classes_by_action = {
+        'list': [permissions.IsAuthenticated],
+        'create': [permissions.IsAuthenticated, IsDecano],
+        'update': [permissions.IsAuthenticated, IsDecano],
+        'destroy': [permissions.IsAuthenticated, IsDecano],
+    }
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response({"message": "Created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response({"data": serializer.data})
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response({"message": "Updated successfully", "data": serializer.data})
-
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
-        return Response({"message": "Deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    def get_permissions(self):
+        """
+        Asigna permisos según la acción.
+        """
+        return [
+            permission()
+            for permission in self.permission_classes_by_action.get(self.action, self.permission_classes)
+        ]
 
     @staticmethod
     def get_model_and_serializer():
         return Student, StudentSerializer
 
 
-class ProfessorViewSet(viewsets.ModelViewSet):
+class ProfessorViewSet(BaseModelViewSet):
+    """
+    Vista para gestionar profesores, accesible únicamente para Decanos.
+    """
     queryset = Professor.objects.all()
     serializer_class = ProfessorSerializer
+    permission_classes = [permissions.IsAuthenticated, IsDecano]
 
     @staticmethod
     def get_model_and_serializer():

@@ -32,13 +32,13 @@ class Request(models.Model):
     state = models.CharField(max_length=20, choices=State.choices, default=State.P)
 
 
-class Template(models.Model):
-    id = models.AutoField(primary_key=True,
-                          editable=False,
-                          unique=True,
-                          blank=False,
-                          null=False,
-                          auto_created=True,
-                          verbose_name="ID")
+# class Template(models.Model):
+#     id = models.AutoField(primary_key=True,
+#                           editable=False,
+#                           unique=True,
+#                           blank=False,
+#                           null=False,
+#                           auto_created=True,
+#                           verbose_name="ID")
 
-    template_attachment = models.FileField(upload_to='document_templates/')
+#     template_attachment = models.FileField(upload_to='document_templates/')

@@ -1,59 +1,40 @@
 from rest_framework.views import APIView
-from rest_framework import status
 from rest_framework.response import Response
-from django.core.paginator import Paginator
-from django.core.cache import cache
+from rest_framework import status
 from django.db.models import Q
-
 from users.views import StudentViewSet, ProfessorViewSet
 from evidences.views import EvidenceViewSet
 from requests.views import RequestViewSet
 from defenses_tribunals.views import DefenseTribunalViewSet
 from defense_acts.views import DefenseActViewSet
-
-
-class DataTypes:
-    """
-    Esta clase dicta los distintos valores que puede tener el atributo datatype
-    """
-    class User:
-        """
-        Esta clase dicta los distintos tipos de usuarios
-        """
-        student = "student"
-        professor = "professor"
-        dptoInf = "dptoInf"
-        decan = "decan"
-
-    evidence = "evidence"
-    request = "request"
-    defense_tribunal = "defense_tribunal"
-    tribunal = "tribunal"
-    defense_act = "defense_act"
+from backend.base.base_model_viewset import BaseModelViewSet
+from .utils.constants import DataTypes
 
 
 class ManagementGatewayView(APIView):
     """
-    Esta clase pretende servir como puente entre los views especificos de manejo d datos dependiendo del tipo de dato
+    Vista centralizada que conecta solicitudes HTTP con diferentes ViewSets según el tipo de dato (`datatype`).
+    Incluye funcionalidades de búsqueda avanzada, paginación y lógica específica (e.g., estudiantes relacionados a profesores).
     """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.request = None
         self.datatype = None
         self.related_user_id = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.request = request
-        self.datatype = kwargs.get('datatype')
-        self.related_user_id = kwargs.get('related_user_id')
-
-        if request.method == 'GET':
-            return self.get()
-        return self.dispatch_request_to_view()
-
-    def dispatch_request_to_view(self, *args, **kwargs):
         """
-        Este metodo es el puente entre el endpoint y cada vista especifica
+        Configura la solicitud inicial y redirige a la acción correspondiente.
+        """
+        self.datatype = kwargs.get("datatype")
+        self.related_user_id = kwargs.get("related_user_id")
+
+        if request.method == "GET":
+            return self.get(request)
+        return self.dispatch_request_to_view(request, *args, **kwargs)
+
+    def dispatch_request_to_view(self, request, *args, **kwargs):
+        """
+        Redirige la solicitud al ViewSet específico basado en el tipo de dato.
         """
         view_mapping = {
             DataTypes.User.student: StudentViewSet.as_view(),
@@ -64,119 +45,112 @@ class ManagementGatewayView(APIView):
             DataTypes.defense_act: DefenseActViewSet.as_view(),
         }
         view = view_mapping.get(self.datatype)
-
         if view:
-            return view(self.request, *args, **kwargs)
+            return view(request, *args, **kwargs)
         return Response({"error": "Invalid datatype"}, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self):
+    def get(self, request):
         """
-        Este método maneja la lógica de la solicitud GET.
+        Maneja solicitudes GET con búsqueda avanzada, paginación y caché.
         """
-        cache_key = self.get_cache_key()
-        cached_data = cache.get(cache_key)
+        cache_key = self.get_cache_key(request)
+        cached_data = self.get_cached_response(cache_key)
 
         if cached_data:
             return Response(cached_data)
 
+        # Modelo y serializador asociado al tipo de dato
         model, serializer_class = self.get_model_and_serializer()
-
-        if model is None or serializer_class is None:
+        if not model or not serializer_class:
             return Response({"error": "Invalid datatype"}, status=status.HTTP_400_BAD_REQUEST)
 
-        queryset = self.get_queryset(model)
+        # Obtener y personalizar el queryset
+        queryset = self.get_specific_queryset(model)
+
+        # Procesar la búsqueda avanzada con `search_term`
+        search_term = request.query_params.get("search", "")
+        queryset = self.handle_search_conditions(queryset, model, search_term)
+
+        # Paginación
         page_data = self.paginate_queryset(queryset)
 
-        # Serialización
-        serializer = serializer_class(page_data['object_list'], many=True)
-
-        # Cache
+        # Serialización y respuesta con caché
+        serializer = serializer_class(page_data["object_list"], many=True)
         response_data = {
-            f'{self.datatype}': serializer.data,
-            'total_pages': page_data['total_pages'],
-            'current_page': page_data['current_page']
+            f"{self.datatype}": serializer.data,
+            "total_pages": page_data["total_pages"],
+            "current_page": page_data["current_page"],
         }
-        cache.set(cache_key, response_data, timeout=300)
-
+        self.cache_response(cache_key, response_data)
         return Response(response_data)
 
-    def get_cache_key(self):
+    def get_specific_queryset(self, model):
         """
-        Genera la clave de caché basada en el tipo de dato y los parámetros de búsqueda.
+        Modifica el queryset según el tipo de usuario.
         """
-        return f"{self.datatype}_{self.related_user_id}_{self.request.query_params.get('search', '')}"
+        queryset = model.objects.all()
 
-    def get_queryset(self, model):
-        """
-        Obtiene el queryset filtrado según los parámetros de búsqueda.
-        """
-        queryset = model.objects.all().select_related('related_model')
-
-        conditions = self.build_search_conditions(model)
-
-        if conditions:
-            queryset = queryset.filter(*conditions)
+        # Lógica específica para listar estudiantes relacionados a profesores simples
+        if self.datatype == DataTypes.User.student and self.related_user_id:
+            related_students_ids = self.get_related_students_ids()
+            if related_students_ids:
+                queryset = queryset.filter(id__in=related_students_ids)
 
         return queryset
 
-    def build_search_conditions(self, model):
+    def handle_search_conditions(self, queryset, model, search_term):
         """
-        Este metodo crea las condiciones de filtrado si hay un termino de busqueda
+        Maneja las condiciones de búsqueda para incluir términos de texto y fechas.
         """
-        conditions = []
+        search_params = {}
 
-        search_term = self.request.query_params.get('search', '')
+        # Verificar si el término de búsqueda es una fecha válida
+        try:
+            date_conditions = model.parse_date_filter(search_term)
+            search_params.update(date_conditions)  # Agregar condición de fecha
+        except ValueError:
+            # Si no es una fecha válida, se considera como texto
+            pass
 
-        if self.datatype == DataTypes.User.student:
-            related_students_ids = self.get_related_students_ids()
-            conditions.append(Q(id__in=related_students_ids))
-
-        if search_term:
-            searchable_fields = model.get_searchable_fields()
-
-            for field in searchable_fields:
-                conditions.append(Q(**{f"{field.name}__icontains": search_term}))
-            return conditions
-        return None
+        # Aplicar el término de búsqueda dinámico utilizando `search`
+        return model.objects.search(queryset=queryset, search_term=search_term, **search_params)
 
     def get_related_students_ids(self):
         """
-        Este metodo devuelve una lista con los ids de los estudiantes que tienen al usuario de id related_user_id como miembro
-        de su tribunal
+        Obtiene los IDs de estudiantes relacionados al profesor (si aplica).
         """
         if self.related_user_id:
-            tribunal_model = DefenseTribunalViewSet.get_model()
+            tribunal_queryset = DefenseTribunalViewSet.get_model().objects.filter(
+                Q(president=self.related_user_id) |
+                Q(secretary=self.related_user_id) |
+                Q(vocal=self.related_user_id) |
+                Q(oponent=self.related_user_id)
+            )
+            return list(tribunal_queryset.values_list("student_id", flat=True))
+        return []
 
-            tribunal_queryset = tribunal_model.objects.filter(
-                                    Q(president=self.related_user_id) |
-                                    Q(secretary=self.related_user_id) |
-                                    Q(vocal=self.related_user_id) |
-                                    Q(oponent=self.related_user_id)
-                                )
-            student_ids = tribunal_queryset.values_list('id', flat=True)
-            return list(student_ids)
-        return None
-
-    def paginate_queryset(self, queryset):
+    def get_cache_key(self, request):
         """
-        Maneja la paginación del queryset.
+        Genera una clave de caché única basada en los parámetros.
         """
-        page_size = 10
-        paginator = Paginator(queryset, page_size)
-        page_number = int(self.request.query_params.get('page', 1))
-        page = paginator.get_page(page_number)
+        return f"{self.datatype}_{self.related_user_id}_{request.query_params.get('search', '')}_{request.query_params.get('page', 1)}"
 
-        return {
-            'object_list': page.object_list,
-            'total_pages': paginator.num_pages,
-            'current_page': page_number - 1
-        }
+    def get_cached_response(self, cache_key):
+        """
+        Recupera datos de caché si están disponibles.
+        """
+        return BaseModelViewSet.get_cached_response(self, cache_key)
+
+    def cache_response(self, cache_key, data, timeout=300):
+        """
+        Guarda datos en caché.
+        """
+        BaseModelViewSet.cache_response(self, cache_key, data, timeout)
 
     def get_model_and_serializer(self):
         """
-        Este método es un auxiliar del método get para obtener la información necesaria del modelo específico.
+        Devuelve el modelo y el serializador asociado al tipo de dato.
         """
-
         model_serializer_mapping = {
             DataTypes.User.student: StudentViewSet.get_model_and_serializer(),
             DataTypes.User.professor: ProfessorViewSet.get_model_and_serializer(),
@@ -185,8 +159,10 @@ class ManagementGatewayView(APIView):
             DataTypes.defense_tribunal: DefenseTribunalViewSet.get_model_and_serializer(),
             DataTypes.defense_act: DefenseActViewSet.get_model_and_serializer(),
         }
-        model_serializer = model_serializer_mapping.get(self.datatype)
+        return model_serializer_mapping.get(self.datatype, (None, None))
 
-        if model_serializer:
-            return model_serializer()
-        return None, None
+    def paginate_queryset(self, queryset):
+        """
+        Aplica paginación al queryset.
+        """
+        return BaseModelViewSet.paginate_queryset(self, queryset)
