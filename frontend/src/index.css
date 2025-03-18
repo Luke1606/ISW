@@ -49,10 +49,10 @@ body {
 .header-ul {
     list-style-type: none;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     flex-flow: row nowrap; 
-    gap: 4px;
+    gap: 10px;
   }
   
 .header-li {
