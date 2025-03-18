@@ -1,7 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import Q
 from users.views import StudentViewSet, ProfessorViewSet
 from evidences.views import EvidenceViewSet
 from requests.views import RequestViewSet
@@ -88,13 +87,13 @@ class ManagementGatewayView(APIView):
         """
         Modifica el queryset según el tipo de usuario.
         """
-        queryset = model.objects.all()
 
         # Lógica específica para listar estudiantes relacionados a profesores simples
         if self.datatype == DataTypes.User.student and self.related_user_id:
             related_students_ids = self.get_related_students_ids()
             if related_students_ids:
-                queryset = queryset.filter(id__in=related_students_ids)
+                # Utiliza el método `search` para filtrar con condiciones dinámicas
+                queryset = model.objects.search(id__in=related_students_ids)
 
         return queryset
 
@@ -113,21 +112,7 @@ class ManagementGatewayView(APIView):
             pass
 
         # Aplicar el término de búsqueda dinámico utilizando `search`
-        return model.objects.search(queryset=queryset, search_term=search_term, **search_params)
-
-    def get_related_students_ids(self):
-        """
-        Obtiene los IDs de estudiantes relacionados al profesor (si aplica).
-        """
-        if self.related_user_id:
-            tribunal_queryset = DefenseTribunalViewSet.get_model().objects.filter(
-                Q(president=self.related_user_id) |
-                Q(secretary=self.related_user_id) |
-                Q(vocal=self.related_user_id) |
-                Q(oponent=self.related_user_id)
-            )
-            return list(tribunal_queryset.values_list("student_id", flat=True))
-        return []
+        return model.objects.search(search_term, queryset=queryset, **search_params)
 
     def get_cache_key(self, request):
         """
