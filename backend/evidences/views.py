@@ -1,19 +1,21 @@
-from rest_framework import viewsets, status
-from rest_framework.response import Response
+"""
+Vistas de la aplicacion evidences
+"""
+from backend.base.base_model_viewset import BaseModelViewSet
 from .models import Evidence
 from .serializers import EvidenceSerializer
 
 
-class EvidenceViewSet(viewsets.ModelViewSet):
+class EvidenceViewSet(BaseModelViewSet):
+    """
+    ViewSet para el modelo Evidences, hereda de BaseModelViewSet.
+    """
     queryset = Evidence.objects.all()
     serializer_class = EvidenceSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
     @staticmethod
     def get_model_and_serializer():
+        """
+        Retorna el modelo y el serializador correspondiente.
+        """
         return Evidence, EvidenceSerializer

@@ -3,10 +3,9 @@ Vistas de la aplicacion users
 """
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions
-
 from backend.base.base_model_viewset import BaseModelViewSet
+from backend.utils.permissions import IsDecano
 from .serializers import AuthTokenObtainPairSerializer, StudentSerializer, ProfessorSerializer
-from .permissions import IsDecano
 from .models import Student, Professor
 
 
