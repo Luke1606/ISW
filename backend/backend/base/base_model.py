@@ -21,7 +21,9 @@ class BaseModel(models.Model):
     """
     Campo para registrar la fecha de creación del objeto.
     """
-    SEARCHABLE_FIELDS = {}
+    SEARCHABLE_FIELDS = {
+        "created_at": "date_range",
+    }
     """
     Campo para definir los campos buscables, basta con guardar el nombre del campo como en el ejemplo:
     SEARCHABLE_FIELDS = ["nombre": "icontains", "edad": "exact"]
