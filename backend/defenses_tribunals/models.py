@@ -1,8 +1,13 @@
-import datetime
+"""
+Modelos de la aplicacion defenses_tribunals.
+"""
 from django.db import models
-from django.db.models import Q
+from django.core.exceptions import ValidationError
+from notifications.views import send_notification
 from users.models import Student, Professor
 from backend.base.base_model import BaseModel
+from backend.base.base_manager import BaseModelManager
+from backend.utils.constants import DataTypes
 
 
 class DefenseTribunal(BaseModel):
@@ -61,105 +66,64 @@ class DefenseTribunal(BaseModel):
         APPROVED = 'Apr', 'Aprobado'
         DISAPPROVED = 'Dis', 'Desaprobado'
         PENDING = 'Pend', 'Pendiente'
-        EMPTY = 'emp', 'Vacio'
+        INCOMPLETE = 'Inc', 'Incompleto'
 
     state = models.CharField(
         max_length=20,
         choices=State.choices,
-        default=State.EMPTY
+        default=State.INCOMPLETE
     )
 
     SEARCHABLE_FIELDS = {
+        **BaseModel.SEARCHABLE_FIELDS,
         'student__username': 'icontains',
         'president__username': 'icontains',
         'secretary__username': 'icontains',
         'vocal__username': 'icontains',
         'oponent__username': 'icontains',
         'tutor__username': 'icontains',
-        'defense_date': 'exact',
+        'defense_date': 'date_range',
         'state': 'icontains',
     }
 
+    objects = BaseModelManager()
+
+    def save(self, *args, **kwargs):
+        """
+        Verifica y ajusta automáticamente el estado en función de los campos definidos.
+        Envia notificaciones si se cumplen ciertas condiciones.
+        """
+        # Determinar si los campos están completos
+        is_complete = all(field is not None for field in [self.president, self.secretary, self.vocal, self.oponent, self.tutor])
+        previous_state = None if not self.pk else DefenseTribunal.objects.get(pk=self.pk).state
+
+        if is_complete and self.state == self.State.INCOMPLETE:
+            self.state = self.State.PENDING
+            super().save(*args, **kwargs)
+
+            # Enviar notificación a decanos
+            decans = Professor.objects.search(role=DataTypes.User.decan)
+            # pylint: disable=no-member
+            notification_message = f"""El tribunal del estudiante {self.student.user.first_name}
+                ya está listo para ser revisado."""
+            notification_url = f"form/{DataTypes.tribunal}/{self.id}"
+            send_notification(notification_message, notification_url, decans)
+
+        # Si el decano cambia el estado (APROBADO o DESAPROBADO), notificar al Dpto Inf
+        if previous_state != self.state and self.state in [self.State.APPROVED, self.State.DISAPPROVED]:
+            dpto_inf_professors = Professor.objects.search(role=DataTypes.User.dptoInf)
+            # pylint: disable=no-member
+            notification_message = f"""El tribunal del estudiante {self.student.user.first_name}
+                cambió su estado a {self.state}."""
+            notification_url = f"form/{DataTypes.tribunal}/{self.id}"
+            send_notification(notification_message, notification_url, dpto_inf_professors)
+
+        super().save(*args, **kwargs)
+
     def clean(self):
         """
-        Método para validar la integridad del modelo y actualizar el estado automáticamente.
+        Validaciones adicionales para integridad del modelo.
         """
-        # Verificar si todos los campos necesarios están asignados (excepto `defense_date`)
-        if all([self.president, self.secretary, self.vocal, self.oponent, self.tutor]):
-            self.state = self.State.PENDING
-        else:
-            self.state = self.State.EMPTY
+        if self.state == self.State.APPROVED and self.pk:
+            raise ValidationError("No se puede modificar un tribunal aprobado, salvo para volverlo a pendiente.")
         super().clean()
-
-    @classmethod
-    def parse_date_filter(cls, date_str):
-        """
-        Convierte un string de fecha en un filtro válido para el queryset.
-        Si el formato no es válido, lanza un ValueError.
-        """
-        try:
-            date = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
-            return {'defense_date': date}
-        except ValueError as exc:
-            raise ValueError(f"El formato de fecha '{date_str}' no es válido. Use 'YYYY-MM-DD'.") from exc
-
-    @classmethod
-    def build_search_conditions(cls, search_term):
-        """
-        Construye dinámicamente las condiciones de búsqueda sin necesidad de _meta.
-        """
-        conditions = Q()
-        for field, lookup in cls.SEARCHABLE_FIELDS.items():
-            if '__' in field:  # Si el campo es una relación
-                # Dividimos el campo para identificar el modelo relacionado
-                related_field, subfield = field.split('__', 1)
-                related_instance = cls._get_related_instance(related_field)
-                if related_instance:
-                    related_searchable_fields = getattr(related_instance, "SEARCHABLE_FIELDS", {})
-                    if subfield in related_searchable_fields:
-                        conditions |= Q(**{f"{field}__{lookup}": search_term})
-            else:
-                conditions |= Q(**{f"{field}__{lookup}": search_term})
-        return conditions
-
-    @staticmethod
-    def _get_related_instance(field_name):
-        """
-        Obtiene la clase relacionada sin necesidad de usar _meta.
-        """
-        related_mappings = {
-            'student': Student,
-            'president': Professor,
-            'secretary': Professor,
-            'vocal': Professor,
-            'oponent': Professor,
-            'tutor': Professor,
-        }
-        return related_mappings.get(field_name, None)
-
-    @classmethod
-    def search(cls, search_term=None, date_filter=None, **kwargs):
-        """
-        Implementación de búsqueda avanzada usando el manager `BaseModelManager`.
-
-        Args:
-            search_term (str): Término para buscar en SEARCHABLE_FIELDS.
-            date_filter (str): String de fecha en formato `YYYY-MM-DD`.
-            kwargs: Otros parámetros para la búsqueda.
-
-        Returns:
-            QuerySet: QuerySet filtrado basado en las condiciones de búsqueda.
-        """
-        queryset = cls.objects.all()
-
-        # Aplicar condiciones de búsqueda por término
-        if search_term:
-            conditions = cls.build_search_conditions(search_term)
-            queryset = queryset.filter(conditions)
-
-        # Aplicar filtro de fecha si se proporciona
-        if date_filter:
-            date_conditions = cls.parse_date_filter(date_filter)
-            queryset = queryset.filter(**date_conditions)
-
-        return cls.objects.search(queryset=queryset, **kwargs)

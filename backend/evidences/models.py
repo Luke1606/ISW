@@ -1,29 +1,31 @@
+"""
+Modelos de la aplicacion de evidencias.
+"""
 from django.db import models
 from django.core.exceptions import ValidationError
 from users.models import Student
+from backend.base.base_model import BaseModel
 
 
-class Evidence(models.Model):
-    id = models.AutoField(primary_key=True,
-                          editable=False,
-                          unique=True,
-                          blank=False,
-                          null=False,
-                          auto_created=True,
-                          verbose_name="ID")
-
-    student = models.ForeignKey(to=Student,
-                                editable=False,
-                                blank=False,
-                                null=False,
-                                related_name='evidences',
-                                on_delete=models.CASCADE)
-
+class Evidence(BaseModel):
+    """
+    Modelo base para representar una evidencia.
+    """
+    student = models.ForeignKey(
+        to=Student,
+        editable=False,
+        blank=False,
+        null=False,
+        related_name='evidences',
+        on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=255, db_index=True, verbose_name="Name")
-
     description = models.TextField(blank=True, null=True, db_index=True, verbose_name="Description")
 
     class Type(models.TextChoices):
+        """
+        Tipos de adjunto.
+        """
         URL = 'URL'
         FILE = 'Archivo', 'File'
 
@@ -31,8 +33,17 @@ class Evidence(models.Model):
     attachment_file = models.FileField(upload_to='attachments/', blank=True, null=True)
     attachment_url = models.URLField(blank=True, null=True)
 
+    SEARCHABLE_FIELDS = {
+        **BaseModel.SEARCHABLE_FIELDS,
+        "name": "icontains",
+        "description": "icontains",
+        "student__username": "icontains",
+    }
+
     def clean(self):
-        # Asegúrate de que solo uno de los campos esté lleno
+        """
+        Validación personalizada para asegurar que los campos de adjunto sean consistentes.
+        """
         if self.attachment_type == self.Type.URL and not self.attachment_url:
             raise ValidationError('URL field must be provided when attachment type is URL.')
         if self.attachment_type == self.Type.FILE and not self.attachment_file:
@@ -43,9 +54,15 @@ class Evidence(models.Model):
             raise ValidationError('URL field must be empty when attachment type is FILE.')
 
 
-class Proyect(Evidence):
-    class Roles(models.Model):
-        NINGUNO = 'Ninguno'
+class Roles(models.Model):
+    """
+    Representa cada rol a desempeñar en un proyecto.
+    """
+    class RoleValues(models.TextChoices):
+        """
+        Opciones de roles a desempeñar en un proyecto.
+        """
+        NONE = 'None', 'Ninguno'
         ANALYST = 'Analista', 'Analyst'
         PROGRAMMER = 'Programador', 'Programmer'
         BD_DESIGNER = 'Diseñador de Bases de Datos', 'Database Designer'
@@ -59,21 +76,58 @@ class Proyect(Evidence):
         NET_ADMIN = 'Administrador de Redes', 'Network Administrator'
         SOFT_ARQUITECT = 'Arquitecto de Software', 'Software Architect'
         PROYECT_LEADER = 'Jefe de Proyecto', 'Project Leader'
+    role = models.CharField(primary_key=True, editable=False, choices=RoleValues.choices, default=RoleValues.NONE)
 
-    roles = models.ManyToManyField(to=Roles, default=Roles.NINGUNO)
+
+class Project(Evidence):
+    """
+    Modelo que representa una evidencia de tipo proyecto.
+    """
+    roles = models.ManyToManyField(
+        to=Roles,
+        related_name="projects",
+        blank=True,
+        verbose_name="Roles"
+    )
+
+    SEARCHABLE_FIELDS = {
+        **Evidence.SEARCHABLE_FIELDS,
+        "roles__name": "icontains",
+    }
 
 
-class ScientificArticle(Evidence):
-    class ScienceFields(models.Model):
-        NINGUNO = 'Ninguno'
+class MainScienceField(models.Model):
+    """
+    Campos principales de la ciencia que puede abarcar el tema del articulo.
+    """
+    class MainScienceFieldValues(models.TextChoices):
+        """
+        Opciones de campos principales de la ciencia que puede abarcar el tema del articulo.
+        """
+        NONE = 'None', 'Ninguno'
         SOFT_ENGINEERING_PROGRAMMING = 'Ingeniería de software y Programación', 'Software Engineering and Programming'
         ORGANIZATIONAL_INTEL = 'Inteligencia organizacional', 'Organizational Intelligence'
         INFORMATION_TECHS = 'Tecnologías de la información', 'Information Technologies'
 
-    class SubScienceFields(models.Model):
-        NINGUNO = 'Ninguno'
+    field = models.CharField(
+        primary_key=True,
+        editable=False,
+        choices=MainScienceFieldValues.choices,
+        default=MainScienceFieldValues.NONE)
+
+
+class FullScienceField(models.Model):
+    """
+    Campos específicos de la ciencia que puede abarcar el tema del artículo.
+    """
+    class SubScienceFieldValues(models.TextChoices):
+        """
+        Opciones de campos secundarios de la ciencia que puede abarcar el tema del articulo.
+        Son relacionados con los campos principales.
+        """
+        NONE = 'None', 'Ninguno'
         # Ingeniería de software y Programación
-        REPRESENTACION_PROCESAMIENTO = '''Representación y procesamiento de la información y del conocimiento:
+        REPRESENTATION_PROCCESSING = '''Representación y procesamiento de la información y del conocimiento:
                                         modelación, estructura de datos, bases de datos, bases de conocimientos,
                                         procesos algorítmicos o heurísticos, programación, técnicas de inteligencia
                                         artificial''', '''Representation and Information and Knowledge Processing: Modeling,
@@ -106,9 +160,31 @@ class ScientificArticle(Evidence):
         NETWORK_ADMIN = 'Administración de redes', 'Network Administration'
         TECH_SUPPORT = 'Soporte técnico de Software y Hardware', 'Hardware and Software Technical Support'
 
-    science_fields = models.ManyToManyField(to=ScienceFields, default=ScienceFields.NINGUNO)
-    sub_science_fields = models.ManyToManyField(to=SubScienceFields, default=SubScienceFields.NINGUNO)
+    main_field = models.ForeignKey(to=MainScienceField, on_delete=models.CASCADE)
+    field = models.CharField(
+            primary_key=True,
+            editable=False,
+            choices=SubScienceFieldValues.choices,
+            default=SubScienceFieldValues.NONE)
+
+
+class ScientificArticle(Evidence):
+    """
+    Modelo que representa un artículo científico.
+    """
+    science_field = models.ManyToManyField(to=FullScienceField)
+
+    SEARCHABLE_FIELDS = {
+        **Evidence.SEARCHABLE_FIELDS,
+        "science_field__field": "icontains",
+        "science_field__main_field__field": "icontains",
+    }
 
 
 class Distinctions(Evidence):
-    pass
+    """
+    Modelo que representa distinciones o reconocimientos.
+    """
+    SEARCHABLE_FIELDS = {
+        **Evidence.SEARCHABLE_FIELDS,
+    }

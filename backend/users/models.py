@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from backend.base.base_model import BaseModel
 from backend.base.base_manager import BaseModelManager
 from backend.utils.constants import DataTypes
+from defenses_tribunals.models import DefenseTribunal
 
 
 class CustomUserManager(BaseUserManager, BaseModelManager):
@@ -56,17 +57,32 @@ class CustomUser(BaseModel, AbstractUser):
     Modelo base para usuarios personalizados.
     """
     email = None
-    pic = models.ImageField(upload_to='images/', blank=True, null=True)
+    pic = models.ImageField(upload_to='users/images/', blank=True, null=True)
 
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['first_name', 'last_name']
     SEARCHABLE_FIELDS = {
+        **BaseModel.SEARCHABLE_FIELDS,
         'username': 'icontains',
         'first_name': 'icontains',
         'last_name': 'icontains',
     }
+
+    @property
+    def is_student(self):
+        """
+        Retorna True si el usuario es estudiante.
+        """
+        return hasattr(self, 'student')
+
+    @property
+    def is_professor(self):
+        """
+        Retorna True si el usuario es profesor
+        """
+        return hasattr(self, 'professor')
 
 
 class Student(BaseModel):
@@ -90,6 +106,7 @@ class Student(BaseModel):
     faculty = models.CharField(max_length=50, choices=Faculties.choices, default=Faculties.NONE)
     group = models.PositiveIntegerField()
     SEARCHABLE_FIELDS = {
+        **BaseModel.SEARCHABLE_FIELDS,
         'faculty': 'icontains',
         'group': 'exact',
     }
@@ -112,5 +129,21 @@ class Professor(BaseModel):
 
     role = models.CharField(max_length=20, choices=Roles.choices, default=Roles.NONE)
     SEARCHABLE_FIELDS = {
+        **BaseModel.SEARCHABLE_FIELDS,
         'role': 'exact',
     }
+
+    def get_related_students_ids(self):
+        """
+        Obtiene los IDs de estudiantes relacionados al profesor (si aplica).
+        """
+        if self.role == self.Roles.PROFESSOR:
+            tribunal_queryset = DefenseTribunal.objects.search(
+                president=self.id,
+                secretary=self.id,
+                vocal=self.id,
+                oponent=self.id,
+                join_type="OR"
+            )
+            return list(tribunal_queryset.values_list("student_id", flat=True))
+        return []

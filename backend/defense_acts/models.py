@@ -1,27 +1,26 @@
+"""
+Modelos de la aplicacion defense_acts.
+"""
 from django.db import models
 from users.models import Student
+from backend.base.base_model import BaseModel
 
 
-class DefenseAct(models.Model):
-    id = models.AutoField(primary_key=True,
-                          editable=False,
-                          unique=True,
-                          blank=False,
-                          null=False,
-                          auto_created=True,
-                          verbose_name="ID")
-    student = models.ForeignKey(to=Student,
-                                editable=False,
-                                blank=False,
-                                null=False,
-                                related_name='defense_act',
-                                on_delete=models.CASCADE)
+class DefenseAct(BaseModel):
+    """
+    Modelo que representa un acto de defensa.
+    """
+    student = models.ForeignKey(
+        to=Student, editable=False, blank=False, null=False,
+        related_name="defense_acts", on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    attachment = models.URLField()
+    attachment = models.FileField(upload_to="defense_acts/attachments/")
 
-    def get_searchable_fields(self, cls):
-        """
-        Devuelve una lista de campos que son de tipo CharField o TextField.
-        """
-        return [field for field in cls._meta.get_fields() if isinstance(field, (models.CharField, models.TextField))]
+    SEARCHABLE_FIELDS = {
+        **BaseModel.SEARCHABLE_FIELDS,
+        "name": "icontains",
+        "student__username": "icontains",
+        "description": "icontains",
+    }
