@@ -23,11 +23,11 @@ const routes = [
         element: <ProtectedRoutesComponent />,
         children: [
           {
-            path: "list/:datatype/:index",
+            path: "list/:datatype/:index?",
             element: <ListComponent />,
           },
           {
-            path: "form/:datatype/:index/:view",
+            path: "form/:datatype/:index?/:view?",
             element: <FormComponent />,
           },
           {

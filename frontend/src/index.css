@@ -632,7 +632,7 @@ body {
 
 
 .error-container {
-    background: #333;
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .spinner {
