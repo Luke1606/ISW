@@ -6,7 +6,6 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from backend.base.base_model import BaseModel
 from backend.base.base_manager import BaseModelManager
 from backend.utils.constants import DataTypes
-from defenses_tribunals.models import DefenseTribunal
 
 
 class CustomUserManager(BaseUserManager, BaseModelManager):
@@ -84,6 +83,17 @@ class CustomUser(BaseModel, AbstractUser):
         """
         return hasattr(self, 'professor')
 
+    @property
+    def user_role(self):
+        """
+        Obtiene el rol del usuario basado en su tipo (estudiante, profesor, etc.).
+        """
+        if self.is_student:
+            return 'student'
+        if self.is_professor:
+            return self.professor.role
+        return 'unknown'
+
 
 class Student(BaseModel):
     """
@@ -100,7 +110,7 @@ class Student(BaseModel):
         FTE = 'FTE', 'Facultad de Tecnologías Educativas'
         CITEC = 'CITEC', 'Facultad de Ciencias y Tecnologías Computacionales'
         FTL = 'FTL', 'Facultad de Tecnologías Libres'
-        DFP = 'DFP', 'Facultad de Ciberseguridad'
+        FCS = 'FCS', 'Facultad de Ciberseguridad'
         FIO = 'FIO', 'Facultad de Información Organizacional'
 
     faculty = models.CharField(max_length=50, choices=Faculties.choices, default=Faculties.NONE)
@@ -138,6 +148,7 @@ class Professor(BaseModel):
         Obtiene los IDs de estudiantes relacionados al profesor (si aplica).
         """
         if self.role == self.Roles.PROFESSOR:
+            from defenses_tribunals.models import DefenseTribunal
             tribunal_queryset = DefenseTribunal.objects.search(
                 president=self.id,
                 secretary=self.id,

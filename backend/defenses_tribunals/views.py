@@ -16,9 +16,8 @@ class DefenseTribunalViewSet(BaseModelViewSet):
 
     permission_classes_by_action = {
         'retrieve': [IsStudent | IsDptoInfProfessor | IsDecano],  # Ver un tribunal
-        'partial_update': [IsDptoInfProfessor | IsDecano],  # Decano cambia estado; Dpto Inf edita integrantes
+        'update': [IsDptoInfProfessor | IsDecano],  # Decano cambia estado; Dpto Inf edita integrantes
         'create': [],
-        'update': [],
         'destroy': [],
         'list': [],
     }
@@ -65,7 +64,7 @@ class DefenseTribunalViewSet(BaseModelViewSet):
 
         return super().retrieve(request, *args, **kwargs)
 
-    def partial_update(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         """
         Permite al Decano cambiar el estado del tribunal.
         Permite al Departamento de Informática editar los integrantes.
@@ -100,3 +99,10 @@ class DefenseTribunalViewSet(BaseModelViewSet):
         """
         if not request.user.professor or request.user.professor.role != request.user.professor.Roles.DPTO_INF:
             raise ValidationError("Solo el Departamento de Informática puede cambiar los integrantes.")
+
+    @staticmethod
+    def get_model_and_serializer():
+        """
+        Devuelve el modelo y serializador correspondiente.
+        """
+        return DefenseTribunal, DefenseTribunalSerializer

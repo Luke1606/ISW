@@ -1,15 +1,18 @@
 from django.contrib import admin
-from .models import Student, Professor
+from .models import Professor, Student
 
 
-@admin.register(Student)
-class StudentAdmin(admin.ModelAdmin):
-    list_display = ('username', 'faculty', 'group')
-    search_fields = ('username', 'faculty')
+class UserAdmin(admin.ModelAdmin):
+    def get_username(self, obj):
+        return obj.user.username
+    get_username.short_description = 'Username'
 
 
 @admin.register(Professor)
-class ProfessorAdmin(admin.ModelAdmin):
-    list_display = ('username', 'role', 'is_superuser', 'is_staff')
-    search_fields = ('username', 'role')
-    list_filter = ('role',)
+class ProfessorAdmin(UserAdmin):
+    list_display = ['get_username', 'role']
+
+
+@admin.register(Student)
+class StudentAdmin(UserAdmin):
+    list_display = ['get_username', 'faculty', 'group']
