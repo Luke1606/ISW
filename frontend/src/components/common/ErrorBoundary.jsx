@@ -23,10 +23,11 @@ class ErrorBoundary extends React.Component {
 
     render() {
         if (this.state.hasError) {
+            const isNetworkError = this.state.message.includes("HTTP Error")
             return (
-                <Error 
-                    errorTitle="Algo salió mal"
-                    errorDescription={this.state.message || "Ha ocurrido un error inesperado. Por favor, inténtelo de nuevo más tarde."} 
+                <Error
+                    errorTitle={isNetworkError ? "Error de red" : "Algo salió mal"}
+                    errorDescription={this.state.message || "Ha ocurrido un error inesperado."}
                 />
             )
         }
