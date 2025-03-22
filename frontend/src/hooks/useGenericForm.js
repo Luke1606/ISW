@@ -7,6 +7,7 @@ const useGenericForm = (submitFunction, initialValues, validationSchema = {}) =>
         success: false,
         message: "",
     })
+
     const [isResponseModalOpen, setResponseModalOpen] = useState(false)
 
     const formik = useFormik({

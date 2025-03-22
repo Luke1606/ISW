@@ -22,4 +22,4 @@ class ManagementService {
     }
 }
 
-export default new ManagementService();
+export default new ManagementService()
