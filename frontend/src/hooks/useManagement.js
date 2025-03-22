@@ -8,7 +8,7 @@ import datatypes from '../js-files/Datatypes'
 
 const useList = (datatype, id) => {
     const [state, setState] = useState({
-        data: [],
+        data: [[]],
         currentPage: 0,
         totalPages: 0,
         searchTerm: '',
@@ -116,7 +116,7 @@ const usePermisions = (datatype, user) => {
         otherOptions: false,
     }
 
-    switch (user.type) {
+    switch (user?.role) {
         case datatypes.user.student:
             if (datatype === datatypes.evidence) {
                 permissions.add = true

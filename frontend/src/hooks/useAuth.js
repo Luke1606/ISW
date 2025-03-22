@@ -5,7 +5,16 @@ const useAuth = () => {
     const [isAuthorized, setIsAuthorized] = useState(null)
 
     useEffect(() => {
-        setIsAuthorized(AuthService.checkAuth())
+        const checkAuthorized = async () => {
+            try {
+                const result = await AuthService.checkAuth()
+                setIsAuthorized(result)
+            } catch (error) {
+                console.error("Error checking authorization:", error)
+                setIsAuthorized(false)
+            }
+        }
+        checkAuthorized()
     }, [])
 
     return isAuthorized

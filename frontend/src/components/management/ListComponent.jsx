@@ -1,4 +1,5 @@
-import { useParams, Suspense } from "react"
+import { Suspense } from "react"
+import { useParams } from "react-router-dom"
 import { useList } from "../../hooks/useManagement"
 import Modal from "../common/Modal"
 
@@ -37,12 +38,6 @@ const List = () => {
                 </button>
             </form>
             
-            {/* mensaje de error */}
-            { state.error && 
-                <span className='error'>
-                    Error: {state.error.message}
-                </span> }
-            
             { permissions.add &&
                 <button 
                     className="add-button"
@@ -54,7 +49,7 @@ const List = () => {
             <Suspense 
                 fallback={<span className="spinner"/>}
                 >
-                { state.data[state.currentPage].map((item, index) =>  (
+                { state.data[state.currentPage] && state.data[state.currentPage].length > 0? state.data[state.currentPage].map((item, index) => (
                     <div key={item.id} className="list-item">
                         <h3 className="list-item-title">
                             {item.name}
@@ -102,10 +97,19 @@ const List = () => {
                             </select>
                         </div>
                     </div>
-                ))}
+                ))
+            : 
+            <h3 className="list-item-title">
+                No hay elementos que mostrar. <br />
+                {/* mensaje de error */}
+                { state.error && 
+                <span className='error'>
+                    Error: {state.error.message}
+                </span> }
+            </h3>}
 
                 {/* botones de paginado */}
-                <div className="button-group pagination-button-group">
+                { state.data[state.currentPage] && state.data[state.currentPage].length > 0 && <div className="button-group pagination-button-group">
                     <button 
                         onClick={() => handlePageChange(state.currentPage - 1)}
                         disabled={state.currentPage===0}>
@@ -131,7 +135,7 @@ const List = () => {
                         >
                         Siguiente
                     </button>
-                </div>
+                </div>}
             </Suspense>
             
             {/* modal de confirmacion de eliminado */}
