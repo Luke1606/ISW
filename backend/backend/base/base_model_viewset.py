@@ -39,7 +39,7 @@ class BaseModelViewSet(ModelViewSet):
         model = self.queryset.model
         searchable_fields = getattr(model, "SEARCHABLE_FIELDS", {})
         if not searchable_fields or not search_term:
-            return queryset
+            return queryset.objects.all()
 
         conditions = Q()
         for field, lookup in searchable_fields.items():
@@ -51,7 +51,7 @@ class BaseModelViewSet(ModelViewSet):
         """
         Maneja la paginación del queryset.
         """
-        page_number = int(self.request.query_params.get("page", 1))
+        page_number = int(self.request.GET.get("page", 1))
         paginator = Paginator(queryset, self.page_size)
         page = paginator.get_page(page_number)
         return {

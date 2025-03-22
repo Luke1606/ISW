@@ -16,11 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from users.views import AuthTokenObtainPairView
+from users.views import AuthTokenObtainPairView, TokenObtainRefreshView
 from .management_gateway_view import ManagementGatewayView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/token/', AuthTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('management/<str:datatype>/<int:super_id>/', ManagementGatewayView.as_view(), name='gateway_view'),
+    path('users/token/refresh/', TokenObtainRefreshView.as_view(), name='token_obtain_refresh'),
+    path('management/<str:datatype>/', ManagementGatewayView.as_view({
+            'get': 'list',          # Asocia GET con la acción 'list'
+            'post': 'create',       # Asocia POST con la acción 'create'
+            'put': 'update',        # Asocia PUT con la acción 'update'
+            'delete': 'destroy',    # Asocia DELETE con la acción 'destroy'
+        }), name='gateway_view'),
 ]

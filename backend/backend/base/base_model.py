@@ -36,3 +36,4 @@ class BaseModel(models.Model):
         Este model no crea una tabla en la base de datos.
         """
         abstract = True
+        ordering = ['id']
