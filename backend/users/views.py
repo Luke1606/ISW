@@ -1,11 +1,11 @@
 """
 Vistas de la aplicacion users
 """
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework import permissions
 from backend.base.base_model_viewset import BaseModelViewSet
-from backend.utils.permissions import IsDecano
-from .serializers import AuthTokenObtainPairSerializer, StudentSerializer, ProfessorSerializer
+from backend.utils.permissions import IsDecano, IsProfessor
+from .serializers import TokenPairSerializer, TokenRefreshSerializer, StudentSerializer, ProfessorSerializer
 from .models import Student, Professor
 
 
@@ -13,7 +13,16 @@ class AuthTokenObtainPairView(TokenObtainPairView):
     """
     Vista para manejar la lógica de autenticación basada en tokens JWT.
     """
-    serializer_class = AuthTokenObtainPairSerializer
+    serializer_class = TokenPairSerializer
+    permission_classes = [permissions.AllowAny]
+    http_method_names = ['post']
+
+
+class TokenObtainRefreshView(TokenRefreshView):
+    """
+    Vista para manejar la lógica de obtencion de un token de refresh JWT.
+    """
+    serializer_class = TokenRefreshSerializer
     permission_classes = [permissions.AllowAny]
     http_method_names = ['post']
 
@@ -24,11 +33,11 @@ class StudentViewSet(BaseModelViewSet):
     - Listar estudiantes accesible por cualquier profesor autenticado.
     - CRUD completo accesible solo para Decanos.
     """
-    queryset = Student.objects.all()
+    queryset = Student.objects.select_related('user').all()
     serializer_class = StudentSerializer
 
     permission_classes_by_action = {
-        'list': [permissions.IsAuthenticated],
+        'list': [permissions.IsAuthenticated, IsProfessor],
         'create': [permissions.IsAuthenticated, IsDecano],
         'update': [permissions.IsAuthenticated, IsDecano],
         'destroy': [permissions.IsAuthenticated, IsDecano],
@@ -52,7 +61,7 @@ class ProfessorViewSet(BaseModelViewSet):
     """
     Vista para gestionar profesores, accesible únicamente para Decanos.
     """
-    queryset = Professor.objects.all()
+    queryset = Professor.objects.select_related('user').all()
     serializer_class = ProfessorSerializer
     permission_classes = [permissions.IsAuthenticated, IsDecano]
 

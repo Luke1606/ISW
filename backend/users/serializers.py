@@ -1,36 +1,23 @@
-from django.contrib.contenttypes.models import ContentType
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework import serializers
-from .models import CustomUser, Student, Professor
+from .models import Student, Professor
 
 
-class AuthTokenObtainPairSerializer(TokenObtainPairSerializer):
+class TokenPairSerializer(TokenObtainPairSerializer):
     """
     Esta clase se utiliza para obtener un pair de tokens (access y refresh) para el usuario,
     ademas de devolver la informacion necesaria del usuario al frontend.
     """
+
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
 
-        token['id'] = user.id
+        token['id'] = str(user.id)
         token['username'] = user.username
         token['name'] = f'{user.first_name} {user.last_name}'
         token['pic'] = user.pic.url if user.pic else None
-
-        # if hasattr(user, 'student'):
-        #     token['role'] = 'student'
-        # elif hasattr(user, 'professor'):
-        #     token['role'] = user.professor.role
-        # else:
-        #     token['role'] = 'unknown'
-
-        if ContentType.objects.get_for_model(user) == ContentType.objects.get_for_model(Student):
-            token['role'] = 'student'
-        elif ContentType.objects.get_for_model(user) == ContentType.objects.get_for_model(Professor):
-            token['role'] = user.role
-        else:
-            token['role'] = 'unknown'
+        token['role'] = user.user_role
 
         return token
 
@@ -41,19 +28,35 @@ class AuthTokenObtainPairSerializer(TokenObtainPairSerializer):
         pass
 
 
-class CustomUserSerializer(serializers.ModelSerializer):
+class TokenRefreshSerializer(TokenRefreshSerializer):
+    """
+    Esta clase se utiliza para obtener un token de refresh para el usuario.
+    """
+
+    @classmethod
+    def get_token(cls, user):
+        return super().get_token(user)
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
+
+class StudentSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+    pic = serializers.ImageField(source='user.pic', required=False)
+
     class Meta:
-        model = CustomUser
-        fields = ['id', 'username', 'pic']
-
-
-class StudentSerializer(CustomUserSerializer):
-    class Meta(CustomUserSerializer.Meta):
         model = Student
-        fields = CustomUserSerializer.Meta.fields + ['faculty', 'group']
+        fields = ['username', 'pic', 'faculty', 'group']
 
 
-class ProfessorSerializer(CustomUserSerializer):
-    class Meta(CustomUserSerializer.Meta):
+class ProfessorSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+    pic = serializers.ImageField(source='user.pic', required=False)
+
+    class Meta:
         model = Professor
-        fields = CustomUserSerializer.Meta.fields + ['role']
+        fields = ['username', 'pic', 'role']
