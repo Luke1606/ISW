@@ -48,7 +48,7 @@ const useGenericForm = (submitFunction, initialValues, validationSchema = {}) =>
 
   useEffect(() => {
     // Abrir el modal si hay un error general o si la autenticación fue exitosa
-    if (formik.errors.general || formState.success || formState.pending) {
+    if (formik.errors.general || formState.success) {
       setResponseModalOpen(true)
     }
   }, [formik.errors.general, formState])

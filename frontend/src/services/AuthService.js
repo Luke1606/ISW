@@ -11,13 +11,14 @@ class AuthService {
                 pic: response.userData.pic,
                 role: response.userData.role,
             }
-            authApi.setToken(tokens.USER_TOKEN_KEY, user)
             authApi.setToken(tokens.ACCESS_TOKEN_KEY, response.tokens.access)
             authApi.setToken(tokens.REFRESH_TOKEN_KEY, response.tokens.refresh)
+            authApi.setToken(tokens.USER_TOKEN_KEY, user)
 
             return user
         }
         console.log('Ocurrio un error: ', response)
+        this.logout()
     }    
 
     async logout () {
@@ -26,18 +27,21 @@ class AuthService {
         authApi.deleteToken(tokens.REFRESH_TOKEN_KEY)
     }
 
-    async checkAuth () {
+    getLoggedUserInfo () {
+        const user = authApi.getToken('user')
+        return user
+    }
+
+    async checkAuth() {
         const token = authApi.getToken(tokens.ACCESS_TOKEN_KEY)
-        
-        try {
+            
+        if(token) {
             if (authApi.isAboutToExpire(token)) 
                 return await this.refreshToken()
             else
-                return false
-        } catch (error) {
-            console.error("Token decoding failed:", error)
+                return true
+        }else
             return false
-        }
     }
 
     async refreshToken () {
@@ -54,7 +58,7 @@ class AuthService {
                 return false
             }
         } catch (error) {
-            console.error("Failed to refresh token:", error)
+            console.error("Error al recargar el token:", error)
             return false
         }
     }
