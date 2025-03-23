@@ -154,7 +154,7 @@ const LoginComponent = () => {
                     className="button"
                     onClick={() => {
                         setResponseModalOpen(false)
-                        navigate(formState.redirect)
+                        navigate('/')
                     }}
                     >
                     Cerrar
