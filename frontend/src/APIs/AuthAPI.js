@@ -1,15 +1,23 @@
 import axios from "axios"
 import { jwtDecode } from "jwt-decode"
 import { ACCESS_TOKEN_KEY } from './Constants'
-import Error from '../components/common/Error'
 
 const authApi = axios.create({
     baseURL: 'http://localhost:8000/users/token/',
 })
 
 authApi.interceptors.request.use(
-    (config) => {
-        const token = getToken(ACCESS_TOKEN_KEY)
+    async (config) => {
+        let token = getToken(ACCESS_TOKEN_KEY)
+         if (token && isAboutToExpire(token)) {
+             const refreshToken = getToken("REFRESH_TOKEN_KEY")
+             if (refreshToken) {
+                 const newAccessToken = await getNewAccessToken(refreshToken)
+                 setToken(ACCESS_TOKEN_KEY, newAccessToken.data.access)
+                 token = newAccessToken.data.access
+             }
+         }
+
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
         }
@@ -24,7 +32,7 @@ authApi.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response) {
-            switch (error.response.status) {
+            switch (error.response?.status) {
                 case 401:
                     throw new Error("Unauthorized")
                 case 402:
@@ -36,7 +44,11 @@ authApi.interceptors.response.use(
                 default:
                     return Promise.reject(error)
             }
+        } else {
+            console.error("Error de red o inesperado:", error.message)
+            return Promise.reject(new Error("Error de red o inesperado"))
         }
+        
     }
 )
 
@@ -52,22 +64,58 @@ export const authenticate = async (userFormData) => {
     }
 }
 
-export const setToken = (TOKEN_KEY, token) => localStorage.setItem(TOKEN_KEY, token)
+export const setToken = (TOKEN_KEY, token) => localStorage.setItem(TOKEN_KEY, JSON.stringify(token))
 
-export const getToken = (TOKEN_KEY) => localStorage.getItem(TOKEN_KEY)
+export const getToken = (TOKEN_KEY) => {
+    const item = localStorage.getItem(TOKEN_KEY)
+    if (!item) {
+        console.warn(`Token con clave "${TOKEN_KEY}" no encontrado.`)
+        console.log("wtf", item)
+        return null
+    }
+    try {
+        return JSON.parse(item)
+    } catch (error) {
+        console.error("Error al parsear el token:", error)
+        return null
+    }
+}
 
 export const deleteToken = (TOKEN_KEY) => localStorage.removeItem(TOKEN_KEY)
 
-export const getNewAccessToken = async (refreshToken) => await authApi.post('refresh/', { refresh: refreshToken })
+export const getNewAccessToken = async (refreshToken) => {
+    try {
+        const response = await authApi.post('refresh/', { refresh: refreshToken })
+        return response.data
+    } catch (error) {
+        throw new Error(`No se pudo refrescar el token: ${error}`)
+    }
+}
 
-export const isValid = (token) => token && token.split('.').length === 3
+export const isValid = (token) => {
+    try {
+        return token && token.split('.').length === 3 && jwtDecode(token)
+    } catch (error) {
+        console.error("Token inválido:", error)
+        return false
+    }
+}
 
-export const isAboutToExpire = (token, threshold = 300) => {
-    if(!isValid(token))
-        throw new Error("Token invalido")
-    
-    const decoded = jwtDecode(token)
-    const tokenExpiration = decoded.exp
-    const now = Date.now() / 1000
-    return (tokenExpiration - now) < threshold
+export const isAboutToExpire = (token, threshold = 60) => {
+    if (!isValid(token)) throw new Error("Token inválido")
+
+    try {
+        const decoded = jwtDecode(token)
+        const tokenExpiration = decoded.exp
+        const now = Date.now() / 1000
+
+        if (tokenExpiration < now) {
+            console.warn("El token ya está caducado.")
+            return true
+        }
+
+        return (tokenExpiration - now) < threshold
+    } catch (error) {
+        throw new Error(`Error al verificar la expiración del token: ${error}`)
+    }
 }
