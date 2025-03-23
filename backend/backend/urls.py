@@ -23,10 +23,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/token/', AuthTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('users/token/refresh/', TokenObtainRefreshView.as_view(), name='token_obtain_refresh'),
-    path('management/<str:datatype>/', ManagementGatewayView.as_view({
-            'get': 'list',          # Asocia GET con la acción 'list'
-            'post': 'create',       # Asocia POST con la acción 'create'
-            'put': 'update',        # Asocia PUT con la acción 'update'
-            'delete': 'destroy',    # Asocia DELETE con la acción 'destroy'
-        }), name='gateway_view'),
+    path('management/<datatype>/', ManagementGatewayView.as_view({
+        'get': 'list', 'post': 'create'
+    }), name='gateway'),
+    path('management/<datatype>/<pk>/', ManagementGatewayView.as_view({
+        'get': 'retrieve', 'put': 'update', 'delete': 'destroy'
+    }), name='gateway-specific'),
 ]
