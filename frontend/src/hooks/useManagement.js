@@ -35,9 +35,9 @@ const useList = (datatype, id) => {
             const response = await ManagementService.fetchData(datatype, searchTerm, id)
             setState(prev => ({
                 ...prev,
-                data: response.data.data,
-                totalPages: response.data.total_pages,
-                currentPage: response.data.current_page,
+                data: response.data || [[]],
+                totalPages: response.total_pages || 0,
+                currentPage: 0,
                 loading: false,
             }))
         } catch (error) {
