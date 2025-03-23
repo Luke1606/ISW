@@ -6,7 +6,7 @@ from django_filters import rest_framework as filters
 
 class DynamicFilterSetFactory:
     """
-    Clase para crear FilterSet dinámicos basados en SEARCHABLE_FIELDS.
+    Clase para crear FilterSet dinámicos basados en el campo SEARCHABLE_FIELDS.
 
     Esta clase encapsula la lógica necesaria para construir FilterSets dinámicos
     y permite acceder al modelo y campos como atributos.

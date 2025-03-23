@@ -4,7 +4,7 @@ from datetime import datetime
 
 class QueryConditionBuilder:
     """
-    Clase para construir dinámicamente condiciones de búsqueda con Q basadas en SEARCHABLE_FIELDS.
+    Clase para construir dinámicamente condiciones de búsqueda con Q basadas en el campo SEARCHABLE_FIELDS.
     """
     def __init__(self, model, join_type="AND"):
         """

@@ -15,6 +15,7 @@ class DataTypes:
         professor = "professor"
         dptoInf = "dptoInf"
         decan = "decan"
+        roles = {student, professor, dptoInf, decan}
 
     evidence = "evidence"
     request = "request"
