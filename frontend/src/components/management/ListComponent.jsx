@@ -18,9 +18,8 @@ const List = () => {
         navigate 
     } = useList(datatype, id)
 
-    
     return (
-        <div>
+        <div className="manage-container">
             {/* Barra de busqueda */}
             <form 
                 role="search" 
@@ -49,7 +48,7 @@ const List = () => {
             <Suspense 
                 fallback={<span className="spinner"/>}
                 >
-                { state.data[state.currentPage] && state.data[state.currentPage].length > 0? state.data[state.currentPage].map((item, index) => (
+                { state?.data?.[state.currentPage]?.length > 0? state.data[state.currentPage].map((item, index) => (
                     <div key={item.id} className="list-item">
                         <h3 className="list-item-title">
                             {item.name}
@@ -104,12 +103,12 @@ const List = () => {
                 {/* mensaje de error */}
                 { state.error && 
                 <span className='error'>
-                    Error: {state.error.message}
+                    {state.error.message}
                 </span> }
             </h3>}
 
                 {/* botones de paginado */}
-                { state.data[state.currentPage] && state.data[state.currentPage].length > 0 && <div className="button-group pagination-button-group">
+                { state?.data?.[state.currentPage]?.length > 0 && <div className="button-group pagination-button-group">
                     <button 
                         onClick={() => handlePageChange(state.currentPage - 1)}
                         disabled={state.currentPage===0}>
