@@ -18,7 +18,7 @@ class CustomUserManager(BaseUserManager, BaseModelManager):
         """
         if not username:
             raise ValueError("El campo 'username' es obligatorio")
-        if role not in Professor.Roles.values:
+        if role not in DataTypes.User.roles:
             raise ValueError("El rol no es válido")
 
         # Crear el usuario base
@@ -28,12 +28,15 @@ class CustomUserManager(BaseUserManager, BaseModelManager):
             last_name=last_name,
             is_staff=(role != DataTypes.User.student),
             is_superuser=role == DataTypes.User.decan,
-            **extra_fields
         )
         user.set_password(password)
         user.save(using=self._db)
 
         if role == DataTypes.User.student:
+            if not extra_fields.get('group'):
+                raise ValueError("El campo 'grupo' es obligatorio para estudiantes.")
+            if not extra_fields.get('faculty'):
+                raise ValueError("El campo 'facultad' es obligatorio para estudiantes.")
             return Student.objects.create(user=user, **extra_fields)
         return Professor.objects.create(user=user, role=role)
 
@@ -59,6 +62,8 @@ class CustomUser(BaseModel, AbstractUser):
     pic = models.ImageField(upload_to='users/images/', blank=True, null=True)
 
     objects = CustomUserManager()
+
+    base_objects = BaseModelManager()
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['first_name', 'last_name']
