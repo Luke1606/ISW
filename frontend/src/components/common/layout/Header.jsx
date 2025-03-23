@@ -49,13 +49,14 @@ const Profile = () => {
 
     if(!user) {
         return (
-            currentPath === "/login"? null 
+            currentPath === "/login"? 
+            null 
             :
             <button 
                 className="profile-button" 
                 onClick={() => navigate("/login")}
                 > 
-                Autenticar 
+                Autenticar
             </button>)
     }
 

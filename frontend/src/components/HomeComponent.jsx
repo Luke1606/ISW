@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import PropTypes from "prop-types"
 import evidence from "../assets/evidence.jpeg"
@@ -11,12 +11,27 @@ import notification from "../assets/notification.png"
 import administration from "../assets/administration.png"
 import security from "../assets/security.jpg"
 import akademos from "../assets/akademos.png"
+import { AuthContext } from "../contexts/AuthContext"
+import datatypes from "../js-files/Datatypes"
 
 const HomeComponent = () => {
+    const { user } = useContext(AuthContext)
+    let redirect
+    if (user) {
+
+        if (user?.role === datatypes.user.student)
+            redirect = `/list/${datatypes.evidence}/${user.id}/`
+        else if (user?.role === datatypes.user.professor)
+            redirect = `/list/${datatypes.user.student}/${user.id}`
+        else
+           redirect = `/list/${datatypes.user.student}/`
+    } else
+        redirect = '/login'
+
     return (
             <>
-                <HeroSection />
-                <FeaturesSection />
+                <HeroSection redirect={redirect}/>
+                { !user && <FeaturesSection />}
             </>
         )
 }
@@ -24,7 +39,7 @@ const HomeComponent = () => {
 export default HomeComponent
 
 
-const HeroSection = () => {
+const HeroSection = ({redirect}) => {
     const navigate = useNavigate()
     return (
             <section className="home-hero">
@@ -41,13 +56,17 @@ const HeroSection = () => {
                     <button 
                         className="home-hero-button"
                         type="button"
-                        onClick={() => {navigate("/login")}}
+                        onClick={() => navigate(redirect)}
                         >
                         Acceder
                     </button>
                 </div>
             </section>
         )
+}
+
+HeroSection.propTypes = {
+    redirect: PropTypes.string.isRequired,
 }
 
 const FeaturesSection = () => {
