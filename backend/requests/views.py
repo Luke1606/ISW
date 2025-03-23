@@ -79,10 +79,3 @@ class RequestViewSet(BaseModelViewSet):
 
         # Actualizar el estado de la solicitud
         return super().update(request, *args, **kwargs)
-
-    @staticmethod
-    def get_model_and_serializer():
-        """
-        Devuelve el modelo y serializador correspondiente.
-        """
-        return Request, RequestSerializer

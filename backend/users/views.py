@@ -52,10 +52,6 @@ class StudentViewSet(BaseModelViewSet):
             for permission in self.permission_classes_by_action.get(self.action, self.permission_classes)
         ]
 
-    @staticmethod
-    def get_model_and_serializer():
-        return Student, StudentSerializer
-
 
 class ProfessorViewSet(BaseModelViewSet):
     """
@@ -64,7 +60,3 @@ class ProfessorViewSet(BaseModelViewSet):
     queryset = Professor.objects.select_related('user').all()
     serializer_class = ProfessorSerializer
     permission_classes = [permissions.IsAuthenticated, IsDecano]
-
-    @staticmethod
-    def get_model_and_serializer():
-        return Professor, ProfessorSerializer

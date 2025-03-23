@@ -99,10 +99,3 @@ class DefenseTribunalViewSet(BaseModelViewSet):
         """
         if not request.user.professor or request.user.professor.role != request.user.professor.Roles.DPTO_INF:
             raise ValidationError("Solo el Departamento de Informática puede cambiar los integrantes.")
-
-    @staticmethod
-    def get_model_and_serializer():
-        """
-        Devuelve el modelo y serializador correspondiente.
-        """
-        return DefenseTribunal, DefenseTribunalSerializer

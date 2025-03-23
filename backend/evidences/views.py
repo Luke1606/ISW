@@ -12,10 +12,3 @@ class EvidenceViewSet(BaseModelViewSet):
     """
     queryset = Evidence.objects.all()
     serializer_class = EvidenceSerializer
-
-    @staticmethod
-    def get_model_and_serializer():
-        """
-        Retorna el modelo y el serializador correspondiente.
-        """
-        return Evidence, EvidenceSerializer

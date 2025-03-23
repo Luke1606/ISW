@@ -12,10 +12,3 @@ class DefenseActViewSet(BaseModelViewSet):
     """
     queryset = DefenseAct.objects.all()
     serializer_class = DefenseActSerializer
-
-    @staticmethod
-    def get_model_and_serializer():
-        """
-        Retorna el modelo y el serializador correspondiente.
-        """
-        return DefenseAct, DefenseActSerializer
