@@ -228,12 +228,13 @@ body {
     padding: 10rem 0;
     background-image: 
         linear-gradient(to right, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.2)),
-        url(background.jpg);
+        url(../public/background.jpg);
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
     flex-grow: 1;
 }
@@ -547,6 +548,11 @@ body {
 
 .manage-container {
     width: 75%;
+    position: relative;
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.2);
     margin: 60px;
     padding: 20px auto;
 }

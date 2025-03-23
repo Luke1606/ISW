@@ -1,6 +1,6 @@
 import React from "react"
 import PropTypes from "prop-types"
-import Error from "./Error"
+import ErrorComponent from "./ErrorComponent"
 
 class ErrorBoundary extends React.Component {
     constructor(props) {
@@ -25,7 +25,7 @@ class ErrorBoundary extends React.Component {
         if (this.state.hasError) {
             const isNetworkError = this.state.message.includes("HTTP Error")
             return (
-                <Error
+                <ErrorComponent
                     errorTitle={isNetworkError ? "Error de red" : "Algo salió mal"}
                     errorDescription={this.state.message || "Ha ocurrido un error inesperado."}
                 />

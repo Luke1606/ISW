@@ -1,7 +1,7 @@
 import PropTypes from "prop-types"
 import { useNavigate } from "react-router-dom"
 
-const Error = ({errorTitle, errorDescription=""}) => {
+const ErrorComponent = ({errorTitle, errorDescription=""}) => {
     const navigate = useNavigate()
     return (
         <div className="error-container">
@@ -12,9 +12,9 @@ const Error = ({errorTitle, errorDescription=""}) => {
     )
 }
 
-Error.propTypes = {
+ErrorComponent.propTypes = {
     errorTitle: PropTypes.string.isRequired,
     errorDescription: PropTypes.string.isRequired,
 }
 
-export default Error
+export default ErrorComponent
