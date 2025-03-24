@@ -34,7 +34,7 @@ REM Volver al directorio backend
 cd ../../backend
 
 REM Iniciar el servidor de Django
-start cmd /k "python manage.py runserver"
+start cmd /k "daphne -p 8000 backend.asgi:application"
 
 REM Cambiar al directorio frontend
 cd ../frontend

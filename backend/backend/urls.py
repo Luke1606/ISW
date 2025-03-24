@@ -15,18 +15,28 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from users.views import AuthTokenObtainPairView, TokenObtainRefreshView
 from .management_gateway_view import ManagementGatewayView
+from notifications.views import NotificationViewSet
+
+
+router = DefaultRouter()
+
+router.register(r'notifications', NotificationViewSet, basename='notifications')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/token/', AuthTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('users/token/refresh/', TokenObtainRefreshView.as_view(), name='token_obtain_refresh'),
-    path('management/<datatype>/', ManagementGatewayView.as_view({
+
+    path('', include(router.urls)),
+
+    path('management/<str:datatype>/', ManagementGatewayView.as_view({
         'get': 'list', 'post': 'create'
     }), name='gateway'),
-    path('management/<datatype>/<pk>/', ManagementGatewayView.as_view({
+    path('management/<str:datatype>/<int:pk>/', ManagementGatewayView.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'destroy'
     }), name='gateway-specific'),
 ]
