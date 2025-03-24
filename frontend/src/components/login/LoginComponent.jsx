@@ -1,10 +1,9 @@
-import { Suspense, useContext, useMemo } from "react"
+import { useContext, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { User } from "lucide-react"
 import * as Yup from "yup"
 import { AuthContext } from "../../contexts/AuthContext"
 import useGenericForm from "../../hooks/useGenericForm"
-import Modal from "../common/Modal"
 
 const LoginComponent = () => {
     const { login } = useContext(AuthContext)
@@ -33,13 +32,11 @@ const LoginComponent = () => {
 
     const {
         formik,
-        isResponseModalOpen,
-        setResponseModalOpen,
         formState,
     } = useGenericForm(login, initialValues, validationSchema)
 
     return (
-        <Suspense fallback={<span className="spinner" />}>
+        <>
             <form className="form-container" onSubmit={formik.handleSubmit}>
                 <div className="icon-container">
                     <div className="icon-circle">
@@ -111,7 +108,6 @@ const LoginComponent = () => {
                                 ? { backgroundColor: "gray" }
                                 : {}
                         }
-                        onClick={() => setResponseModalOpen(true)}
                         >
                         Aceptar
                     </button>
@@ -125,42 +121,7 @@ const LoginComponent = () => {
                     </button>
                 </div>
             </form>
-
-            {formik.errors.general && 
-                <span className="error"
-                style={{fontSize: 'larger'}}
-                >
-                    {formik.errors.general}
-                </span>
-            }
-
-            {!formState.pending &&
-            <Modal
-                isOpen={isResponseModalOpen}
-                title={formState.success?
-                            "Autenticación exitosa"
-                            :
-                            "Error de autenticación"
-                }
-                >
-                <p>
-                    {formState.success?
-                    formState.message
-                    :
-                    formik.errors.general}
-                </p>
-
-                <button
-                    className="button"
-                    onClick={() => {
-                        setResponseModalOpen(false)
-                        navigate('/')
-                    }}
-                    >
-                    Cerrar
-                </button>
-            </Modal>}
-        </Suspense>
+        </>
     )
 }
 

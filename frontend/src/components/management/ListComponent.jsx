@@ -4,9 +4,9 @@ import { useList } from "../../hooks/useManagement"
 import Modal from "../common/Modal"
 
 const List = () => {
-    const { datatype, id } = useParams()
+    const { datatype, relatedUserId } = useParams()
 
-    const { 
+    const {
         formik, 
         state, 
         setState,
@@ -16,7 +16,7 @@ const List = () => {
         handleDelete, 
         handleOptions, 
         navigate 
-    } = useList(datatype, id)
+    } = useList(datatype, relatedUserId)
 
     return (
         <div className="manage-container">
@@ -150,7 +150,7 @@ const List = () => {
                 <div className="modal-button-group button-group">
                     <button 
                         className="accept-button modal-button"
-                        onClick={() => handleDelete(datatype, state.selectedItemId, id)}>
+                        onClick={() => handleDelete(datatype, state.selectedItemId, relatedUserId)}>
                         Aceptar
                     </button>
                     

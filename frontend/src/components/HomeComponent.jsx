@@ -18,7 +18,6 @@ const HomeComponent = () => {
     const { user } = useContext(AuthContext)
     let redirect
     if (user) {
-
         if (user?.role === datatypes.user.student)
             redirect = `/list/${datatypes.evidence}/${user.id}/`
         else if (user?.role === datatypes.user.professor)
