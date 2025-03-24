@@ -4,6 +4,7 @@ import LoginComponent from "./components/login/LoginComponent"
 import ProtectedRoutesComponent from "./components/ProtectedRoutesComponent"
 import ListComponent from "./components/management/ListComponent"
 import FormComponent from "./components/management/FormComponent"
+import NotificationCenter from "./components/notifications/NotificationCenter"
 import ErrorComponent from "./components/common/ErrorComponent"
 
 const routes = [
@@ -31,11 +32,15 @@ const routes = [
                 element: <ProtectedRoutesComponent />,
                 children: [
                     {
-                        path: "list/:datatype/:index?",
+                        path: "notifications",
+                        element: <NotificationCenter />,
+                    },
+                    {
+                        path: "list/:datatype/:relatedUserId?",
                         element: <ListComponent />,
                     },
                     {
-                        path: "form/:datatype/:index?/:view?",
+                        path: "form/:datatype/:relatedUserId?/:view?",
                         element: <FormComponent />,
                     },
                 ],
