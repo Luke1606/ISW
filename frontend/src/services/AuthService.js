@@ -1,5 +1,6 @@
 import * as authApi from "../APIs/AuthAPI"
 import * as tokens from "../APIs/Constants"
+import NotificationService from "./NotificationService"
 
 class AuthService {
     async login (userFormData) {
@@ -25,6 +26,12 @@ class AuthService {
         authApi.deleteToken(tokens.USER_TOKEN_KEY)
         authApi.deleteToken(tokens.ACCESS_TOKEN_KEY)
         authApi.deleteToken(tokens.REFRESH_TOKEN_KEY)
+
+        const notification = {
+            title: "Cierre de sesión exitoso",
+            message: "",
+        }
+        NotificationService.showToast(notification, "warning")
     }
 
     getLoggedUserInfo () {
