@@ -14,19 +14,17 @@ const handleRequest = async (method, url, options = {}) => {
     }
 }
 
-export const getAllData = (datatype, relatedUserId) =>
-    handleRequest('get', `${datatype}/`, { params: { related_user_id: relatedUserId } })
+export const apiGetAllData = (datatype, searchTerm, relatedUserId) =>
+    handleRequest('get', `${datatype}/`, { params: { related_user_id: relatedUserId, search_term: searchTerm} })
 
-export const getData = (datatype, id, relatedUserId) =>
+export const apiGetData = (datatype, id, relatedUserId) =>
     handleRequest('get', `${datatype}/${id}/`, { params: { related_user_id: relatedUserId } })
 
-export const createData = (datatype, data, relatedUserId) =>
+export const apiCreateData = (datatype, data, relatedUserId) =>
     handleRequest('post', `${datatype}/`, { data, params: { related_user_id: relatedUserId } })
 
-export const updateData = (datatype, id, data, relatedUserId) =>
+export const apiUpdateData = (datatype, id, data, relatedUserId) =>
     handleRequest('put', `${datatype}/${id}/`, { data, params: { related_user_id: relatedUserId } })
 
-export const deleteData = (datatype, id, relatedUserId) =>
+export const apiDeleteData = (datatype, id, relatedUserId) =>
     handleRequest('delete', `${datatype}/${id}/`, { params: { related_user_id: relatedUserId } })
-
-export default managementApi

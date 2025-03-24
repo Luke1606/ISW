@@ -1,24 +1,30 @@
-import * as managementApi from "../APIs/ManagementAPI"
+import {
+    apiGetAllData, 
+    apiGetData,
+    apiDeleteData,
+    apiCreateData,
+    apiUpdateData
+} from "../APIs/ManagementAPI"
 
 class ManagementService {
-    async fetchData(datatype, searchTerm, relatedUserId) {
-        return await managementApi.getAllData(datatype, searchTerm, relatedUserId)
+    async getAllData(datatype, searchTerm, relatedUserId) {
+        return await apiGetAllData(datatype, searchTerm, relatedUserId)
     }
     
     async getData(datatype, id, relatedUserId) {
-        return await managementApi.getData(datatype, id, relatedUserId)
+        return await apiGetData(datatype, id, relatedUserId)
     }
     
     async createData(datatype, data, relatedUserId) {
-        return await managementApi.createData(datatype, data, relatedUserId)
+        return await apiCreateData(datatype, data, relatedUserId)
     }
     
     async updateData(datatype, id, data, relatedUserId) {
-        return await managementApi.updateData(datatype, id, data, relatedUserId)
+        return await apiUpdateData(datatype, id, data, relatedUserId)
     }
     
     async deleteData(datatype, id, relatedUserId) {
-        return await managementApi.deleteData(datatype, id, relatedUserId)
+        return await apiDeleteData(datatype, id, relatedUserId)
     }
 }
 
