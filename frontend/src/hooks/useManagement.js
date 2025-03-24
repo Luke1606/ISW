@@ -6,7 +6,7 @@ import ManagementService from '../services/ManagementService'
 import { AuthContext } from "../contexts/AuthContext"
 import datatypes from '../js-files/Datatypes'
 
-const useList = (datatype, id) => {
+const useList = (datatype, relatedUserId) => {
     const [state, setState] = useState({
         data: [[]],
         currentPage: 0,
@@ -25,14 +25,14 @@ const useList = (datatype, id) => {
         initialValues: {search: ""},
         onSubmit: (values) => {
             setState(prev => ({ ...prev, searchTerm: values.search }))
-            fetchData(values.search)
+            getData(values.search)
         }
     })
 
-    const fetchData = useDebouncedApiCall(async (searchTerm) => {
+    const getData = useDebouncedApiCall(async (searchTerm) => {
         try {
             setState(prev => ({ ...prev, loading: true }))
-            const response = await ManagementService.fetchData(datatype, searchTerm, id)
+            const response = await ManagementService.getAllData(datatype, searchTerm, relatedUserId)
             setState(prev => ({
                 ...prev,
                 data: response.data || [[]],
@@ -43,7 +43,7 @@ const useList = (datatype, id) => {
         } catch (error) {
             setState(prev => ({ ...prev, error, loading: false }))
         }
-    }, 300)
+    })
 
     const getOptions = useDebouncedApiCall(async (datatype, user, selectedItemId) => {
         let options = []
@@ -75,7 +75,7 @@ const useList = (datatype, id) => {
     }, 300)
 
     useEffect(() => {
-        fetchData(state.searchTerm)
+        getData(state.searchTerm)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.searchTerm])
     
@@ -92,7 +92,7 @@ const useList = (datatype, id) => {
     const handleDelete = async (datatype, id, relatedUserId) => {
         try {
             await ManagementService.deleteData(datatype, id, relatedUserId)
-            fetchData(state.searchTerm)
+            getData(state.searchTerm)
         } catch (error) {
             setState(prev => ({ ...prev, error }))
         }
