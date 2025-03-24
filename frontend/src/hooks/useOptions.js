@@ -18,7 +18,7 @@ const useSideMenuOptions = () => {
     let options=['No hay opciones disponibles']
 
     switch (currentPath) {
-        case "/tree":
+        case "/list":
             options = [
                 "Filtrar",
                 "Ordenar"
@@ -43,7 +43,7 @@ const useHeaderOptions = () => {
     if(user)
         options.push({
             title: "Notificaciones",
-            action: "#"
+            action: "/notifications"
         },
         {
             title: "Generar Reporte",
