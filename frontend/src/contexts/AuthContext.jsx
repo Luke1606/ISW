@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
 
             setUser(userData)
             setAuthStatusChanged((prev) => !prev)
-    
+
             return {
                 success: true,
                 message: `El usuario ${userData.name} se ha autenticado correctamente.`,
@@ -33,12 +33,23 @@ const AuthProvider = ({ children }) => {
                 response: error.response || undefined,
                 data: error.data || undefined,
             }
+
+            if (error.message === "Unauthorized") {
+                return {
+                    success: false,
+                    error: {
+                        ...authError,
+                        message: "El usuario no está autorizado. Verifica tus credenciales.",
+                    },
+                };
+            }
+
             return { success: false, error: authError }
         }
-    };
+    }
 
     const logout = () => {
-        AuthService.logout();
+        AuthService.logout()
         setUser(null)
         setAuthStatusChanged((prev) => !prev)
     }
