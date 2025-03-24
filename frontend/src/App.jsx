@@ -1,7 +1,9 @@
 import { Suspense } from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import routes from "./routes"
+import ToastNotification from "./components/common/ToastNotification"
 import { AuthProvider } from "./contexts/AuthContext"
+import useUserActivity from './hooks/useUserActivity'
 
 const router = createBrowserRouter(routes, {
     future: {
@@ -11,12 +13,17 @@ const router = createBrowserRouter(routes, {
 })
 
 const App = () => {
+    useUserActivity()
     return (
-        <AuthProvider>
-            <Suspense fallback={<span className="spin"/>}>
-                <RouterProvider router={router} />
-            </Suspense>
-        </AuthProvider>
+        <>
+            <ToastNotification />
+
+            <AuthProvider>
+                <Suspense fallback={<span className="spin"/>}>
+                    <RouterProvider router={router} />
+                </Suspense>
+            </AuthProvider>
+        </>
     )
 }
 
