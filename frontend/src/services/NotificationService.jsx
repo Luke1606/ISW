@@ -40,6 +40,11 @@ class NotificationService {
     }
   
     connect () {
+        if (this.socket && (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING)) {
+            console.warn('El WebSocket ya está conectado o está intentando conectar.')
+            return
+        }
+
         this.socket = new WebSocket(this.url)
         
         this.socket.onopen = () => {
@@ -55,7 +60,7 @@ class NotificationService {
             if (this.reconnectAttempts < this.maxReconnectAttempts) {
                 console.log(`WebSocket desconectado. Intentando reconectar (${this.reconnectAttempts + 1}/${this.maxReconnectAttempts})...`)
                 this.reconnectAttempts++
-                setTimeout(() => this.connect(), 3000); // Intentar reconectar tras 3 segundos
+                setTimeout(() => this.connect(), 5000) // Intentar reconectar tras 5 segundos
             } else {
                 console.error('Se excedió el límite de intentos de reconexión. Por favor verifica el servidor.')
             }
@@ -86,12 +91,14 @@ class NotificationService {
   
     disconnect () {
         if (this.socket) {
-            if (this.socket.readyState === WebSocket.OPEN) {
+            if (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING) {
                 this.socket.close()
-                console.log('WebSocket desconectado exitosamente')
+                console.info('WebSocket desconectado exitosamente')
             } else {
-                console.log('WebSocket ya estaba cerrado o no se pudo desconectar.')
+                console.warn('WebSocket ya estaba cerrado o no se pudo desconectar.')
             }
+        } else {
+            console.error('No hay instancia activa del WebSocket.')
         }
     }
   

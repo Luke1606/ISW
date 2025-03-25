@@ -18,7 +18,7 @@ const useGenericForm = (submitFunction, initialValues, validationSchema = {}) =>
             setFormState({ ...formState, pending: true })
 
             const result = await submitFunction(values)
-            console.log(result);
+
             if (result && result.success) {
                 setFormState({
                     pending: false,
@@ -58,7 +58,7 @@ const useGenericForm = (submitFunction, initialValues, validationSchema = {}) =>
                 :
                 formik.errors.general
         }
-        console.log(formState)
+
         const type = formState.success? "success" : "error"
         NotificationService.showToast(notification, type)
     }

@@ -49,7 +49,7 @@ const List = () => {
                 fallback={<span className="spinner"/>}
                 >
                 { state?.data?.[state.currentPage]?.length > 0? state.data[state.currentPage].map((item, index) => (
-                    <div key={item.id} className="list-item">
+                    <div key={`${item.id}-${index}`} className="list-item">
                         <h3 className="list-item-title">
                             {item.name}
                         </h3>
@@ -58,7 +58,7 @@ const List = () => {
                             { permissions.edit && 
                                 <button 
                                     className="edit-button list-button"
-                                    onClick={() => navigate(`/form/${datatype}/${index}`)}>
+                                    onClick={() => navigate(`/form/${datatype}/${item.id}`)}>
                                     Editar
                                 </button>}
 
@@ -68,7 +68,7 @@ const List = () => {
                                     onClick={() => {
                                         setState((prev) => ({
                                             ...prev, 
-                                            selectedItemId: index,
+                                            selectedItemId: item.id,
                                             deleteConfirmationModalVisibility: true
                                         }))   
                                     }}>
@@ -77,7 +77,7 @@ const List = () => {
 
                             <button
                                 className="details-button list-button"
-                                onClick={() => navigate(`/form/${datatype}/${index}/${true}`)}>
+                                onClick={() => navigate(`/form/${datatype}/${item.id}/${true}`)}>
                                 Ver detalles
                             </button>
 
@@ -86,7 +86,7 @@ const List = () => {
                                 onChange={handleOptions}>
                                 {options.map((option, index) => (
                                     <option
-                                        key={index} 
+                                        key={index}
                                         className="option-element"
                                         value={option.value}
                                         >
@@ -97,15 +97,15 @@ const List = () => {
                         </div>
                     </div>
                 ))
-            : 
-            <h3 className="list-item-title">
-                No hay elementos que mostrar. <br />
-                {/* mensaje de error */}
-                { state.error && 
-                <span className='error'>
-                    {state.error.message}
-                </span> }
-            </h3>}
+                : 
+                <h3 className="list-item-title">
+                    No hay elementos que mostrar. <br />
+                    {/* mensaje de error */}
+                    { state.error && 
+                    <span className='error'>
+                        {state.error.message}
+                    </span> }
+                </h3>}
 
                 {/* botones de paginado */}
                 { state?.data?.[state.currentPage]?.length > 0 && <div className="button-group pagination-button-group">
