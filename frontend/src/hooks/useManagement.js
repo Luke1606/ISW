@@ -51,24 +51,24 @@ const useList = (datatype, relatedUserId) => {
             options.push({ value: `/tree`, label: 'Listar Evidencias' })
     
             const pendingRequests = await hasPendingRequests(selectedItemId)
-            if (user.type === datatypes.user.dptoInf && pendingRequests)
+            if (user?.role === datatypes.user.dptoInf && pendingRequests)
                 options.push({ value: `/form`, label: 'Aprobar solicitud', params: { id: selectedItemId, datatype: datatypes.request } });
     
             const unconfiguredDefenseTribunal = await hasUnconfiguredDefenseTribunal(selectedItemId)
-            if (user.type === datatypes.user.dptoInf && unconfiguredDefenseTribunal)
+            if (user?.role === datatypes.user.dptoInf && unconfiguredDefenseTribunal)
                 options.push({ value: `/form`, label: 'Configurar defensa y tribunal', params: { id: selectedItemId, datatype: datatypes.defense_tribunal } });
     
-            if (user.type !== datatypes.user.dptoInf && !unconfiguredDefenseTribunal)
+            if (user?.role !== datatypes.user.dptoInf && !unconfiguredDefenseTribunal)
                 options.push({ value: `/form`, label: 'Ver datos de defensa y tribunal', params: { id: selectedItemId, datatype: datatypes.defense_tribunal, readOnly: true } });
     
             const pendingTribunal = await hasPendingTribunal(selectedItemId);
-            if (user.type === datatypes.user.decan && pendingTribunal) 
+            if (user?.role === datatypes.user.decan && pendingTribunal) 
                 options.push({ value: `/form`, label: 'Aprobar tribunal', params: { id: selectedItemId, datatype: datatypes.tribunal } })
     
-            if (user.type !== datatypes.user.professor)
+            if (user?.role !== datatypes.user.professor)
                 options.push({ value: `/tree`, label: 'Listar actas de defensa', params: { id: selectedItemId, datatype: datatypes.defense_act } })
     
-            if (user.type === datatypes.user.professor)
+            if (user?.role === datatypes.user.professor)
                 options.push({ value: `/tree`, label: 'Gestionar actas de defensa', params: { id: selectedItemId, datatype: datatypes.defense_act } })
         }
         setOptions(options)
@@ -140,8 +140,12 @@ const usePermisions = (datatype, user) => {
             break
 
         case datatypes.user.decan:
-            if (datatype === datatypes.user.student) 
+            if (datatype === datatypes.user.student || datatype === datatypes.user.professor) {
+                permissions.add = true
+                permissions.edit = true
+                permissions.del = true
                 permissions.otherOptions = true
+            }
             break
     }
 

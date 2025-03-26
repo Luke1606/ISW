@@ -43,11 +43,13 @@ const useHeaderOptions = () => {
     if(user)
         options.push({
             title: "Notificaciones",
-            action: "/notifications"
+            action: "/notifications",
+            icon: "/bell.jpg",
         },
         {
             title: "Generar Reporte",
-            action: "#"
+            action: "#",
+            icon: "/report.png"
         })
 
     return options

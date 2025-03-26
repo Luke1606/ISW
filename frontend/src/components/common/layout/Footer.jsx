@@ -1,12 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link } from "react-router-dom"
 import Modal from '../Modal'
-import arrow from "/arrow.gif"
-import facebook from "/facebook.png"
-import instagram from "/instagram.png"
-import whatsapp from "/whatsapp.png"
-import x from "/x.png"
-import linkedin from "/linkedin.png"
 
 const Footer = () => {
     const [isMenuVisible, setMenuVisible] = useState(false)
@@ -45,7 +39,7 @@ const Footer = () => {
             </small>
 
             <button className="footer-button" onClick={toggleMenu} ref={buttonRef}>
-                <img className="footer-icon" src={arrow} alt="Abrir menú" />
+                <img className="footer-icon" src="/arrow.gif" alt="Abrir menú" />
             </button>
 
             <Modal
@@ -53,19 +47,22 @@ const Footer = () => {
                 position='bottom-right'>
                 <div className="social-icons menu-dropdown" ref={menuRef}>
                     <Link to="#" className="social-icon fab">
-                        <img src={facebook} className="social facebook" />
+                        <img src="/facebook.png" className="social facebook" />
                     </Link>
                     <Link to="#" className="social-icon x">
-                        <img src={x} className="social x" />
+                        <img src="/x.png" className="social x" />
                     </Link>
                     <Link to="#" className="social-icon what">
-                        <img src={whatsapp} className="social whatsapp" />
+                        <img src="/whatsapp.png" className="social whatsapp" />
                     </Link>
                     <Link to="#" className="social-icon link">
-                        <img src={linkedin} className="social linkedin" />
+                        <img src="/linkedin.png" className="social linkedin" />
                     </Link>
                     <Link to="#" className="social-icon inst">
-                        <img src={instagram} className="social instagram" />
+                        <img src="/instagram.png" className="social instagram" />
+                    </Link>
+                    <Link to="#" className="social-icon tel">
+                        <img src="/telegram.png" className="social telegram" />
                     </Link>
                 </div>
             </Modal>

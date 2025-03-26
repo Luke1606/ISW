@@ -23,101 +23,133 @@ const List = () => {
             {/* Barra de busqueda */}
             <form 
                 role="search" 
+                className="search-form"
                 onSubmit={formik.handleSubmit}
                 >
                 <input
+                    className="form-input search-input"
                     type="text"
                     placeholder="Buscar en Akademos..."
                     {...formik.getFieldProps("search")}/>
 
-                <button 
+                <button
                     type="submit"
+                    className="search-button"
                     >
                     Buscar
                 </button>
             </form>
             
-            { permissions.add &&
-                <button 
-                    className="add-button"
-                    onClick={() => navigate(`/form/${datatype}`)}>
-                    Agregar
-                </button>}
+            <div
+                className="button-container manage-buttons"
+                >
+                { permissions.add &&
+                    <button 
+                        className="add-button"
+                        onClick={() => navigate(`/form/${datatype}`)}>
+                        Agregar
+                    </button>}
+
+                    { permissions.del && 
+                        <button 
+                            className="delete-button list-button"
+                            onClick={() => {
+                            setState((prev) => ({
+                                ...prev, 
+                                deleteConfirmationModalVisibility: true
+                                }))   
+                            }}>
+                            Eliminar
+                        </button>}
+                </div>
 
             {/* Lista de elementos */}
-            <Suspense 
+            <Suspense
                 fallback={<span className="spinner"/>}
                 >
-                { state?.data?.[state.currentPage]?.length > 0? state.data[state.currentPage].map((item, index) => (
-                    <div key={`${item.id}-${index}`} className="list-item">
-                        <h3 className="list-item-title">
-                            {item.name}
-                        </h3>
+                <div
+                    className="manage-list"
+                    >
+                    { state?.data?.[state.currentPage]?.length > 0? state.data[state.currentPage].map((item, index) => (
+                        <div key={`${item.id}-${index}`} className="list-item">
+                            <h3 className="list-item-title">
+                                {item.name}
+                            </h3>
 
-                        <div className="list-button-group button-group">
-                            { permissions.edit && 
-                                <button 
-                                    className="edit-button list-button"
-                                    onClick={() => navigate(`/form/${datatype}/${item.id}`)}>
-                                    Editar
-                                </button>}
+                            <div className="list-button-container button-container">
+                                { permissions.edit && 
+                                    <button 
+                                        className="edit-button list-button"
+                                        onClick={() => navigate(`/form/${datatype}/${item.id}`)}>
+                                        Editar
+                                    </button>}
 
-                            { permissions.del && 
-                                <button 
-                                    className="delete-button list-button"
-                                    onClick={() => {
-                                        setState((prev) => ({
-                                            ...prev, 
-                                            selectedItemId: item.id,
-                                            deleteConfirmationModalVisibility: true
-                                        }))   
-                                    }}>
-                                    Eliminar
-                                </button>}
+                                { permissions.del && 
+                                    <button 
+                                        className="delete-button list-button"
+                                        onClick={() => {
+                                            setState((prev) => ({
+                                                ...prev, 
+                                                selectedItemId: item.id,
+                                                deleteConfirmationModalVisibility: true
+                                            }))   
+                                        }}>
+                                        Eliminar
+                                    </button>}
 
-                            <button
-                                className="details-button list-button"
-                                onClick={() => navigate(`/form/${datatype}/${item.id}/${true}`)}>
-                                Ver detalles
-                            </button>
+                                <button
+                                    className="details-button list-button"
+                                    onClick={() => navigate(`/form/${datatype}/${item.id}/${true}`)}>
+                                    Ver detalles
+                                </button>
 
-                            <select 
-                                className="options-button list-button" 
-                                onChange={handleOptions}>
-                                {options.map((option, index) => (
-                                    <option
-                                        key={index}
-                                        className="option-element"
-                                        value={option.value}
-                                        >
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </select>
+                                <select 
+                                    className="button options-button" 
+                                    onChange={handleOptions}
+                                    >
+                                    <option className="option-element" value="" disabled>Seleccione una opción...</option>
+                                    {options.map((option, index) => (
+                                        <option
+                                            key={index}
+                                            className="option-element"
+                                            value={option.value}
+                                            >
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                ))
-                : 
-                <h3 className="list-item-title">
-                    No hay elementos que mostrar. <br />
-                    {/* mensaje de error */}
-                    { state.error && 
-                    <span className='error'>
-                        {state.error.message}
-                    </span> }
-                </h3>}
+                    ))
+                    : 
+                    <h3 className="list-item-title">
+                        No hay elementos que mostrar. <br />
+                        {/* mensaje de error */}
+                        { state.error && 
+                        <span className='error'>
+                            {state.error.message}
+                        </span> }
+                    </h3>}
+                </div>
 
                 {/* botones de paginado */}
                 { state?.data?.[state.currentPage]?.length > 0 && <div className="button-group pagination-button-group">
                     <button 
                         onClick={() => handlePageChange(state.currentPage - 1)}
-                        disabled={state.currentPage===0}>
+                        disabled={state.currentPage===0}
+                        style={
+                            state.currentPage===0? 
+                                { visibility: 'hidden' }:{}}>
                             Anterior
                     </button>
 
                     <select 
                         onChange={(e) => handlePageChange(Number(e.target.value))}
                         value={state.currentPage}
+                        disabled={state.totalPages<=1}
+                        style={
+                            state.totalPages<=1?
+                                { visibility: 'hidden' }:{}}
                         >
                         <option value="" disabled>Ir a página...</option>
 
@@ -131,6 +163,9 @@ const List = () => {
                     <button 
                         onClick={() => handlePageChange(state.currentPage + 1)}
                         disabled={state.currentPage >= state.totalPages - 1}
+                        style={
+                            state.currentPage >= state.totalPages - 1?
+                                { visibility: 'hidden' }:{}}
                         >
                         Siguiente
                     </button>
@@ -139,28 +174,32 @@ const List = () => {
             
             {/* modal de confirmacion de eliminado */}
             <Modal isOpen={state.deleteConfirmationModalVisibility}>
-                <h2 className="modal-title">
-                    Confirmar eliminación
-                </h2>
+                <div 
+                    className="confirmation-modal"
+                    >
+                    <h2 className="modal-title">
+                        Confirmar eliminación
+                    </h2>
 
-                <p className="modal-content">
-                    ¿Está seguro de que desea continuar?
-                </p>
+                    <p className="modal-content">
+                        ¿Está seguro de que desea continuar?
+                    </p>
 
-                <div className="modal-button-group button-group">
-                    <button 
-                        className="accept-button modal-button"
-                        onClick={() => handleDelete(datatype, state.selectedItemId, relatedUserId)}>
-                        Aceptar
-                    </button>
-                    
-                    <button 
-                        className="cancel-button modal-button"
-                        onClick={() => setState(
-                            (prev) => ({ ...prev, deleteConfirmationModalVisibility: false })
-                        )}>
-                        Cancelar
-                    </button>
+                    <div className="modal-button-container button-container">
+                        <button 
+                            className="accept-button modal-button"
+                            onClick={() => handleDelete(datatype, state.selectedItemId, relatedUserId)}>
+                            Aceptar
+                        </button>
+                        
+                        <button 
+                            className="cancel-button modal-button"
+                            onClick={() => setState(
+                                (prev) => ({ ...prev, deleteConfirmationModalVisibility: false })
+                            )}>
+                            Cancelar
+                        </button>
+                    </div>
                 </div>
             </Modal>
         </div>
