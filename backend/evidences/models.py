@@ -3,8 +3,8 @@ Modelos de la aplicacion de evidencias.
 """
 from django.db import models
 from django.core.exceptions import ValidationError
+from core.base.base_model import BaseModel
 from users.models import Student
-from backend.base.base_model import BaseModel
 
 
 class Evidence(BaseModel):

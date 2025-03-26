@@ -1,7 +1,7 @@
 """
 Vistas de la aplicacion evidences
 """
-from backend.base.base_model_viewset import BaseModelViewSet
+from core.base.base_model_viewset import BaseModelViewSet
 from .models import Evidence
 from .serializers import EvidenceSerializer
 

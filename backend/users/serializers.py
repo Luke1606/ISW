@@ -34,6 +34,7 @@ class BaseUserSerializer(serializers.ModelSerializer):
     """
     Serializer base para compartir características comunes entre StudentSerializer y ProfessorSerializer.
     """
+    id = serializers.UUIDField(required=True)
     name = serializers.SerializerMethodField()
     pic = serializers.ImageField(source='user.pic', required=False)
 
@@ -44,7 +45,7 @@ class BaseUserSerializer(serializers.ModelSerializer):
         return f"{obj.user.first_name} {obj.user.last_name}"
 
     class Meta:
-        fields = ['name', 'pic']
+        fields = ['id', 'name', 'pic']
 
 
 class StudentSerializer(BaseUserSerializer):

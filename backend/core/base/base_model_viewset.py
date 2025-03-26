@@ -21,7 +21,7 @@ class BaseModelViewSet(ModelViewSet):
     - Caché opcional.
     """
     filter_backends = [filters.DjangoFilterBackend]
-    page_size = 10  # Tamaño de página por defecto
+    page_size = 5  # Tamaño de página por defecto
 
     def get_filterset_class(self):
         """

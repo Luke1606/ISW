@@ -2,8 +2,8 @@
 Modelos de la aplicacion defense_acts.
 """
 from django.db import models
+from core.base.base_model import BaseModel
 from users.models import Student
-from backend.base.base_model import BaseModel
 
 
 class DefenseAct(BaseModel):

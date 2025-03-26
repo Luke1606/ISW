@@ -3,9 +3,9 @@ Models de la aplicacion users
 """
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from backend.base.base_model import BaseModel
-from backend.base.base_manager import BaseModelManager
-from backend.utils.constants import DataTypes
+from core.base.base_model import BaseModel
+from core.base.base_manager import BaseModelManager
+from core.utils.constants import DataTypes
 
 
 class CustomUserManager(BaseUserManager, BaseModelManager):

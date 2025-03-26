@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'channels',
     'django_filters',
+    'core',
     'users',
     'evidences',
     'requests',

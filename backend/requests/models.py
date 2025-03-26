@@ -4,8 +4,8 @@ Modelos de la aplicacion solicitudes.
 from django.db import models
 from django.core.exceptions import ValidationError
 from users.models import Student
-from backend.base.base_model import BaseModel
-from backend.base.base_manager import BaseModelManager
+from core.base.base_model import BaseModel
+from core.base.base_manager import BaseModelManager
 
 
 class Request(BaseModel):

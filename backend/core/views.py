@@ -7,7 +7,7 @@ from evidences.views import EvidenceViewSet
 from requests.views import RequestViewSet
 from defenses_tribunals.views import DefenseTribunalViewSet
 from defense_acts.views import DefenseActViewSet
-from backend.base.base_model_viewset import BaseModelViewSet
+from .base.base_model_viewset import BaseModelViewSet
 from .utils.constants import DataTypes
 
 

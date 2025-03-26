@@ -3,11 +3,11 @@ Modelos de la aplicacion defenses_tribunals.
 """
 from django.db import models
 from django.core.exceptions import ValidationError
-from notifications.views import send_notification
+from core.base.base_model import BaseModel
+from core.base.base_manager import BaseModelManager
+from core.utils.constants import DataTypes
 from users.models import Student, Professor
-from backend.base.base_model import BaseModel
-from backend.base.base_manager import BaseModelManager
-from backend.utils.constants import DataTypes
+from notifications.views import send_notification
 
 
 class DefenseTribunal(BaseModel):

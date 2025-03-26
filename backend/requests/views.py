@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from defenses_tribunals.models import DefenseTribunal
-from backend.base.base_model_viewset import BaseModelViewSet
-from backend.utils.permissions import IsDptoInfProfessor, IsStudent, ReadOnlyForOthers
+from core.base.base_model_viewset import BaseModelViewSet
+from core.utils.permissions import IsDptoInfProfessor, IsStudent, ReadOnlyForOthers
 from .serializers import RequestSerializer
 from .models import Request
 

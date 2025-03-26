@@ -1,6 +1,6 @@
 from rest_framework.exceptions import ValidationError, PermissionDenied
-from backend.base.base_model_viewset import BaseModelViewSet
-from backend.utils.permissions import IsDptoInfProfessor, IsDecano, IsStudent
+from core.base.base_model_viewset import BaseModelViewSet
+from core.utils.permissions import IsDptoInfProfessor, IsDecano, IsStudent
 from .models import DefenseTribunal
 from .serializers import DefenseTribunalSerializer
 
