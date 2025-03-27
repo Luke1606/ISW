@@ -12,7 +12,8 @@ class Command(BaseCommand):
         # Obtener todos los modelos registrados en la aplicación
         all_models = apps.get_models()
 
-        for model in all_models:
+        # Recorre todos los modelos de la aplicacion segun su index
+        for model in all_models.sort(key=lambda x, y: x.DB_INDEX < y.DB_INDEX):
             try:
                 # Ajusta la cantidad de entradas según necesites
                 seeder.add_entity(model, 50)

@@ -2,7 +2,7 @@
 Modelos de la aplicacion defense_acts.
 """
 from django.db import models
-from core.base.base_model import BaseModel
+from core.models import BaseModel
 from users.models import Student
 
 
@@ -24,3 +24,5 @@ class DefenseAct(BaseModel):
         "student__username": "icontains",
         "description": "icontains",
     }
+
+    DB_INDEX = 6

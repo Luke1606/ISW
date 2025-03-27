@@ -4,8 +4,7 @@ Modelos de la aplicacion solicitudes.
 from django.db import models
 from django.core.exceptions import ValidationError
 from users.models import Student
-from core.base.base_model import BaseModel
-from core.base.base_manager import BaseModelManager
+from core.models import BaseModel
 
 
 class Request(BaseModel):
@@ -62,7 +61,7 @@ class Request(BaseModel):
         "state": "exact",
     }
 
-    objects = BaseModelManager()
+    DB_INDEX = 4
 
     def save(self, *args, **kwargs):
         """

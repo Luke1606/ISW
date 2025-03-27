@@ -3,9 +3,9 @@ Models de la aplicacion users
 """
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from core.base.base_model import BaseModel
-from core.base.base_manager import BaseModelManager
-from core.utils.constants import DataTypes
+from core.models import BaseModel
+from core.models import BaseModelManager
+from core.management.utils.constants import DataTypes
 
 
 class CustomUserManager(BaseUserManager, BaseModelManager):
@@ -74,6 +74,8 @@ class CustomUser(BaseModel, AbstractUser):
         'last_name': 'icontains',
     }
 
+    DB_INDEX = 0
+
     @property
     def is_student(self):
         """
@@ -126,6 +128,8 @@ class Student(BaseModel):
         'group': 'exact',
     }
 
+    DB_INDEX = 1
+
 
 class Professor(BaseModel):
     """
@@ -147,6 +151,8 @@ class Professor(BaseModel):
         **BaseModel.SEARCHABLE_FIELDS,
         'role': 'exact',
     }
+
+    DB_INDEX = 2
 
     def get_related_students_ids(self):
         """

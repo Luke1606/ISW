@@ -3,9 +3,8 @@ Modelos de la aplicacion defenses_tribunals.
 """
 from django.db import models
 from django.core.exceptions import ValidationError
-from core.base.base_model import BaseModel
-from core.base.base_manager import BaseModelManager
-from core.utils.constants import DataTypes
+from core.models import BaseModel
+from core.management.utils.constants import DataTypes
 from users.models import Student, Professor
 from notifications.views import send_notification
 
@@ -86,7 +85,7 @@ class DefenseTribunal(BaseModel):
         'state': 'icontains',
     }
 
-    objects = BaseModelManager()
+    DB_INDEX = 5
 
     def save(self, *args, **kwargs):
         """

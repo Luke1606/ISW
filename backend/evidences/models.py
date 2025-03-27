@@ -3,7 +3,7 @@ Modelos de la aplicacion de evidencias.
 """
 from django.db import models
 from django.core.exceptions import ValidationError
-from core.base.base_model import BaseModel
+from core.models import BaseModel
 from users.models import Student
 
 
@@ -39,6 +39,8 @@ class Evidence(BaseModel):
         "description": "icontains",
         "student__username": "icontains",
     }
+
+    DB_INDEX = 3
 
     def clean(self):
         """
