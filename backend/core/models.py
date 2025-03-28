@@ -3,8 +3,8 @@ import uuid
 from django.db import models
 from datetime import datetime
 from django.db.models import Q
-from management.helpers.dynamic_filterset_factory import DynamicFilterSetFactory
-from management.helpers.query_conditions_builder import QueryConditionBuilder
+from .management.helpers.dynamic_filterset_factory import DynamicFilterSetFactory
+from .management.helpers.query_conditions_builder import QueryConditionBuilder
 
 
 class BaseModelManager(models.Manager):

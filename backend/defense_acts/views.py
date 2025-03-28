@@ -1,7 +1,7 @@
 """
 Vistas de la aplicacion defense_acts
 """
-from core.base.base_model_viewset import BaseModelViewSet
+from core.views import BaseModelViewSet
 from .models import DefenseAct
 from .serializers import DefenseActSerializer
 

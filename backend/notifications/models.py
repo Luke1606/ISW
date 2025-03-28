@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db import models
-from core.base.base_model import BaseModel
+from core.models import BaseModel
 
 
 class Notification(BaseModel):
