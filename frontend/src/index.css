@@ -157,6 +157,77 @@ button:hover, .button:hover {
     object-fit: cover;
 }
 
+
+/* Ícono de hamburguesa (visible en modo móvil) */
+.menu-icon {
+    display: none; /* Oculto por defecto */
+    cursor: pointer;
+    font-size: 1.5rem; /* Tamaño del ícono */
+    color: white; /* Color del ícono */
+}
+
+.dropdown-menu {
+    display: none; /* Oculto por defecto */
+    position: absolute;
+    top: 100%; /* Debajo del encabezado */
+    left: 0;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    z-index: 3;
+}
+
+.dropdown-item {
+    padding: 1rem;
+    font-size: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: rgb(240, 240, 240); /* Color de fondo al pasar el mouse */
+}
+
+/* Media Queries para pantallas pequeñas (modo móvil) */
+@media (max-width: 768px) {
+    /* Ocultar el menú normal */
+    .header-ul {
+        display: none;
+    }
+
+    /* Mostrar el ícono de hamburguesa */
+    .menu-icon {
+        display: block;
+    }
+
+    /* Mostrar el menú desplegable cuando está activo */
+    .dropdown-menu {
+        display: block;
+        background-color:#c8c8c8;
+        color: var(--primary-tone);
+    
+
+    }
+
+    a {
+        color: orange;
+        font-weight: bold;
+        text-decoration: none;
+    }
+    a:hover {
+        color: red;
+    }
+    a:visited {
+        color: var(--primary-dark-tone);
+    }
+
+}
+
+
 /* profile */
 .profile-container {
     display: flex;
@@ -193,6 +264,36 @@ button:hover, .button:hover {
 
 .profile-button:hover {
     background-color: var(--primary-light-tone);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .profile-container {
+        flex-direction: row;
+        padding: 0.3rem;
+    }
+
+    .profile-pic {
+        width: 25%;
+        max-width: 40px;
+    }
+
+    .profile-button {
+        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-pic {
+        width: 30%;
+        max-width: 35px;
+    }
+
+    .profile-button {
+        font-size: 0.8rem;
+        padding: 0.5rem 1rem;
+    }
 }
 
 /* sidemenu */
@@ -695,6 +796,55 @@ button:hover, .button:hover {
 .manage-buttons {
     justify-content: flex-end;
     margin-left: 25rem;
+}
+
+@media (max-width: 1024px) {
+    .manage-container {
+        width: 90%;
+        padding: 1rem;
+    }
+
+    .search-input {
+        width: 60%;
+    }
+
+    .manage-buttons {
+        justify-content: center;
+        margin-left: 0;
+
+    }
+}
+
+@media (max-width: 768px) {
+    .manage-container {
+        width: 95%;
+    }
+
+    .search-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-input {
+        width: 80%;
+    }
+
+    .manage-buttons {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+        height: 10%;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-input {
+        width: 90%;
+    }
+
+    .search-button {
+        width: 50%;
+    }
 }
 
 .manage-list {
