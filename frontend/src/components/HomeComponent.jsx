@@ -40,26 +40,24 @@ export default HomeComponent
 
 const HeroSection = ({redirect}) => {
     const navigate = useNavigate()
+    const { user } = useContext(AuthContext)
+    const welcomeMessage = `Bienvenido ${user? user.name : "al Sistema de Gestión de Ejercicios de Culminación de Estudios"}`
     return (
             <section className="home-hero">
-                <div className="home-hero-container">
-                    <h2 className="home-hero-title">
-                        Bienvenido al Sistema de Gestión de Ejercicios de Culminación de
-                        Estudios
-                    </h2>
+                <h2 className="home-hero-title">
+                    {welcomeMessage}
+                </h2>
 
-                    <p className="home-hero-content">
-                        Una solución integral para la gestión de todo el proceso de ejercicios de culminación de estudios integrada con una herramienta multiplataforma que contribuye al perfeccionamiento de los procesos académicos de una institución. Su uso permite el desarrollo coherente de una estrategia organizacional que articule todos los niveles de decisión presentes en los procesos universitarios. Todos los roles del proceso educativo están involucrados en la solución, por lo que se permitirá el acceso a la información de forma segura a todos los niveles, facilitando la toma de decisiones.
-                    </p>
-        
-                    <button 
-                        className="home-hero-button"
-                        type="button"
-                        onClick={() => navigate(redirect)}
-                        >
-                        Acceder
-                    </button>
-                </div>
+                <p className="home-hero-content">
+                    Una solución integral para la gestión de todo el proceso de ejercicios de culminación de estudios integrada con una herramienta multiplataforma que contribuye al perfeccionamiento de los procesos académicos de una institución. Su uso permite el desarrollo coherente de una estrategia organizacional que articule todos los niveles de decisión presentes en los procesos universitarios. Todos los roles del proceso educativo están involucrados en la solución, por lo que se permitirá el acceso a la información de forma segura a todos los niveles, facilitando la toma de decisiones.
+                </p>
+    
+                <button 
+                    className="home-hero-button"
+                    onClick={() => navigate(redirect)}
+                    >
+                    Acceder
+                </button>
             </section>
         )
 }
