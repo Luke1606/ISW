@@ -3,6 +3,18 @@ import * as tokens from "../APIs/Constants"
 import NotificationService from "./NotificationService"
 
 class AuthService {
+    constructor () {
+        this.isUserActive = true
+    }
+
+    setUserActive(state) {
+        this.isUserActive = state
+    }
+
+    getUserActive () {
+        return this.isUserActive
+    }
+    
     async login (userFormData) {
         const response = await authApi.authenticate(userFormData)
         if (response.tokens && response.userData) {
@@ -20,6 +32,7 @@ class AuthService {
         }
         console.log('Ocurrio un error: ', response)
         this.logout()
+        throw new Error(response.status)
     }    
 
     async logout () {

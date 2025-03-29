@@ -34,13 +34,11 @@ authApi.interceptors.response.use(
         if (error.response) {
             switch (error.response?.status) {
                 case 401:
-                    throw new Error("Unauthorized")
-                case 402:
-                    throw new Error("Payment Required")
+                    throw new Error("No existe una cuenta asociada. Verifique sus credenciales")
                 case 403:
-                    throw new Error("Forbidden")
+                    throw new Error("No tiene acceso a este recurso")
                 case 404:
-                    throw new Error("Not Found")
+                    throw new Error("Recurso no encontrado")
                 default:
                     return Promise.reject(error)
             }
@@ -59,8 +57,7 @@ export const authenticate = async (userFormData) => {
 
         return { tokens: response.data, userData: tokenPayload, status: response.status }
     } catch (error) {
-        console.error("Error al autenticar:", error)
-        return { tokens: null, data: null, status: error.response?.status || "Error desconocido" }
+        return { tokens: null, data: null, status: error.message || "Error desconocido" }
     }
 }
 
