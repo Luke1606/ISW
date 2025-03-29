@@ -12,35 +12,40 @@ class CustomUserManager(BaseUserManager, BaseModelManager):
     """
     Manager único para gestionar la creación de usuarios, estudiantes, profesores y superusuarios.
     """
-    def create_user_by_role(self, role, username, password=None, first_name=None, last_name=None, **extra_fields):
+    def create_user_by_role(self, role, username=None, password=None,  name=None, pic=None, **extra_fields):
         """
         Crear un usuario con un rol específico (student, professor, decan, etc.).
         """
         if not username:
             raise ValueError("El campo 'username' es obligatorio")
+        if not password:
+            raise ValueError("El campo 'password' es obligatorio")
+        if not name:
+            raise ValueError("El campo 'name' es obligatorio")
         if role not in DataTypes.User.roles:
             raise ValueError("El rol no es válido")
 
         # Crear el usuario base
         user = self.model(
             username=username,
-            first_name=first_name,
-            last_name=last_name,
+            name=name,
+            pic=pic,
             is_staff=(role != DataTypes.User.student),
             is_superuser=role == DataTypes.User.decan,
         )
         user.set_password(password)
-        user.save(using=self._db)
 
         if role == DataTypes.User.student:
             if not extra_fields.get('group'):
                 raise ValueError("El campo 'grupo' es obligatorio para estudiantes.")
             if not extra_fields.get('faculty'):
                 raise ValueError("El campo 'facultad' es obligatorio para estudiantes.")
-            return Student.objects.create(user=user, **extra_fields)
-        return Professor.objects.create(user=user, role=role)
+            Student.objects.create(user=user, **extra_fields)
+        else:
+            Professor.objects.create(user=user, role=role)
+        user.save(using=self._db)
 
-    def create_superuser(self, username, password=None, first_name=None, last_name=None, **extra_fields):
+    def create_superuser(self, username, password, name, pic, **extra_fields):
         """
         Crear un superusuario que utiliza la lógica de create_user_by_role.
         """
@@ -48,8 +53,8 @@ class CustomUserManager(BaseUserManager, BaseModelManager):
             role=DataTypes.User.decan,
             username=username,
             password=password,
-            first_name=first_name,
-            last_name=last_name,
+            name=name,
+            pic=pic,
             **extra_fields
         )
 
@@ -58,6 +63,9 @@ class CustomUser(BaseModel, AbstractUser):
     """
     Modelo base para usuarios personalizados.
     """
+    name = models.CharField(max_length=255, blank=False)
+    first_name = None
+    last_name = None
     email = None
     pic = models.ImageField(upload_to='users/images/', blank=True, null=True)
 
@@ -66,13 +74,6 @@ class CustomUser(BaseModel, AbstractUser):
     base_objects = BaseModelManager()
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
-    SEARCHABLE_FIELDS = {
-        **BaseModel.SEARCHABLE_FIELDS,
-        'username': 'icontains',
-        'first_name': 'icontains',
-        'last_name': 'icontains',
-    }
 
     DB_INDEX = 0
 
@@ -124,8 +125,10 @@ class Student(BaseModel):
     group = models.PositiveIntegerField()
     SEARCHABLE_FIELDS = {
         **BaseModel.SEARCHABLE_FIELDS,
+        'user__username': 'icontains',
+        'user__name': 'icontains',
         'faculty': 'icontains',
-        'group': 'exact',
+        'group': 'int_exact',
     }
 
     DB_INDEX = 1

@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework import permissions
 from core.views import BaseModelViewSet
 from core.management.utils.permissions import IsDecano, IsProfessor
-from .serializers import TokenPairSerializer, TokenRefreshSerializer, StudentSerializer, ProfessorSerializer
+from .serializers import TokenPairSerializer, TokenRenewSerializer, StudentSerializer, ProfessorSerializer, UserListSerializer
 from .models import Student, Professor
 
 
@@ -22,7 +22,7 @@ class TokenObtainRefreshView(TokenRefreshView):
     """
     Vista para manejar la lógica de obtencion de un token de refresh JWT.
     """
-    serializer_class = TokenRefreshSerializer
+    serializer_class = TokenRenewSerializer
     permission_classes = [permissions.AllowAny]
     http_method_names = ['post']
 
@@ -35,7 +35,7 @@ class StudentViewSet(BaseModelViewSet):
     """
     queryset = Student.objects.select_related('user').all()
     serializer_class = StudentSerializer
-
+    list_serializer_class = UserListSerializer
     permission_classes_by_action = {
         'list': [permissions.IsAuthenticated, IsProfessor],
         'create': [permissions.IsAuthenticated, IsDecano],
@@ -59,4 +59,5 @@ class ProfessorViewSet(BaseModelViewSet):
     """
     queryset = Professor.objects.select_related('user').all()
     serializer_class = ProfessorSerializer
+    list_serializer_class = UserListSerializer
     permission_classes = [permissions.IsAuthenticated, IsDecano]

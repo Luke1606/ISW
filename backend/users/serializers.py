@@ -1,6 +1,7 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework import serializers
-from .models import Student, Professor
+from core.serializers import BaseListSerializer
+from .models import CustomUser, Student, Professor
 
 
 class TokenPairSerializer(TokenObtainPairSerializer):
@@ -13,15 +14,14 @@ class TokenPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         token['id'] = str(user.id)
-        token['username'] = user.username
-        token['name'] = f'{user.first_name} {user.last_name}'
+        token['name'] = user.name
         token['pic'] = user.pic.url if user.pic else None
         token['role'] = user.user_role
 
         return token
 
 
-class TokenRefreshSerializer(TokenRefreshSerializer):
+class TokenRenewSerializer(TokenRefreshSerializer):
     """
     Esta clase se utiliza para obtener un token de refresh para el usuario.
     """
@@ -30,7 +30,23 @@ class TokenRefreshSerializer(TokenRefreshSerializer):
         return super().get_token(user)
 
 
-class BaseUserSerializer(serializers.ModelSerializer):
+class UserListSerializer(BaseListSerializer):
+    """
+    Serializer base para compartir características comunes entre StudentSerializer y ProfessorSerializer.
+    """
+
+    class Meta:
+        model = CustomUser
+        fields = BaseListSerializer.Meta.fields
+
+    def get_name(self, obj):
+        """
+        Combina first_name y last_name del usuario.
+        """
+        return f"{obj.user.name}"
+
+
+class BaseUserSerializer(UserListSerializer):
     """
     Serializer base para compartir características comunes entre StudentSerializer y ProfessorSerializer.
     """
@@ -38,14 +54,8 @@ class BaseUserSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     pic = serializers.ImageField(source='user.pic', required=False)
 
-    def get_name(self, obj):
-        """
-        Combina first_name y last_name del usuario.
-        """
-        return f"{obj.user.first_name} {obj.user.last_name}"
-
     class Meta:
-        fields = ['id', 'name', 'pic']
+        fields = UserListSerializer.Meta.fields + ['pic']
 
 
 class StudentSerializer(BaseUserSerializer):

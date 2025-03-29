@@ -35,9 +35,13 @@ class Evidence(BaseModel):
 
     SEARCHABLE_FIELDS = {
         **BaseModel.SEARCHABLE_FIELDS,
-        "name": "icontains",
-        "description": "icontains",
-        "student__username": "icontains",
+        'student__username': 'icontains',
+        'student__name': 'icontains',
+        'student__group': 'int_exact',
+        'student__faculty': 'icontains',
+        'name': 'icontains',
+        'description': 'icontains',
+        'student__username': 'icontains',
     }
 
     DB_INDEX = 3
