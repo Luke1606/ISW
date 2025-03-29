@@ -41,7 +41,7 @@ const List = () => {
             </form>
             
             <div
-                className="button-container manage-buttons"
+                className="button-container-manage-buttons"
                 >
                 { permissions.add &&
                     <button 
