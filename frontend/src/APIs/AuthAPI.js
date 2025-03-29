@@ -68,9 +68,9 @@ export const setToken = (TOKEN_KEY, token) => localStorage.setItem(TOKEN_KEY, JS
 
 export const getToken = (TOKEN_KEY) => {
     const item = localStorage.getItem(TOKEN_KEY)
+
     if (!item) {
         console.warn(`Token con clave "${TOKEN_KEY}" no encontrado.`)
-        console.log("wtf", item)
         return null
     }
     try {
@@ -86,7 +86,7 @@ export const deleteToken = (TOKEN_KEY) => localStorage.removeItem(TOKEN_KEY)
 export const getNewAccessToken = async (refreshToken) => {
     try {
         const response = await authApi.post('refresh/', { refresh: refreshToken })
-        return response.data
+        return response
     } catch (error) {
         throw new Error(`No se pudo refrescar el token: ${error}`)
     }
@@ -113,7 +113,6 @@ export const isAboutToExpire = (token, threshold = 60) => {
             console.warn("El token ya está caducado.")
             return true
         }
-
         return (tokenExpiration - now) < threshold
     } catch (error) {
         throw new Error(`Error al verificar la expiración del token: ${error}`)

@@ -41,10 +41,11 @@ class AuthService {
 
     async checkAuth() {
         const token = authApi.getToken(tokens.ACCESS_TOKEN_KEY)
-            
+
         if(token) {
-            if (authApi.isAboutToExpire(token)) 
+            if (authApi.isAboutToExpire(token))
                 return await this.refreshToken()
+            
             else
                 return true
         }else
@@ -53,11 +54,13 @@ class AuthService {
 
     async refreshToken () {
         const refreshToken = authApi.getToken(tokens.REFRESH_TOKEN_KEY)
+
         if (!refreshToken)
             return false
 
         try {
             const response = await authApi.getNewAccessToken(refreshToken)
+            
             if (response?.status === 200) {
                 authApi.setToken(tokens.ACCESS_TOKEN_KEY, response.data.access)
                 return true
