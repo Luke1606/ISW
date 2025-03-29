@@ -151,8 +151,8 @@ button:hover, .button:hover {
 }
 
 .header-option {
-    max-width: 100%; /* Se ajusta al ancho del contenedor */
-    height: auto; /* Mantiene la proporción */
+    width: 4rem;
+    height: 4rem;
     object-fit: cover;
 }
 
@@ -160,13 +160,8 @@ button:hover, .button:hover {
 .profile-container {
     display: flex;
     flex-flow: row;
-    justify-content : right;
+    justify-content : center;
     background: rgb(200,200,200);
-    max-width: 22%; /* Se ajusta al 80% del ancho del contenedor padre */
-    height: 100%; /* Se ajusta al 80% del alto del contenedor padre */
-    padding: 0; /* Espaciado interno */
-    overflow: hidden; /* Evita que el contenido se desborde */
-
 }
 
 .profile-figure {
@@ -188,50 +183,10 @@ button:hover, .button:hover {
     background: rgb(200,200,200);
     transition: all .2s ease-in-out;
     color: black;
-    width: auto; /* Permite que el ancho se ajuste al contenido */
-    height: auto; /* Permite que la altura se ajuste al contenido */
-    padding: 0.5rem 1rem; /* Espaciado interno */
-    white-space: nowrap; /* Evita que el texto se envuelva */
-    font-size: 1rem; /* Tamaño de fuente */
-    line-height: 1.0; /* Altura de línea */
 }
 
 .profile-button:hover {
     background-color: var(--primary-light-tone);
-}
-
-@media (max-width: 768px) {
-    .profile-container {
-        width: 80%; /* Aumenta el ancho en pantallas más pequeñas */
-        flex-flow: column; /* Cambia a columna en pantallas pequeñas */
-        align-items: center; /* Centra los elementos */
-    }
-
-    .profile-button {
-        font-size: 0.9rem; /* Reduce el tamaño de la fuente */
-        padding: 0.4rem 0.8rem; /* Ajusta el espaciado interno */
-    }
-
-    .profile-pic {
-        width: 30px; /* Ajusta el tamaño de la imagen */
-        height: 30px; /* Ajusta el tamaño de la imagen */
-    }
-}
-
-@media (max-width: 480px) {
-    .profile-container {
-        width: 95%; /* Aumenta el ancho en pantallas muy pequeñas */
-    }
-
-    .profile-button {
-        font-size: 0.8rem; /* Reduce aún más el tamaño de la fuente */
-        padding: 0.3rem 0.6rem; /* Ajusta el espaciado interno */
-    }
-
-    .profile-pic {
-        width: 25px; /* Ajusta el tamaño de la imagen */
-        height: 25px; /* Ajusta el tamaño de la imagen */
-    }
 }
 
 /* sidemenu */
