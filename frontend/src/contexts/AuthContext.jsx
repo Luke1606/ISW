@@ -28,23 +28,10 @@ const AuthProvider = ({ children }) => {
                 message: `El usuario ${userData.name} se ha autenticado correctamente.`,
             }
         } catch (error) {
-            const authError = {
-                title: "Error durante la autenticación",
-                response: error.response || undefined,
-                data: error.data || undefined,
+            return {
+                success: false,
+                message: error.message
             }
-
-            if (error.message === "Unauthorized") {
-                return {
-                    success: false,
-                    error: {
-                        ...authError,
-                        message: "El usuario no está autorizado. Verifica tus credenciales.",
-                    },
-                };
-            }
-
-            return { success: false, error: authError }
         }
     }
 
