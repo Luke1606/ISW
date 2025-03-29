@@ -44,7 +44,7 @@ const useHeaderOptions = () => {
         options.push({
             title: "Notificaciones",
             action: "/notifications",
-            icon: "/bell.jpg",
+            icon: "/bell.png",
         },
         {
             title: "Generar Reporte",

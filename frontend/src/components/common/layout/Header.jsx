@@ -65,7 +65,7 @@ const Profile = () => {
             <figure className="profile-figure">
                 <img className="profile-picture" src={user.pic} alt="profile-picture" />
             </figure>
-            <button className="profile-button" onClick={logout}> Usuario: {user.name} </button>
+            <button className="profile-button" onClick={logout}>{user.name}</button>
         </div>
     )
 }

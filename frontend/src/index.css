@@ -148,6 +148,7 @@ button:hover, .button:hover {
 
 .header-li:hover {
     transform: scale(1.1);
+    filter: drop-shadow(0 0 10px var(--primary-tone));
 }
 
 .header-option {
@@ -162,6 +163,10 @@ button:hover, .button:hover {
     flex-flow: row;
     justify-content : center;
     background: rgb(200,200,200);
+    /* max-width: 22%; */
+    height: 100%;
+    /* padding: 0; Espaciado interno */
+    overflow: hidden; 
 }
 
 .profile-figure {
@@ -177,6 +182,7 @@ button:hover, .button:hover {
     height: 35px;
     object-fit : cover;
 }
+
 
 .profile-button {
     margin: 1rem;
