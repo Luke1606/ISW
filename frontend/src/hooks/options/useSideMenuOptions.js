@@ -1,11 +1,11 @@
 import { useLocation } from 'react-router-dom'
-import { useContext, useEffect, useState } from 'react'
-import { AuthContext } from "../contexts/AuthContext"
+import { useEffect } from 'react'
+import usePopup from "../common/usePopup"
 
 const useSideMenuOptions = () => {
     const location = useLocation()
     const currentPath = location.pathname
-    const [ isVisible, setIsVisible ] = useState(false)
+    const { isVisible, setIsVisible } = usePopup()
 
     useEffect(() => {
         if (currentPath === "/tree" || currentPath === "/form") {
@@ -36,24 +36,5 @@ const useSideMenuOptions = () => {
     return { options, isVisible}
 }
 
-const useHeaderOptions = () => {
-    let options = []
-    const { user } = useContext(AuthContext)
-
-    if(user)
-        options.push({
-            title: "Notificaciones",
-            action: "/notifications",
-            icon: "/bell.png",
-        },
-        {
-            title: "Generar Reporte",
-            action: "#",
-            icon: "/report.png"
-        })
-
-    return options
-}
-
-export { useSideMenuOptions, useHeaderOptions }
+export default useSideMenuOptions
 

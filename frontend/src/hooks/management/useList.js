@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
-import useDebouncedApiCall from './useDebouncedApiCall'
-import ManagementService from '../services/ManagementService'
-import { AuthContext } from "../contexts/AuthContext"
-import datatypes from '../js-files/Datatypes'
+import useDebouncedApiCall from '../common/useDebouncedApiCall'
+import ManagementService from '../../services/ManagementService'
+import { AuthContext } from "../../contexts/AuthContext"
+import datatypes from '../../js-files/Datatypes'
 
 const useList = (datatype, relatedUserId) => {
     const [state, setState] = useState({
@@ -170,20 +170,4 @@ const hasPendingTribunal = async (studentId) => {
     return false
 }
 
-const useForm = (datatype, idData) => {
-    const getPrevValues = useDebouncedApiCall(async (datatype, id) => {
-        const response = await ManagementService.getData(datatype, id)
-        return response? response.data : null
-    })
-    const prevValues = getPrevValues(datatype, idData)
-
-    return { prevValues }
-}
-
-
-
-export { useList, useForm }
-
-
-
-
+export default useList

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useFormik } from "formik"
 import useDebouncedApiCall from './useDebouncedApiCall'
-import NotificationService from "../services/NotificationService"
+import NotificationService from "../../services/NotificationService"
 
 const useGenericForm = (submitFunction, initialValues, validationSchema = {}) => {
     const [formState, setFormState] = useState({
@@ -19,44 +19,25 @@ const useGenericForm = (submitFunction, initialValues, validationSchema = {}) =>
 
             const result = await submitFunction(values)
 
-            if (result && result.success) {
+            if (result) {
                 setFormState({
                     pending: false,
-                    success: true,
+                    success: result.success,
                     message: result.message,
                 })
-            } else {
-                const error = result?.error
-                setFormState({ pending: false, success: false, message: "" })
-
-                if (error && error.response && error.response.data) {
-                    const serverErrors = error.response.data
-                    
-                    Object.keys(serverErrors).forEach((key) => {
-                        formik.setFieldError(key, serverErrors[key])
-                    })
-                } else {
-                    formik.setFieldError(
-                        "general",
-                        error?.title || "Error desconocido"
-                    )
-                }
             }
         })
     })
 
   useEffect(() => {
     // mostrar un toast si hay un error general o si la autenticación fue exitosa
-    if (formik.errors.general || formState.success) {
+    if (formState.message != "") {
         const notification = {
-            title: formState.success? 
+            title: formState.success?
                 "Operación exitosa"
                 :
                 "Error",
-            message: formState.success?
-                formState.message
-                :
-                formik.errors.general
+            message: formState.message
         }
 
         const type = formState.success? "success" : "error"

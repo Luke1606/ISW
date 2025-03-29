@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import routes from "./routes"
 import ToastNotification from "./components/common/ToastNotification"
 import { AuthProvider } from "./contexts/AuthContext"
-import useUserActivity from './hooks/useUserActivity'
+import useUserActivity from './hooks/Auth/useUserActivity'
 
 const router = createBrowserRouter(routes, {
     future: {

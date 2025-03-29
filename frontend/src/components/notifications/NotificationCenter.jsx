@@ -1,4 +1,4 @@
-import useNotifications from '../../hooks/useNotifications'
+import useNotifications from '../../hooks/notifications/useNotifications'
 import { useNavigate } from "react-router-dom"
 
 const NotificationComponent = () => {

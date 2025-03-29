@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
-import AuthService from "../services/AuthService"
-import { AuthContext } from "../contexts/AuthContext"
+import AuthService from "../../services/AuthService"
+import { AuthContext } from "../../contexts/AuthContext"
 
 const useAuth = () => {
     const [isAuthorized, setIsAuthorized] = useState(null)

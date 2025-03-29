@@ -1,20 +1,18 @@
 import { useEffect } from 'react'
-import NotificationService from '../services/NotificationService'
+import AuthService from "../../services/AuthService"
 
 const useUserActivity = () => {
     useEffect(() => {
-        NotificationService.setUserActive(true)
+        AuthService.setUserActive(true)
         
         let timeout
         
-        const handleUserInactive = () => {
-            NotificationService.setUserActive(false)
-        }
-
         const resetActivityTimeout = () => {
-            NotificationService.setUserActive(true)
+            AuthService.setUserActive(true)
             clearTimeout(timeout)
-            timeout = setTimeout(handleUserInactive, 30000)
+            timeout = setTimeout(
+                () => AuthService.setUserActive(false)
+                , 60000 * 10)
         }
 
         window.addEventListener('mousemove', resetActivityTimeout)
@@ -22,7 +20,7 @@ const useUserActivity = () => {
         window.addEventListener('scroll', resetActivityTimeout)
 
         return () => {
-            NotificationService.setUserActive(false)
+            AuthService.setUserActive(false)
             window.removeEventListener('mousemove', resetActivityTimeout)
             window.removeEventListener('keydown', resetActivityTimeout)
             window.removeEventListener('scroll', resetActivityTimeout)

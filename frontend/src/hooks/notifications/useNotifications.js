@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import useDebouncedApiCall from './useDebouncedApiCall'
-import NotificationService from '../services/NotificationService'
+import useDebouncedApiCall from '../common/useDebouncedApiCall'
+import NotificationService from '../../services/NotificationService'
 
 const useNotifications = () => {
     const [notifications, setNotifications] = useState([])
