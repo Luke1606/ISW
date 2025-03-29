@@ -1,7 +1,18 @@
 import { Suspense } from "react"
 import { useParams } from "react-router-dom"
-import { useList } from "../../hooks/useManagement"
+import useList from "../../hooks/management/useList"
 import Modal from "../common/Modal"
+import { 
+    Search, 
+    Save, 
+    Edit, 
+    Trash2,
+    FileText, 
+    Check, 
+    X,
+    ArrowLeftSquare,
+    ArrowRightSquare
+} from "lucide-react"
 
 const List = () => {
     const { datatype, relatedUserId } = useParams()
@@ -33,10 +44,11 @@ const List = () => {
                     {...formik.getFieldProps("search")}/>
 
                 <button
+                    title="Buscar"
                     type="submit"
                     className="search-button"
                     >
-                    Buscar
+                    <Search size={30}/>
                 </button>
             </form>
             
@@ -45,21 +57,23 @@ const List = () => {
                 >
                 { permissions.add &&
                     <button 
+                        title="Agregar"
                         className="add-button"
                         onClick={() => navigate(`/form/${datatype}`)}>
-                        Agregar
+                        <Save size={30}/>
                     </button>}
 
                     { permissions.del && 
                         <button 
+                            title="Eliminar varios"
                             className="delete-button list-button"
                             onClick={() => {
                             setState((prev) => ({
-                                ...prev, 
+                                ...prev,
                                 deleteConfirmationModalVisibility: true
                                 }))   
                             }}>
-                            Eliminar
+                            <Trash2 size={30}/>
                         </button>}
                 </div>
 
@@ -79,13 +93,15 @@ const List = () => {
                             <div className="list-button-container button-container">
                                 { permissions.edit && 
                                     <button 
+                                        title="Editar"
                                         className="edit-button list-button"
                                         onClick={() => navigate(`/form/${datatype}/${item.id}`)}>
-                                        Editar
+                                        <Edit size={30}/>
                                     </button>}
 
                                 { permissions.del && 
                                     <button 
+                                        title="Eliminar"
                                         className="delete-button list-button"
                                         onClick={() => {
                                             setState((prev) => ({
@@ -94,17 +110,19 @@ const List = () => {
                                                 deleteConfirmationModalVisibility: true
                                             }))   
                                         }}>
-                                        Eliminar
+                                        <Trash2 size={30}/>
                                     </button>}
 
                                 <button
+                                    title="Ver detalles"
                                     className="details-button list-button"
                                     onClick={() => navigate(`/form/${datatype}/${item.id}/${true}`)}>
-                                    Ver detalles
+                                    <FileText size={30}/>
                                 </button>
 
                                 <select 
                                     className="button options-button" 
+                                    title="Más opciones"
                                     onChange={handleOptions}
                                     >
                                     <option className="option-element" value="" disabled>Seleccione una opción...</option>
@@ -133,43 +151,49 @@ const List = () => {
                 </div>
 
                 {/* botones de paginado */}
-                { state?.data?.[state.currentPage]?.length > 0 && <div className="button-group pagination-button-group">
-                    <button 
-                        onClick={() => handlePageChange(state.currentPage - 1)}
-                        disabled={state.currentPage===0}
-                        style={
-                            state.currentPage===0? 
-                                { visibility: 'hidden' }:{}}>
-                            Anterior
-                    </button>
+                { state?.totalPages >= 1 && 
+                    <div className="button-group pagination-button-group">
+                        <button 
+                            title="Anterior"
+                            onClick={() => handlePageChange(state.currentPage - 1)}
+                            disabled={state.currentPage===0}
+                            style={
+                                state.currentPage===0? 
+                                    { visibility: 'hidden' }:{}}
+                            >
+                            <ArrowLeftSquare size={40}/>
+                        </button>
 
-                    <select 
-                        onChange={(e) => handlePageChange(Number(e.target.value))}
-                        value={state.currentPage}
-                        disabled={state.totalPages<=1}
-                        style={
-                            state.totalPages<=1?
-                                { visibility: 'hidden' }:{}}
-                        >
-                        <option value="" disabled>Ir a página...</option>
+                        <select 
+                            title="Ir a página..."
+                            onChange={(e) => handlePageChange(Number(e.target.value))}
+                            value={state.currentPage}
+                            disabled={state.totalPages<=1}
+                            className="button"
+                            style={
+                                state.totalPages<=1?
+                                    { visibility: 'hidden' }:{}}
+                            >
+                            <option value="" disabled>Ir a página...</option>
 
-                        {Array.from({ length: state.totalPages }, (_, index) => (
-                            <option key={index} value={index}>
-                                {index + 1}
-                            </option>
-                        ))}
-                    </select>
+                            {Array.from({ length: state.totalPages }, (_, index) => (
+                                <option key={index} value={index}>
+                                    {index + 1}
+                                </option>
+                            ))}
+                        </select>
 
-                    <button 
-                        onClick={() => handlePageChange(state.currentPage + 1)}
-                        disabled={state.currentPage >= state.totalPages - 1}
-                        style={
-                            state.currentPage >= state.totalPages - 1?
-                                { visibility: 'hidden' }:{}}
-                        >
-                        Siguiente
-                    </button>
-                </div>}
+                        <button 
+                            title="Siguiente"
+                            onClick={() => handlePageChange(state.currentPage + 1)}
+                            disabled={state.currentPage >= state.totalPages - 1}
+                            style={
+                                state.currentPage >= state.totalPages - 1?
+                                    { visibility: 'hidden' }:{}}
+                            >
+                            <ArrowRightSquare size={40}/>
+                        </button>
+                    </div>}
             </Suspense>
             
             {/* modal de confirmacion de eliminado */}
@@ -185,19 +209,22 @@ const List = () => {
                         ¿Está seguro de que desea continuar?
                     </p>
 
-                    <div className="modal-button-container button-container">
+                    <div className="button-container modal-button-container">
                         <button 
                             className="accept-button modal-button"
+                            title="Aceptar"
                             onClick={() => handleDelete(datatype, state.selectedItemId, relatedUserId)}>
-                            Aceptar
+                            <Check size={30}/>
                         </button>
                         
                         <button 
                             className="cancel-button modal-button"
+                            title="Cancelar"
+
                             onClick={() => setState(
                                 (prev) => ({ ...prev, deleteConfirmationModalVisibility: false })
                             )}>
-                            Cancelar
+                            <X size={30}/>
                         </button>
                     </div>
                 </div>
