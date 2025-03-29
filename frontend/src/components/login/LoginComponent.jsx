@@ -3,11 +3,20 @@ import { useNavigate } from "react-router-dom"
 import { User } from "lucide-react"
 import * as Yup from "yup"
 import { AuthContext } from "../../contexts/AuthContext"
-import useGenericForm from "../../hooks/useGenericForm"
+import useGenericForm from "../../hooks/common/useGenericForm"
+import { useDropPopup } from "../../hooks/common/usePopup"
+import Modal from "../common/Modal"
 
 const LoginComponent = () => {
     const { login } = useContext(AuthContext)
     const navigate = useNavigate()
+    const popupId = 'login-popup'
+    const { 
+        openerRef,
+        dropPopupRef,
+        isVisible,
+        toggleVisible,
+    } = useDropPopup(popupId, ()=> navigate('/'))
 
     const initialValues = {
         username: "",
@@ -100,6 +109,10 @@ const LoginComponent = () => {
                     <button
                         type="submit"
                         className="accept-button"
+                        title="Aceptar"
+                        onClick={toggleVisible}
+                        data-popup-id={popupId}
+                        ref={openerRef}
                         disabled={
                             formState.pending || Object.keys(formik.errors).length > 0
                         }
@@ -115,12 +128,29 @@ const LoginComponent = () => {
                     <button
                         type="button"
                         className="cancel-button"
+                        title="Cancelar"
                         onClick={() => navigate("/")}
                         >
                         Cancelar
                     </button>
                 </div>
             </form>
+
+            <Modal
+                isOpen={isVisible}
+                >
+                <div 
+                    className=""
+                    data-popup-id={popupId}
+                    ref={dropPopupRef}
+                    >
+                    <p
+                        className="modal-content"
+                        >
+                        {formState.message}
+                    </p>
+                </div>
+            </Modal>
         </>
     )
 }
