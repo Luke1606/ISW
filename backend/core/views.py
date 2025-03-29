@@ -1,11 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
-from django_filters import rest_framework as filters
 from django.core.paginator import Paginator
 from django.core.cache import cache
-from django.db.models import Q
-from .management.helpers.dynamic_filterset_factory import DynamicFilterSetFactory
 
 
 class BaseModelViewSet(ModelViewSet):
@@ -16,67 +13,72 @@ class BaseModelViewSet(ModelViewSet):
     - Búsquedas.
     - Caché opcional.
     """
-    filter_backends = [filters.DjangoFilterBackend]
     page_size = 5  # Tamaño de página por defecto
-
-    def get_filterset_class(self):
-        """
-        Retorna un FilterSet dinámico basado en el modelo asociado.
-        """
-        if not hasattr(self.queryset, "model"):
-            raise ValueError("El queryset debe tener un modelo asociado para generar el FilterSet dinámico.")
-
-        # Usar DynamicFilterSetFactory para crear el filtro dinámico
-        factory = DynamicFilterSetFactory(self.queryset.model)
-        return factory.create()
+    cache_timeout = 300  # Tiempo de vencimiento de cache
+    list_serializer_class = None  # Opción para un serializer de lista
 
     def get_queryset(self):
+        """
+        Sobrescribe el queryset inicial utilizando el método 'search' del manager.
+        """
+        # Obtener el queryset inicial
         queryset = super().get_queryset()
+
+        # Usar el método auxiliar para obtener el 'search_term' y filtrar el queryset a partir de este
+        queryset = queryset.model.objects.search(self.get_search_term())
+
         return queryset
+
+    def get_serializer_class(self):
+        # Si la acción es 'list' y hay un list_serializer_class definido, usarlo
+        if self.action == 'list' and self.list_serializer_class:
+            return self.list_serializer_class
+        # En otros casos, usar el serializer definido en serializer_class
+        return self.serializer_class
 
     def list(self, request, *args, **kwargs):
         """
-        Sobrescribe el método 'list' para devolver todos los datos, divididos por página.
+        Sobrescribe el método 'list' para devolver los datos filtrados y paginados.
+        Utiliza caché para optimizar el rendimiento.
         """
+        # Crear una clave de caché única basada en los parámetros de la request
+        search_term = self.get_search_term()
+
+        cache_key = f"{self.__class__.__name__}_list_{search_term or ""}"
+
+        # Intentar recuperar los datos del caché
+        return Response(
+            self.get_or_set_cached_response(cache_key, lambda: self._generate_response()),
+            status=status.HTTP_200_OK
+        )
+
+    def get_or_set_cached_response(self, cache_key, data_function):
+        cached_data = self.get_cached_response(cache_key)
+        if cached_data:
+            return cached_data
+
+        # Llama a la función que genera los datos si no están en la caché
+        data = data_function()
+        self.cache_response(cache_key, data, timeout=self.cache_timeout)
+        return data
+
+    def _generate_response(self):
         queryset = self.get_queryset()
-
         if not queryset.exists():
-            return Response(
-                {"message": "No hay elementos disponibles."},
-                status=status.HTTP_204_NO_CONTENT
-            )
+            return {"message": "No hay elementos disponibles."}
 
-        paginated_data = self.paginate_queryset()
+        paginated_data = self.paginate_queryset(queryset=queryset)
+        paginated_data["data"] = {
+            page: self.get_serializer(object_list, many=True).data
+            for page, object_list in paginated_data["data"].items()
+        }
+        return paginated_data
 
-        # Serializar los datos paginados
-        for page, object_list in paginated_data["data"].items():
-            serializer = self.get_serializer(object_list, many=True)
-            paginated_data["data"][page] = serializer.data
-
-        # Devolver la respuesta final
-        print(paginated_data)
-        return Response(paginated_data, status=status.HTTP_200_OK)
-
-    def search_queryset(self, search_term):
-        """
-        Realiza búsquedas en el queryset utilizando los SEARCHABLE_FIELDS.
-        """
-        model = self.queryset.model
-        searchable_fields = getattr(model, "SEARCHABLE_FIELDS", {})
-        if not searchable_fields or not search_term:
-            return self.queryset.objects.all()
-
-        conditions = Q()
-        for field, lookup in searchable_fields.items():
-            conditions |= Q(**{f"{field}__{lookup}": search_term})
-
-        return self.queryset.filter(conditions)
-
-    def paginate_queryset(self):
+    def paginate_queryset(self, queryset):
         """
         Maneja la paginación del queryset y devuelve todos los datos divididos por páginas.
         """
-        paginator = Paginator(self.queryset, self.page_size)
+        paginator = Paginator(queryset, self.page_size)
         total_pages = paginator.num_pages
         all_data = {}
 
@@ -88,6 +90,16 @@ class BaseModelViewSet(ModelViewSet):
             "data": all_data,
             "total_pages": total_pages
         }
+
+    def get_search_term(self):
+        """
+        Método auxiliar para obtener el parámetro 'search_term' de la request.
+        Verifica que no sea nulo o una cadena vacía compuesta solo de espacios.
+        """
+        search_term = self.request.query_params.get('search_term', '').strip()
+        if search_term and not search_term.isspace():
+            return search_term
+        return None  # Retorna None si es inválido
 
     def cache_response(self, cache_key, data, timeout=300):
         """

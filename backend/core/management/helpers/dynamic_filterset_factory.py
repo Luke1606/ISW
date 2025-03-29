@@ -2,6 +2,7 @@
 Una fábrica para generar clases `FilterSet` dinámicas basadas en los campos definidos en `SEARCHABLE_FIELDS` de un modelo.
 """
 from django_filters import rest_framework as filters
+from django.db.models import Q
 
 
 class DynamicFilterSetFactory:
@@ -19,7 +20,6 @@ class DynamicFilterSetFactory:
             model (Model): Modelo de Django que contiene SEARCHABLE_FIELDS.
         """
         self.model = model
-        self.searchable_fields = getattr(model, "SEARCHABLE_FIELDS", {})
 
     def create(self):
         """
@@ -28,7 +28,7 @@ class DynamicFilterSetFactory:
         Returns:
             Type[FilterSet]: Clase FilterSet dinámica personalizada para el modelo.
         """
-        searchable_fields = self.searchable_fields
+        searchable_fields = self.model.SEARCHABLE_FIELDS
 
         # Clase interna que actúa como FilterSet dinámico
         class DynamicFilterSet(filters.FilterSet):
@@ -45,3 +45,34 @@ class DynamicFilterSetFactory:
                 }
 
         return DynamicFilterSet
+
+    def filter_with_join_type(self, queryset, data, join_type):
+        """
+        Aplica el FilterSet dinámico a un queryset con soporte para lógica de combinación (AND/OR).
+
+        Args:
+            queryset (QuerySet): QuerySet base al que se aplicarán los filtros.
+            data (dict): Datos para filtrar.
+            join_type (str): Tipo de combinación lógica ("AND" o "OR").
+
+        Returns:
+            QuerySet: QuerySet filtrado basado en las condiciones combinadas.
+        """
+        # Crear el FilterSet dinámico
+        filterset_class = self.create()
+        filterset = filterset_class(data=data, queryset=queryset)
+
+        # Validar filtros con lógica predeterminada
+        if not filterset.is_valid():
+            raise ValueError(f"Filtros inválidos: {filterset.errors}")
+
+        # Extraer las condiciones validadas del filterset
+        conditions = Q()
+        for field, value in filterset.form.cleaned_data.items():
+            if value is not None:  # Solo procesar los filtros válidos
+                condition = Q(**{field: value})
+                conditions = (
+                    conditions | condition if join_type == "OR" else conditions & condition
+                )
+
+        return conditions
