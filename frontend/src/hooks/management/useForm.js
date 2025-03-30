@@ -8,7 +8,12 @@ const useForm = (datatype, idData) => {
     })
     const prevValues = getPrevValues(datatype, idData)
 
-    return { prevValues }
+    const handleSubmit = idData? 
+                            ManagementService.updateData
+                            : 
+                            ManagementService.createData
+
+    return { prevValues, handleSubmit }
 }
 
 
