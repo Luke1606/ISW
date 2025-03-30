@@ -28,14 +28,15 @@ const LoginComponent = () => {
             Yup.object().shape({
                 username: Yup.string()
                     .min(4, "El nombre de usuario debe tener al menos 4 caracteres")
-                    .required("El nombre de usuario es obligatorio"),
+                    // .required("El nombre de usuario es obligatorio") como prueba
+                    ,
                 password: Yup.string()
                     .min(10, "La contraseña debe tener al menos 10 caracteres")
                     .matches(/[a-z]/, "La contraseña debe contener al menos una letra minúscula")
                     .matches(/[A-Z]/, "La contraseña debe contener al menos una letra mayúscula")
                     .matches(/[0-9]/, "La contraseña debe contener al menos un número")
                     .matches(/[\W_]/, "La contraseña debe contener al menos un caracter especial")
-                    .required("La contraseña es obligatoria"),
+                    // .required("La contraseña es obligatoria"), como prueba
             }),
         [])
 
