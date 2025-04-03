@@ -462,7 +462,7 @@ body {
   }
   
   .carousel-slide {
-    width: 90%; /* Increased from 80% for better mobile use */
+    width: 90%;
     max-width: 50rem; /* 800px */
     margin: 0 auto;
     transition: transform 0.3s ease-out;
@@ -470,13 +470,13 @@ body {
     justify-content: center;
   }
   
-  /* Enhanced Navigation Buttons */
+  /* Enhanced Navigation Buttons - Modificado para hover controlado */
   .carousel-button {
     position: absolute;
     top: 120%;
     transform: translateY(-120%);
     background-color: white;
-    color:goldenrod ;
+    color: goldenrod;
     border: none;
     border-radius: 50%;
     width: 3rem;
@@ -486,17 +486,25 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 0;
+    z-index: 10;
     transition: all 0.2s ease;
     box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.2);
+    opacity: 0; /* Inicialmente invisibles */
+    pointer-events: none; /* No interactuables por defecto */
+  }
+  
+  .features-carousel:hover .carousel-button,
+  .carousel-button:hover {
+    opacity: 1; /* Visibles al hover */
+    pointer-events: auto; /* Interactuables al hover */
   }
   
   .carousel-button.prev {
-    left: 2%; /* Percentage-based positioning */
+    left: 2%;
   }
   
   .carousel-button.next {
-    right: 2%; /* Percentage-based positioning */
+    right: 2%;
   }
   
   .carousel-button:hover {
@@ -510,7 +518,7 @@ body {
     display: flex;
     justify-content: center;
     margin-top: 1.5rem;
-    gap: 0.75rem; /* Replaces margin for better spacing */
+    gap: 0.75rem;
   }
   
   .indicator {
@@ -526,29 +534,6 @@ body {
   .indicator.active {
     background: #333;
     transform: scale(1.2);
-  }
-  
-  /* Controls */
-  .carousel-controls {
-    display: flex;
-    justify-content: center;
-    margin-top: 1.5rem;
-  }
-  
-  .play-pause-btn {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    padding: 0.5rem 1.25rem;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.875rem;
-  }
-  
-  .play-pause-btn:hover {
-    background: #45a049;
-    transform: translateY(-0.0625rem);
   }
   
   /* Responsive Breakpoints */
@@ -619,7 +604,6 @@ body {
       height: 0.625rem;
     }
   }
-  
 
 /* form */
 .form-container {
