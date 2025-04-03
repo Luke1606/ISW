@@ -14,8 +14,8 @@ import akademos from "../assets/akademos.png";
 export const FeaturesCarousel = ({ features }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-
-  // Mapeo de features desde el componente FeaturesSection
+  const [isHovering, setIsHovering] = useState(false);
+  
   const featureItems = [
     {
       icon: { alt: "Gran cantidad de carpetas", src: evidence },
@@ -128,63 +128,72 @@ export const FeaturesCarousel = ({ features }) => {
     setCurrentIndex(index);
   };
 
-  // Auto-play functionality
+  // Auto-play functionality con control de hover
   useEffect(() => {
     let interval;
-    if (isAutoPlaying) {
+    if (isAutoPlaying && !isHovering) {
       interval = setInterval(goToNext, 5000);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [currentIndex, isAutoPlaying]);
+  }, [currentIndex, isAutoPlaying, isHovering]);
 
   return (
-    <div className="features-carousel">
+    <div 
+      className="features-carousel"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
       <div className="carousel-container">
-        <button
-          className="carousel-button prev"
-          onClick={goToPrev}
-          aria-label="Anterior"
-        >
-          &lt;
-        </button>
-
         <div className="carousel-slide">
           <div className="feature-card">
             <div className="feature-card-inner">
               <div className="feature-card-front">
                 <img
-                  alt={featureItems[currentIndex].icon.alt}
+                  alt={featureItems[currentIndex]?.icon?.alt || "Icono"}
                   className="feature-icon"
-                  src={featureItems[currentIndex].icon.src}
+                  src={featureItems[currentIndex]?.icon?.src}
                 />
               </div>
 
               <div className="feature-card-back">
                 <h3 className="feature-card-title">
-                  {featureItems[currentIndex].title}
+                  {featureItems[currentIndex]?.title || ""}
                 </h3>
 
                 <p className="feature-card-brief">
-                  {featureItems[currentIndex].brief}
+                  {featureItems[currentIndex]?.brief || ""}
                 </p>
 
                 <div className="feature-card-content">
-                  {featureItems[currentIndex].content}
+                  {featureItems[currentIndex]?.content || ""}
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <button
-          className="carousel-button next"
-          onClick={goToNext}
-          aria-label="Siguiente"
-        >
-          &gt;
-        </button>
+        {/* Botones dentro del mismo contenedor */}
+        <div className="carousel-navigation">
+          <button
+            className={`carousel-button prev ${isHovering ? 'visible' : ''}`}
+            onClick={goToPrev}
+            aria-label="Anterior"
+            onMouseEnter={() => setIsHovering(true)}
+          >
+            &lt;
+          </button>
+          
+          <button
+            className={`carousel-button next ${isHovering ? 'visible' : ''}`}
+            onClick={goToNext}
+            aria-label="Siguiente"
+            onMouseEnter={() => setIsHovering(true)}
+          >
+            &gt;
+          </button>
+        </div>
       </div>
 
       <div className="carousel-indicators">
@@ -197,17 +206,7 @@ export const FeaturesCarousel = ({ features }) => {
           />
         ))}
       </div>
-
-      <div className="carousel-controls">
-        <button
-          onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-          className="play-pause-btn"
-        >
-          {isAutoPlaying ? "Pausar" : "Reproducir"}
-        </button>
-      </div>
     </div>
-    
   );
 };
 
