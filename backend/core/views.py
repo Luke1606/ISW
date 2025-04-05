@@ -13,8 +13,8 @@ class BaseModelViewSet(ModelViewSet):
     - Búsquedas.
     - Caché opcional.
     """
-    page_size = 5  # Tamaño de página por defecto
-    cache_timeout = 300  # Tiempo de vencimiento de cache
+    _page_size = 5  # Tamaño de página por defecto
+    _cache_timeout = 300  # Tiempo de vencimiento de cache
     list_serializer_class = None  # Opción para un serializer de lista
 
     def get_queryset(self):
@@ -25,7 +25,7 @@ class BaseModelViewSet(ModelViewSet):
         queryset = super().get_queryset()
 
         # Usar el método auxiliar para obtener el 'search_term' y filtrar el queryset a partir de este
-        queryset = queryset.model.objects.search(self.get_search_term())
+        queryset = queryset.model.objects.search(self._get_search_term())
 
         return queryset
 
@@ -42,24 +42,24 @@ class BaseModelViewSet(ModelViewSet):
         Utiliza caché para optimizar el rendimiento.
         """
         # Crear una clave de caché única basada en los parámetros de la request
-        search_term = self.get_search_term()
+        search_term = self._get_search_term()
 
         cache_key = f"{self.__class__.__name__}_list_{search_term or ""}"
 
         # Intentar recuperar los datos del caché
         return Response(
-            self.get_or_set_cached_response(cache_key, lambda: self._generate_response()),
+            self._get_or_set_cached_response(cache_key, lambda: self._generate_response()),
             status=status.HTTP_200_OK
         )
 
-    def get_or_set_cached_response(self, cache_key, data_function):
-        cached_data = self.get_cached_response(cache_key)
+    def _get_or_set_cached_response(self, cache_key, data_function):
+        cached_data = self._get_cached_response(cache_key)
         if cached_data:
             return cached_data
 
         # Llama a la función que genera los datos si no están en la caché
         data = data_function()
-        self.cache_response(cache_key, data, timeout=self.cache_timeout)
+        self._cache_response(cache_key, data, timeout=self._cache_timeout)
         return data
 
     def _generate_response(self):
@@ -67,18 +67,18 @@ class BaseModelViewSet(ModelViewSet):
         if not queryset.exists():
             return {"message": "No hay elementos disponibles."}
 
-        paginated_data = self.paginate_queryset(queryset=queryset)
+        paginated_data = self._paginate_queryset(queryset=queryset)
         paginated_data["data"] = {
             page: self.get_serializer(object_list, many=True).data
             for page, object_list in paginated_data["data"].items()
         }
         return paginated_data
 
-    def paginate_queryset(self, queryset):
+    def _paginate_queryset(self, queryset):
         """
         Maneja la paginación del queryset y devuelve todos los datos divididos por páginas.
         """
-        paginator = Paginator(queryset, self.page_size)
+        paginator = Paginator(queryset, self._page_size)
         total_pages = paginator.num_pages
         all_data = {}
 
@@ -91,7 +91,7 @@ class BaseModelViewSet(ModelViewSet):
             "total_pages": total_pages
         }
 
-    def get_search_term(self):
+    def _get_search_term(self):
         """
         Método auxiliar para obtener el parámetro 'search_term' de la request.
         Verifica que no sea nulo o una cadena vacía compuesta solo de espacios.
@@ -101,13 +101,13 @@ class BaseModelViewSet(ModelViewSet):
             return search_term
         return None  # Retorna None si es inválido
 
-    def cache_response(self, cache_key, data, timeout=300):
+    def _cache_response(self, cache_key, data, timeout=300):
         """
         Guarda los datos en caché.
         """
         cache.set(cache_key, data, timeout)
 
-    def get_cached_response(self, cache_key):
+    def _get_cached_response(self, cache_key):
         """
         Recupera datos del caché.
         """

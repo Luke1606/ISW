@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 class BaseListSerializer(serializers.ModelSerializer):
     """
-    BaseSerializer especifico para serializar datos destinados a listas de elementos.
+    BaseSerializer específico para serializar datos destinados a listas de elementos.
     """
     name = serializers.SerializerMethodField()
 
@@ -13,7 +13,8 @@ class BaseListSerializer(serializers.ModelSerializer):
 
     def get_name(self, obj):
         """
-        Método que los serializers hijos pueden implementar o sobrescribir.
+        Método que los serializers hijos deben reimplementar para que a partir de este metodo
+        se guarde el resultado en el campo name.
         Por defecto, lanza una excepción si no está implementado.
         """
         raise NotImplementedError(
