@@ -85,10 +85,6 @@ const useList = (datatype, relatedUserId) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [datatype, state.selectedItemId])
 
-    const handlePageChange = (newPage) => {
-        setState(prev => ({ ...prev, currentPage: newPage }))
-    }
-
     const handleDelete = async (datatype, id, relatedUserId) => {
         try {
             await ManagementService.deleteData(datatype, id, relatedUserId)
@@ -104,8 +100,23 @@ const useList = (datatype, relatedUserId) => {
             navigate(value)
         }
     }
+    
+    // logica de paginado
+    const [ currentPage, setCurrentPage ] = useState(0)
+    
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage)
+    }
 
-    return { formik, state, setState, permissions, options, handlePageChange, handleDelete, handleOptions, navigate }
+    const paginationParams = {
+        totalPages: state?.totalPages,
+        currentPage: currentPage,
+        handlePageChange: handlePageChange,
+        pageControl: true,
+        loop: false,
+    }
+
+    return { formik, state, setState, permissions, options, handleDelete, handleOptions, navigate, paginationParams }
 }
 
 const usePermisions = (datatype, user) => {

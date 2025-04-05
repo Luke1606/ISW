@@ -2,16 +2,15 @@ import { Suspense } from "react"
 import { useParams } from "react-router-dom"
 import useList from "../../hooks/management/useList"
 import Modal from "../common/Modal"
+import PaginationButtons from "../common/PaginationButtons"
 import { 
     Search, 
-    Save, 
+    Plus, 
     Edit, 
     Trash2,
     FileText, 
     Check, 
     X,
-    ArrowLeftSquare,
-    ArrowRightSquare
 } from "lucide-react"
 
 const List = () => {
@@ -23,10 +22,10 @@ const List = () => {
         setState,
         permissions, 
         options, 
-        handlePageChange, 
         handleDelete, 
         handleOptions, 
-        navigate 
+        navigate,
+        paginationParams
     } = useList(datatype, relatedUserId)
 
     return (
@@ -48,7 +47,7 @@ const List = () => {
                     type="submit"
                     className="search-button"
                     >
-                    <Search size={30}/>
+                    <Search size={40}/>
                 </button>
             </form>
             
@@ -60,20 +59,20 @@ const List = () => {
                         title="Agregar"
                         className="add-button"
                         onClick={() => navigate(`/form/${datatype}`)}>
-                        <Save size={30}/>
+                        <Plus size={40}/>
                     </button>}
 
                     { permissions.del && 
                         <button 
                             title="Eliminar varios"
-                            className="delete-button list-button"
+                            className="delete-button"
                             onClick={() => {
                             setState((prev) => ({
                                 ...prev,
                                 deleteConfirmationModalVisibility: true
                                 }))   
                             }}>
-                            <Trash2 size={30}/>
+                            <Trash2 size={40}/>
                         </button>}
                 </div>
 
@@ -96,7 +95,7 @@ const List = () => {
                                         title="Editar"
                                         className="edit-button list-button"
                                         onClick={() => navigate(`/form/${datatype}/${item.id}`)}>
-                                        <Edit size={30}/>
+                                        <Edit size={50}/>
                                     </button>}
 
                                 { permissions.del && 
@@ -110,18 +109,18 @@ const List = () => {
                                                 deleteConfirmationModalVisibility: true
                                             }))   
                                         }}>
-                                        <Trash2 size={30}/>
+                                        <Trash2 size={50}/>
                                     </button>}
 
                                 <button
                                     title="Ver detalles"
                                     className="details-button list-button"
                                     onClick={() => navigate(`/form/${datatype}/${item.id}/${true}`)}>
-                                    <FileText size={30}/>
+                                    <FileText size={50}/>
                                 </button>
 
                                 <select 
-                                    className="button options-button" 
+                                    className="button options-button list-button" 
                                     title="Más opciones"
                                     onChange={handleOptions}
                                     >
@@ -150,50 +149,7 @@ const List = () => {
                     </h3>}
                 </div>
 
-                {/* botones de paginado */}
-                { state?.totalPages >= 1 && 
-                    <div className="button-group pagination-button-group">
-                        <button 
-                            title="Anterior"
-                            onClick={() => handlePageChange(state.currentPage - 1)}
-                            disabled={state.currentPage===0}
-                            style={
-                                state.currentPage===0? 
-                                    { visibility: 'hidden' }:{}}
-                            >
-                            <ArrowLeftSquare size={40}/>
-                        </button>
-
-                        <select 
-                            title="Ir a página..."
-                            onChange={(e) => handlePageChange(Number(e.target.value))}
-                            value={state.currentPage}
-                            disabled={state.totalPages<=1}
-                            className="button"
-                            style={
-                                state.totalPages<=1?
-                                    { visibility: 'hidden' }:{}}
-                            >
-                            <option value="" disabled>Ir a página...</option>
-
-                            {Array.from({ length: state.totalPages }, (_, index) => (
-                                <option key={index} value={index}>
-                                    {index + 1}
-                                </option>
-                            ))}
-                        </select>
-
-                        <button 
-                            title="Siguiente"
-                            onClick={() => handlePageChange(state.currentPage + 1)}
-                            disabled={state.currentPage >= state.totalPages - 1}
-                            style={
-                                state.currentPage >= state.totalPages - 1?
-                                    { visibility: 'hidden' }:{}}
-                            >
-                            <ArrowRightSquare size={40}/>
-                        </button>
-                    </div>}
+                <PaginationButtons paginationParams={paginationParams}/>
             </Suspense>
             
             {/* modal de confirmacion de eliminado */}
