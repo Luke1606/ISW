@@ -2,10 +2,10 @@
 import { useParams } from "react-router-dom"
 import datatypes from "../../../js-files/Datatypes"
 import { useDropPopup } from "../../../hooks/common/usePopup"
-import { useForm } from "../../../hooks/management/useForm"
+import useForm from "../../../hooks/management/useForm"
 import { EvidenceForm, ReadOnlyEvidenceForm } from "./EvidenceForms"
 import { RequestForm, ReadOnlyRequestForm } from "./RequestForms"
-import { DefenseTribunalForm, ReadOnlyDefenseTribunalForm, TribunalAprovalForm } from "./DefenseTribunalForms"
+import { DefenseTribunalForm, ReadOnlyDefenseTribunalForm } from "./DefenseTribunalForms"
 import { DefenseActForm, ReadOnlyDefenseActForm } from "./DefenseActForms"
 import { UserForm, ReadOnlyUserForm } from "./UserForms"
 
@@ -56,12 +56,12 @@ const FormComponent = () => {
                 :
                 <DefenseTribunalForm values={params.values} functions={params.functions}/>
             break
-        case datatypes.tribunal:
-            children = readOnly?
-                <ReadOnlyDefenseActForm prevValues={prevValues}/>
-                :
-                <TribunalAprovalForm values={params.values} functions={params.functions}/>
-            break
+        // case datatypes.tribunal:
+        //     children = readOnly?
+        //         <ReadOnlyDefenseActForm prevValues={prevValues}/>
+        //         :
+        //         <TribunalAprovalForm values={params.values} functions={params.functions}/>
+        //     break
         case datatypes.defense_act:    
             children = readOnly?
                 <ReadOnlyDefenseActForm prevValues={prevValues}/>
