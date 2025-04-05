@@ -75,7 +75,7 @@ const LoginComponent = () => {
 
                 <span
                     className="error"
-                    style={formik.errors.username ? {} : { visibility: "hidden" }}
+                    style={formik.errors.username && formik.touched.username ? {} : { visibility: "hidden" }}
                     >
                     {formik.errors.username}
                 </span>
@@ -101,7 +101,7 @@ const LoginComponent = () => {
 
                 <span
                     className="error"
-                    style={formik.errors.password ? {} : { visibility: "hidden" }}
+                    style={formik.errors.password && formik.touched.password ? {} : { visibility: "hidden" }}
                     >
                     {formik.errors.password}
                 </span>

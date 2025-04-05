@@ -27,8 +27,8 @@ class NotificationService {
     showToast (newNotification, type='info') {
         toast(
             <div>
-                <strong>{newNotification.title}</strong>
-                <div>{newNotification.message}</div>
+                <strong style={{ fontSize: '2rem' }}>{newNotification.title}</strong>
+                <div style={{ fontSize: '1.5rem' }}>{newNotification.message}</div>
             </div>
         , {
             type: type,
