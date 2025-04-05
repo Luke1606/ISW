@@ -22,7 +22,7 @@ body {
     text-align: center;
 }
 
-/* common */
+/* ***********common*********** */
 button, .button{
     width: fit-content;
     display: flex;
@@ -44,6 +44,7 @@ button:hover, .button:hover {
     transform: scale(1.1);
 }
 
+/* modal */
 .modal-overlay {
     position: fixed;
     width: 100%;
@@ -61,6 +62,10 @@ button:hover, .button:hover {
 
 .modal-container {
     position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     border-radius: 20px;
     background-color: whitesmoke;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
@@ -80,14 +85,24 @@ button:hover, .button:hover {
     }
 }
 
+.modal-title {
+    font-size: 2.5rem;
+}
+
+.modal-content {
+    font-size: 2rem;
+}
+
 .modal-button-container {
     margin: 0 auto !important;
 }
 
+/* error */
 .error-container {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
+/* loading spinner */
 .spinner {
     border: 2rem solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
@@ -107,7 +122,215 @@ button:hover, .button:hover {
     }
 }
 
-/* Header */
+.button-container {
+    width: 80%;
+    display: flex; 
+    margin-top: 3rem;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 3rem;
+    padding: 0;
+    margin: 0;
+}
+
+/* pagination buttons */
+.pagination-button-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+/* Botones de "Anterior" y "Siguiente" */
+.pagination-button-group button {
+    background: var(--primary-gradient);
+    padding: 0.6rem 1.5rem;
+}
+
+.pagination-button-group button:hover {
+    background-color: #555; 
+    border-color: #777;
+}
+
+.pagination-button-group button:disabled {
+    background-color: #222;
+    color: #666;
+    cursor: not-allowed;
+    border-color: #444;
+}
+
+.pagination-button-group select { /* Select estilizado como botón */
+    -webkit-appearance: none; /* Elimina estilos nativos */
+    -moz-appearance: none;
+    appearance: none;
+    background: var(--primary-gradient);
+    color: white;
+    border: 2px solid black;
+    padding: 0.5rem;
+    font-size: 2.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    width: auto;
+}
+
+.pagination-button-group select:after {
+    content: ''; /* Elimina flecha predeterminada del select */
+}
+
+.pagination-button-group select:hover {
+    background: var(--primary-transparent-gradient);
+    border-color: #595959;
+}
+
+.pagination-button-group select:disabled {
+    color: #666;
+    cursor: not-allowed;
+}
+
+.pagination-button-group select option {
+    background: var(--primary-gradient);
+    color: white;
+    font-size: 1rem;
+}
+
+/* carousel de cards */
+.card-carousel {
+    width: 100%;
+    max-width: 75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.carousel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+}
+  
+.carousel-slide {
+    width: 90%;
+    max-width: 50rem;
+    margin: 0 auto;
+    transition: transform 0.3s ease-out;
+    display: flex;
+    justify-content: center;
+}
+
+.carousel-button {
+    background: transparent !important;
+    border: none;
+}
+
+.carousel-button:hover {
+    box-shadow: none;
+    filter: drop-shadow(0 0 10px black);
+    border: none;
+}
+
+@media (min-width: 48rem) { /* 768px */
+    .carousel-slide {
+        width: 85%;
+    }
+}
+  
+@media (min-width: 64rem) { /* 1024px */
+    .carousel-slide {
+        width: 80%;
+    }
+}
+  
+@media (max-width: 36rem) {
+    .carousel-slide {
+        width: 95%;
+    }
+}
+
+/* cards volteables */
+.flip-card {
+    background-color: transparent;
+    width: 40rem;
+    height: 30rem;
+    perspective: 1000px;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: all 0.5s ease;
+    transform-style: preserve-3d;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+}
+  
+.flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg) scale(1.1);
+}
+  
+.flip-card-front, .flip-card-back {
+    box-shadow: 0 8px 14px 0 rgba(0,0,0,0.4);
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 1rem;
+    border: 4px solid var(--primary-dark-tone);
+}
+  
+.flip-card-front {
+    background: var(--primary-transparent-gradient);
+    color: white;
+    overflow: hidden;
+}
+  
+.flip-card-back {
+    background: linear-gradient(120deg, rgba(255, 255, 255, 1) 60%, rgba(240, 240, 240, 0.8) 80%, rgba(218, 157, 6, 0.6) 60%, rgba(255, 174, 24, 0.7) 70%);
+    transform: rotateY(180deg);
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    text-align: center; 
+  }
+
+.flip-card-title {
+    color: var(--primary-dark-tone);
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.flip-card-brief {
+    color: black;
+    font-size: 1.8rem;
+    text-align: center;
+    max-width: 80%;
+    position: relative;
+    line-height: 50px;
+}
+
+.flip-icon {
+    position: inherit;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    border-radius: 1em;
+}
+
+/* *********Header********* */
 .header {
     width: 100%;
     height: 10%;
@@ -209,7 +432,6 @@ button:hover, .button:hover {
     background: var(--primary-transparent-gradient);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .profile-container {
         padding: 0.3rem;
@@ -238,7 +460,7 @@ button:hover, .button:hover {
     }
 }
 
-/* sidemenu */
+/* *********Sidemenu********* */
 .sidemenu {
     position: fixed;
     display: flex;
@@ -290,7 +512,7 @@ button:hover, .button:hover {
     box-shadow: 0 0 18px 15px rgb(35, 2, 117);
   }  
 
-/* footer */
+/* *********Footer********* */
 .footer {
     width: 100%;
     display: flex;
@@ -337,7 +559,7 @@ button:hover, .button:hover {
     z-index: 10;
 }
 
-/* Estilos generales para el contenedor de los enlaces sociales */
+/* contenedor de los enlaces sociales */
 .social-icons {
     display: flex;
     flex-direction: column;
@@ -350,7 +572,7 @@ button:hover, .button:hover {
 .social-icon {
     width: 70px;
     height: 70px;
-    background-color: rgb(144, 144, 144); /* Color base */
+    background-color: rgb(144, 144, 144);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -360,10 +582,9 @@ button:hover, .button:hover {
 }
 
 .social-icon:hover {
-    transform: scale(1.1); /* Efecto de escala */
+    transform: scale(1.1);
 }
 
-/* Estilos específicos para cada red social */
 .fab:hover {
     background-color: #00acee; /* Facebook */
 }
@@ -394,7 +615,7 @@ button:hover, .button:hover {
     transition: all 0.3s ease-in-out;
 }
 
-/* layout */
+/* *********Layout********* */
 .layout-container {
     width: 100%;
     height: 100%;
@@ -431,27 +652,36 @@ button:hover, .button:hover {
     flex-grow: 1;
 }
 
-/* components */
+/* ******************components****************** */
+/* *********hero********* */
 .home-hero {
     background: var(--primary-transparent-gradient);
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
     max-width: 90%;
     border-radius: 40px;
     color: white;
     text-align: center;
-    padding: 5rem 1rem;
+    padding: 3rem;
+}
+
+.home-hero-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 60%;
+    gap: 2rem;
 }
 
 .home-hero-title {
     font-size: 3.5rem;
     margin-bottom: 1rem;
     padding: 30px;
-    filter: drop-shadow(0 0 10px var(--primary-dark-tone));
+    filter: drop-shadow(0 0 10px black);
     transition: all 0.2s ease-in-out;
-    display: inline-block;
     cursor: default;
 }
 
@@ -467,163 +697,165 @@ button:hover, .button:hover {
     cursor: default;
 }
 
-.home-hero-button {
+.home-button {
+    margin-top: 1.5rem;
     background: var(--primary-gradient);
 }
 
-.home-hero-button:hover {
+.home-button:hover {
     background: var(--primary-transparent-gradient);
 }
 
-.home-features-section {
-    padding: 5rem 1rem;
-    text-align: center;
-}
-
-.home-features-section-overlay {
-    animation: cover .5s ease-in-out forwards;
-}
-
-@keyframes cover {
-    from {
-        background-color: transparent;
-    }
-    to {
-        background-color: rgba(255, 255, 255, 0.8);
-    }
-}
-
-.home-features-section-overlay-hidden {
-    animation: uncover 1.5s ease-in-out forwards;
-}
-
-@keyframes uncover {
-    from {
-        background-color: rgba(255, 255, 255, 0.8);
-    }
-    to {
-        background-color: transparent;  
-    }
-}
-
-.home-features-title {
-    font-size: 3.5rem;
-    color: var(--primary-dark-tone);
-    filter: drop-shadow(0 0 5px white);
-    margin-bottom: 1rem;
-    display: inline-block;
-    transition: all 0.2s ease-in-out;
-}
-
-.home-features-title:hover {
-    border-radius: 10px;
-    filter: brightness(150%);
-    transform: scale(1.1);
-    cursor: default;
-}
-
-.home-features-content {
-    font-size: 2rem;
-    color: black;
-    margin-bottom: 2rem;
-}
-
-.home-features-content:hover {
-    cursor: default;
-}
-
-.home-features-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 60px;
-}
-
-.feature-card {
-    background-color: transparent;
-    width: 40rem;
-    height: 30rem;
-    perspective: 1000px;
-}
-
-.feature-card-inner {
+/* *********List********* */
+.manage-container {
+    width: 75%;
     position: relative;
-    width: 100%;
-    height: 100%;
-    transition: all 0.5s ease;
-    transform-style: preserve-3d;
-    display: flex;
-    text-align: center;
-    justify-content: center;
-}
-  
-.feature-card:hover .feature-card-inner {
-    transform: rotateY(180deg) scale(1.1);
-}
-  
-.feature-card-front, .feature-card-back {
-    box-shadow: 0 8px 14px 0 rgba(0,0,0,0.4);
-    position: absolute;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    border-radius: 1rem;
-    border: 4px solid var(--primary-dark-tone);
+    background-color: rgba(255, 237, 197, 0.5);
+    border-radius: 20px;
+    padding: 10px;
 }
-  
-.feature-card-front {
-    background: var(--primary-transparent-gradient);
-    color: white;
-    overflow: hidden;
-}
-  
-.feature-card-back {
-    background: linear-gradient(120deg, rgba(255, 255, 255, 1) 60%, rgba(240, 240, 240, 0.8) 80%, rgba(218, 157, 6, 0.6) 60%, rgba(255, 174, 24, 0.7) 70%);
-    transform: rotateY(180deg);
-    display: flex; 
-    flex-direction: column; 
+
+.search-form {
+    display: flex;
     justify-content: center;
+    margin: 5px;
+    padding: 10px;
+}
+
+.search-input {
+    margin: auto 30px;
+    width: 40%;
+    height: 3.5rem;
+}
+
+.search-button {
+    background-color: var(--primary-tone);
+    margin: auto 1.5rem;
+}
+
+.manage-buttons {
+    justify-content: flex-start;
+    margin-left: 2rem;
+    gap: 1rem;
+}
+
+.manage-buttons button, .search-button {
+    padding: 1rem;
+}
+
+.add-button {
+    background-color: rgb(39, 174, 96);
+}
+
+.add-button:hover {
+    background-color: rgb(46, 204, 113);
+}
+
+.delete-button {
+    background-color: rgb(150, 0, 0);
+}
+
+.delete-button:hover {
+    background-color: rgb(200, 0, 0);
+}
+
+.manage-list {
+    background: rgba(230, 230, 230, 0.8);
+    height: 30rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+    padding: 0 10px;
+}
+
+.list-item {
+    padding: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    text-align: center; 
-  }
-
-.feature-card-title {
-    color: var(--primary-dark-tone);
-    margin-bottom: 1rem;
-    font-size: 2rem;
-    font-weight: bold;
+    border-bottom: 2px solid #858585;
+    transition: all 0.3s ease;
 }
 
-.feature-card-brief {
+.list-item:hover {
+    background-color: rgb(255, 255, 255);
+}
+
+.list-item-title {
+    cursor: default;
+}
+
+.list-button-container {
+    width: fit-content;
+    gap: 1rem;
+}
+
+.list-button {
+    background-color: transparent;
+    padding: 0;
     color: black;
-    font-size: 1.8rem;
-    text-align: center;
-    max-width: 80%;
-    position: relative;
-    line-height: 50px;
+    border: none;
 }
 
-/* por ahora */
-.feature-card-content {
-    display: none;
+.list-button:hover {
+    box-shadow: none;
+    background-color: transparent;
+    filter: drop-shadow(0 0 10px var(--primary-dark-tone));
 }
 
-.feature-icon {
-    position: inherit;
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-    border-radius: 1em;
+.options-button {
+    -webkit-appearance: none; /* Compatibilidad con navegadores basados en WebKit */
+    -moz-appearance: none; /* Compatibilidad con Firefox */
+    appearance: none; /* Eliminar estilo predeterminado */
+    background-image: url(/option.png);
+    background-size: cover;
+    background-position: center;
+    width: 3.5rem;
+    height: 3.5rem;
 }
 
-/* form */
+.options-button:active {
+    outline : none;
+}
+
+.option-element {
+    outline: none;
+}
+
+@media (max-width: 1024px) {
+    .manage-container {
+        width: 90%;
+        padding: 1rem;
+    }
+    .back-button {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .manage-container {
+        width: 95%;
+    }
+
+    .manage-buttons {
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-input {
+        width: 90%;
+    }
+}
+
+/* *********form********* */
 .form-container {
     background-color: rgba(230, 230, 230, .9);
-    height: 40rem;
+    height: 45rem;
     width: 35rem;
     position: relative;
     display: flex;
@@ -685,23 +917,12 @@ button:hover, .button:hover {
     justify-content: center;
 }
 
-.button-container {
-    width: 80%;
-    display: flex; 
-    margin-top: 3rem;
-    justify-content: space-between;
-    align-items: center;
-    gap: 3rem;
-    padding: 0;
-    margin: 0;
-}
-
 .accept-button {
     background-color: var(--primary-tone);
     
 }
 
-.cancel-button, .delete-button {
+.cancel-button {
     background-color: rgb(150, 0, 0);
 }
 
@@ -709,221 +930,11 @@ button:hover, .button:hover {
     background-color: var(--primary-light-tone);
 }
 
-.cancel-button:hover, .delete-button:hover {
+.cancel-button:hover {
     background-color: rgb(200, 0, 0);
 }
 
 .error {
     color:rgb(200, 0, 0);
-}
-
-.index-buton {
-    background-color: black;
-    color: white;
-}
-
-.manage-container {
-    width: 75%;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    background-color: rgba(255, 237, 197, 0.5);
-    border-radius: 20px;
-    padding: 10px;
-}
-
-.search-form {
-    display: flex;
-    justify-content: center;
-    margin: 5px;
-    background-color: rgb(230, 230, 230, .4);
-    padding: 10px;
-}
-
-.search-input {
-    margin: auto 30px;
-    width: 40%;
-    height: 3.5rem;
-}
-
-.search-button {
-    background-color: var(--primary-tone);
-}
-
-.manage-buttons {
-    justify-content: flex-start;
-    margin-left: 2rem;
-}
-
-.manage-list {
-    background: rgba(230, 230, 230, 0.8);
-    height: 30rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin: 10px 0;
-    padding: 0 10px;
-}
-
-.list-item {
-    padding: 15px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #858585;
-    transition: all 0.3s ease;
-}
-
-.list-item:hover {
-    background-color: rgb(255, 255, 255);
-}
-
-.list-item-title {
-    cursor: default;
-}
-
-.add-button {
-    background-color: rgb(39, 174, 96);
-}
-
-.add-button:hover {
-    background-color: rgb(46, 204, 113);
-}
-
-.edit-button {
-    background-color: rgb(255, 130, 75);
-}
-
-.edit-button:hover {
-    background-color: rgb(255, 153, 102);
-}
-
-.details-button {
-    background-color: rgb(175, 126, 0);
-}
-
-.details-button:hover {
-    background-color: rgb(227, 136, 0);
-}
-
-.options-button {
-    -webkit-appearance: none; /* Compatibilidad con navegadores basados en WebKit */
-    -moz-appearance: none; /* Compatibilidad con Firefox */
-    appearance: none; /* Eliminar estilo predeterminado */
-    background: transparent;
-    border: none;
-    color: inherit;
-    background-image: url(/option.png);
-    background-size: cover;
-    background-position: center;
-    width: 5rem;
-    background-color: rgb(149, 149, 149);
-}
-
-.options-button:hover {
-    background-color: rgb(215, 215, 215);
-}
-
-.option-element {
-    outline: none;
-}
-
-.list-button-container {
-    width: fit-content;
-    gap: 1rem;
-}
-
-/* Contenedor de los botones */
-.pagination-button-group {
-    display: flex;
-    justify-content: center; /* Centra los botones */
-    align-items: center; /* Centra verticalmente */
-    gap: 1rem; /* Espaciado entre los botones */
-    margin: 2rem 0; /* Margen vertical */
-}
-
-/* Botones de "Anterior" y "Siguiente" */
-.pagination-button-group button {
-    background: var(--primary-gradient);
-    padding: 0.6rem 1.5rem;
-}
-
-.pagination-button-group button:hover {
-    background-color: #555; 
-    border-color: #777;
-}
-
-.pagination-button-group button:disabled {
-    background-color: #222;
-    color: #666;
-    cursor: not-allowed;
-    border-color: #444;
-}
-
-/* Select estilizado como botón */
-.pagination-button-group select {
-    -webkit-appearance: none; /* Elimina estilos nativos */
-    -moz-appearance: none;
-    appearance: none;
-    background: var(--primary-gradient);
-    color: white;
-    border: 2px solid black;
-    padding: 0.5rem;
-    font-size: 2.5rem;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-    text-transform: uppercase;
-    transition: all 0.3s ease;
-    width: auto;
-}
-
-/* Flecha personalizada del select */
-.pagination-button-group select:after {
-    content: ''; /* Elimina flecha predeterminada del select */
-}
-
-.pagination-button-group select:hover {
-    background: var(--primary-transparent-gradient);
-    border-color: #595959;
-}
-
-.pagination-button-group select:disabled {
-    color: #666;
-    cursor: not-allowed;
-}
-
-/* Opciones de select */
-.pagination-button-group select option {
-    background: var(--primary-gradient);
-    color: white;
-    font-size: 1rem;
-}
-
-
-@media (max-width: 1024px) {
-    .manage-container {
-        width: 90%;
-        padding: 1rem;
-    }
-    .back-button {
-        display: none;
-    }
-}
-
-@media (max-width: 768px) {
-    .manage-container {
-        width: 95%;
-    }
-
-    .manage-buttons {
-        gap: 0.5rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .search-input {
-        width: 90%;
-    }
+    height: 3rem;
 }
