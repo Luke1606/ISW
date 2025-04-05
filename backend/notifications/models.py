@@ -16,3 +16,5 @@ class Notification(BaseModel):
         'message': 'icontains',
         'is_read': 'exact',
     }
+
+    DB_INDEX = 10

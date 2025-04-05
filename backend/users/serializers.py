@@ -41,36 +41,37 @@ class UserListSerializer(BaseListSerializer):
 
     def get_name(self, obj):
         """
-        Combina first_name y last_name del usuario.
+        Devuelve el nombre del usuario.
         """
         return f"{obj.user.name}"
 
 
-class BaseUserSerializer(UserListSerializer):
+class CustomUserSerializer(serializers.ModelSerializer):
     """
     Serializer base para compartir características comunes entre StudentSerializer y ProfessorSerializer.
     """
-    id = serializers.UUIDField(required=True)
-    name = serializers.SerializerMethodField()
-    pic = serializers.ImageField(source='user.pic', required=False)
+    class Meta:
+        model = CustomUser
+        fields = '__all__'
+
+
+class StudentSerializer(serializers.ModelSerializer):
+    """
+    Serializer para estudiantes.
+    """
+    user = CustomUserSerializer()
 
     class Meta:
-        fields = UserListSerializer.Meta.fields + ['pic']
-
-
-class StudentSerializer(BaseUserSerializer):
-    """
-    Serializer para estudiantes que hereda de BaseUserSerializer.
-    """
-    class Meta(BaseUserSerializer.Meta):
         model = Student
-        fields = BaseUserSerializer.Meta.fields + ['faculty', 'group']
+        fields = ['user', 'faculty', 'group']
 
 
-class ProfessorSerializer(BaseUserSerializer):
+class ProfessorSerializer(serializers.ModelSerializer):
     """
-    Serializer para profesores que hereda de BaseUserSerializer.
+    Serializer para profesores.
     """
-    class Meta(BaseUserSerializer.Meta):
+    user = CustomUserSerializer()
+
+    class Meta:
         model = Professor
-        fields = BaseUserSerializer.Meta.fields + ['role']
+        fields = ['user', 'role']
