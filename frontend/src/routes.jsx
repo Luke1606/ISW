@@ -3,7 +3,6 @@ import HomeComponent from "./components/home/HomeComponent"
 import LoginComponent from "./components/login/LoginComponent"
 import ProtectedRoutesComponent from "./components/ProtectedRoutesComponent"
 import ListComponent from "./components/management/ListComponent"
-import FormComponent from "./components/management/Forms/FormComponent"
 import NotificationCenter from "./components/notifications/NotificationCenter"
 import ErrorComponent from "./components/common/ErrorComponent"
 
@@ -38,10 +37,6 @@ const routes = [
                     {
                         path: "list/:datatype/:relatedUserId?",
                         element: <ListComponent />,
-                    },
-                    {
-                        path: "form/:datatype/:relatedUserId?/:view?",
-                        element: <FormComponent />,
                     },
                 ],
             },

@@ -816,10 +816,7 @@ button:hover, .button:hover {
     background-position: center;
     width: 3.5rem;
     height: 3.5rem;
-}
-
-.options-button:active {
-    outline : none;
+    outline: none;
 }
 
 .option-element {
