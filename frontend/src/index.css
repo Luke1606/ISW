@@ -865,7 +865,7 @@ button:hover, .button:hover {
     margin-bottom: 50px;
     font-family: Arial, sans-serif; 
     font-size: 1.3rem;
-    border-radius: 50px;
+    border-radius: 10px;
     box-shadow: 0 0 20px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -934,4 +934,15 @@ button:hover, .button:hover {
 .error {
     color:rgb(200, 0, 0);
     height: 3rem;
+}
+
+.manage-form {
+    margin: 0;
+    height: fit-content;
+}
+
+.form-select {
+    width: 80%;
+    height: 3rem;
+    font-size: 1.5rem;
 }

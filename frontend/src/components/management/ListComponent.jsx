@@ -1,10 +1,10 @@
-import { Suspense } from "react"
-import { useParams } from "react-router-dom"
-import { Search, Plus, Edit, Trash2, FileText, Check, X } from "lucide-react"
-import { useListDataStates, useItemSelectionControl, useListModals, usePermisions } from "../../hooks/management/useList"
-import Modal from "../common/Modal"
-import PaginationButtons from "../common/PaginationButtons"
-import FormComponent from "./Forms/FormComponent"
+import { Suspense } from 'react'
+import { useParams } from 'react-router-dom'
+import { Search, Plus, Edit, Trash2, FileText, Check, X } from 'lucide-react'
+import { useListDataStates, useItemSelectionControl, useListModals, usePermisions } from '../../hooks/management/useList'
+import Modal from '../common/Modal'
+import PaginationButtons from '../common/PaginationButtons'
+import FormComponent from './Forms/FormComponent'
 
 
 const List = () => {
@@ -36,36 +36,36 @@ const List = () => {
     } = useListModals()
 
     return (
-        <div className="manage-container">
+        <div className='manage-container'>
             {/* Barra de busqueda */}
             <form 
-                role="search" 
-                className="search-form"
+                role='search' 
+                className='search-form'
                 onSubmit={handleSearch}
                 >
                 <input
-                    className="form-input search-input"
-                    type="text"
-                    name="search"
-                    placeholder="Buscar en Akademos..."
+                    className='form-input search-input'
+                    type='text'
+                    name='search'
+                    placeholder='Buscar en Akademos...'
                     />
 
                 <button
-                    title="Buscar"
-                    type="submit"
-                    className="search-button"
+                    title='Buscar'
+                    type='submit'
+                    className='search-button'
                     >
                     <Search size={40}/>
                 </button>
             </form>
             
             <div
-                className="button-container manage-buttons"
+                className='button-container manage-buttons'
                 >
                 { permissions.add &&
                     <button 
-                        title="Agregar"
-                        className="add-button"
+                        title='Agregar'
+                        className='add-button'
                         onClick={() => openManageForm({datatype: datatype})}
                         >
                         <Plus size={40}/>
@@ -73,8 +73,8 @@ const List = () => {
 
                     { permissions.del && 
                         <button 
-                            title="Eliminar varios"
-                            className="delete-button"
+                            title='Eliminar varios'
+                            className='delete-button'
                             onClick={() => setdeleteConfirmationModalVisibility(true)}
                             >
                             <Trash2 size={40}/>
@@ -83,25 +83,25 @@ const List = () => {
 
             {/* Lista de elementos */}
             <Suspense
-                fallback={<span className="spinner"/>}
+                fallback={<span className='spinner'/>}
                 >
                 <div
-                    className="manage-list"
+                    className='manage-list'
                     >
                     { loading? 
-                    <span className="spinner"/>
+                    <span className='spinner'/>
                     :
                     currentData?.length > 0?
                         currentData?.map((item, index) => (
-                            <div key={`${item.id}-${index}`} className="list-item">
-                                <h3 className="list-item-title">
+                            <div key={`${item.id}-${index}`} className='list-item'>
+                                <h3 className='list-item-title'>
                                     {item.name}
                                 </h3>
 
-                                <div className="list-button-container button-container">
+                                <div className='list-button-container button-container'>
                                     <button
-                                        title="Ver detalles"
-                                        className="details-button list-button"
+                                        title='Ver detalles'
+                                        className='details-button list-button'
                                         onClick={() => openManageForm({datatype: datatype, idData: item.id, view: true})}
                                         >
                                         <FileText size={50}/>
@@ -109,8 +109,8 @@ const List = () => {
 
                                     { permissions.edit && 
                                         <button 
-                                            title="Editar"
-                                            className="edit-button list-button"
+                                            title='Editar'
+                                            className='edit-button list-button'
                                             onClick={() => openManageForm({datatype: datatype, idData: item.id})}
                                             >
                                             <Edit size={50}/>
@@ -118,8 +118,8 @@ const List = () => {
 
                                     { permissions.del && 
                                         <button 
-                                            title="Eliminar"
-                                            className="delete-button list-button"
+                                            title='Eliminar'
+                                            className='delete-button list-button'
                                             onClick={() => {
                                                 setSelectedItemId(item.id)
                                                 setdeleteConfirmationModalVisibility(true)
@@ -128,24 +128,24 @@ const List = () => {
                                         </button>}
                                 
                                     <select 
-                                        className="button options-button list-button" 
-                                        title="Más opciones"
-                                        defaultValue={""}
+                                        className='button options-button list-button' 
+                                        title='Más opciones'
+                                        defaultValue={''}
                                         onChange={handleOptions}
                                         onClick={()=>setSelectedItemId(item.id)}
                                         >
                                         <option 
-                                            className="option-element" 
-                                            value="" 
+                                            className='option-element' 
+                                            value='' 
                                             disabled
                                             >
-                                            Seleccione una opción...
+                                            -- Seleccione una opción --
                                         </option>
 
                                         {itemOptions.map((option, index) => (
                                             <option
                                                 key={index}
-                                                className="option-element"
+                                                className='option-element'
                                                 value={option.value}
                                                 >
                                                 {option.label}
@@ -156,7 +156,7 @@ const List = () => {
                             </div>
                         ))
                     : 
-                        <h3 className="list-item-title">
+                        <h3 className='list-item-title'>
                             No hay elementos que mostrar.
                         </h3>}
                 </div>
@@ -168,27 +168,27 @@ const List = () => {
             {/* modal de confirmacion de eliminado */}
             <Modal isOpen={deleteConfirmationModalVisibility}>
                 <div 
-                    className="confirmation-modal"
+                    className='confirmation-modal'
                     >
-                    <h2 className="modal-title">
+                    <h2 className='modal-title'>
                         Confirmar eliminación
                     </h2>
 
-                    <p className="modal-content">
+                    <p className='modal-content'>
                         ¿Está seguro de que desea continuar?
                     </p>
 
-                    <div className="button-container modal-button-container">
+                    <div className='button-container modal-button-container'>
                         <button 
-                            className="accept-button modal-button"
-                            title="Aceptar"
+                            className='accept-button modal-button'
+                            title='Aceptar'
                             onClick={() => handleDelete(datatype, selectedItemId, relatedUserId)}>
                             <Check size={30}/>
                         </button>
                         
                         <button 
-                            className="cancel-button modal-button"
-                            title="Cancelar"
+                            className='cancel-button modal-button'
+                            title='Cancelar'
 
                             onClick={() => setdeleteConfirmationModalVisibility(false)}>
                             <X size={30}/>

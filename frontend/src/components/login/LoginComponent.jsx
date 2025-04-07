@@ -27,16 +27,16 @@ const LoginComponent = () => {
         () =>
             Yup.object().shape({
                 username: Yup.string()
-                    .min(4, "El nombre de usuario debe tener al menos 4 caracteres")
-                    // .required("El nombre de usuario es obligatorio") como prueba
-                    ,
+                    .min(3, 'El nombre de usuario debe tener al menos 4 caracteres')
+                    .required('El nombre de usuario es obligatorio')
+                    .matches(/^[a-zA-Z0-9]*$/, 'El nombre no puede contener caracteres especiales'),
                 password: Yup.string()
                     .min(10, "La contraseña debe tener al menos 10 caracteres")
                     .matches(/[a-z]/, "La contraseña debe contener al menos una letra minúscula")
                     .matches(/[A-Z]/, "La contraseña debe contener al menos una letra mayúscula")
                     .matches(/[0-9]/, "La contraseña debe contener al menos un número")
                     .matches(/[\W_]/, "La contraseña debe contener al menos un caracter especial")
-                    // .required("La contraseña es obligatoria"), como prueba
+                    .required("La contraseña es obligatoria"),
             }),
         [])
 
@@ -69,7 +69,6 @@ const LoginComponent = () => {
                     id="username"
                     placeholder="Ingrese su nombre de usuario"
                     autoComplete="username"
-                    required
                     {...formik.getFieldProps("username")}
                 />
 
@@ -95,7 +94,6 @@ const LoginComponent = () => {
                     name="password"
                     placeholder="Ingrese su contraseña"
                     autoComplete="current-password"
-                    required
                     {...formik.getFieldProps("password")}
                 />
 

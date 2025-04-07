@@ -4,9 +4,11 @@ import ManagementService from '../../services/ManagementService'
 import NotificationService from '../../services/NotificationService'
 
 const useForm = (datatype, idData) => {
-    const [prevValues, setPrevValues] = useState(null)
+    const [ loading, setLoading ] = useState(false)
+    const [ prevValues, setPrevValues ] = useState(null)
 
     const getPrevValues = useDebouncedApiCall(async (datatype, id) => {
+        setLoading(true)
         try {
             const response = await ManagementService.getData(datatype, id)
             setPrevValues(response)
@@ -16,11 +18,14 @@ const useForm = (datatype, idData) => {
                 message: error.message
             }
             NotificationService.showToast(notification, 'error')
+        } finally {
+            setLoading(false)
         }
     })
 
     useEffect(() => {
-        getPrevValues(datatype, idData)
+        if (idData)
+            getPrevValues(datatype, idData)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [datatype, idData])
     
@@ -29,7 +34,7 @@ const useForm = (datatype, idData) => {
                             : 
                             ManagementService.createData
 
-    return { prevValues, handleSubmit }
+    return { loading, prevValues, handleSubmit }
 }
 
 export default useForm

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 
 import datatypes from "../../../js-files/Datatypes"
 import { useDropPopup } from "../../../hooks/common/usePopup"
@@ -13,7 +14,7 @@ const FormComponent = ({formParams}) => {
     const idData = formParams.idData
     const view = formParams.view
 
-    const { prevValues, handleSubmit } = useForm(datatype, idData)
+    const { loading, prevValues, handleSubmit } = useForm(datatype, idData)
 
     const popupId = 'form-popup'
     const { 
@@ -23,18 +24,22 @@ const FormComponent = ({formParams}) => {
         toggleVisible,
     } = useDropPopup(popupId)
 
-    const params = {
-        values: {
+    const values = {
             prevValues, 
             openerRef, 
             dropPopupRef, 
             isVisible
-        },
-        functions: {
-            handleSubmit,
-            toggleVisible
-        } 
     }
+    
+    const functions = {
+        handleSubmit,
+        toggleVisible
+    }
+
+    if (loading) {
+        return <span className="spinner"/>
+    }
+
 
     let specificForm
 
@@ -43,19 +48,19 @@ const FormComponent = ({formParams}) => {
             specificForm = view?
                 <ReadOnlyEvidenceForm prevValues={prevValues}/> 
                 : 
-                <EvidenceForm values={params.values} functions={params.functions}/>
+                <EvidenceForm values={values} functions={functions}/>
             break 
         case datatypes.request:
             specificForm = view?
                 <ReadOnlyRequestForm prevValues={prevValues}/>
                 :
-                <RequestForm values={params.values} functions={params.functions}/>
+                <RequestForm values={values} functions={functions}/>
             break
         case datatypes.defense_tribunal:    
             specificForm = view?
                 <ReadOnlyDefenseTribunalForm prevValues={prevValues}/>
                 :
-                <DefenseTribunalForm values={params.values} functions={params.functions}/>
+                <DefenseTribunalForm values={values} functions={functions}/>
             break
         // case datatypes.tribunal:
         //     children = <TribunalAprovalForm values={params.values} functions={params.functions}/>
@@ -64,14 +69,14 @@ const FormComponent = ({formParams}) => {
             specificForm = view?
                 <ReadOnlyDefenseActForm prevValues={prevValues}/>
                 :
-                <DefenseActForm values={params.values} functions={params.functions}/>
+                <DefenseActForm values={values} functions={functions}/>
             break
             case datatypes.user.professor:
             case datatypes.user.student:
                 specificForm = view?
                     <ReadOnlyUserForm prevValues={prevValues}/>
                     :
-                    <UserForm datatype={datatype} values={params.values} functions={params.functions}/>
+                    <UserForm values={values} functions={functions}/>
             break
             default:
                 console.warn(`El tipo de dato ${datatype} no coincide con ningun formulario configurado.`);
