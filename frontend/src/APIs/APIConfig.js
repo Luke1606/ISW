@@ -44,19 +44,17 @@ export const setupInterceptors = (instance) => {
                                 authApi.deleteToken(tokens.ACCESS_TOKEN_KEY)
                                 authApi.deleteToken(tokens.REFRESH_TOKEN_KEY)
                                 console.log(error)
-                                return Promise.reject("Sesión expirada. Por favor, inicia sesión nuevamente.")
+                                throw new Error("Sesión expirada. Por favor, inicia sesión nuevamente.")
                             } 
                         } 
                     }
                     break
-                case 402:
-                    throw new Error(`Payment Required: ${error.response}`)
                 case 403:
-                    throw new Error(`Forbidden: ${error.response}`)
+                    throw new Error("No tiene acceso a este recurso")
                 case 404:
-                    throw new Error(`Not Found: ${error.response}`)
+                    throw new Error("Recurso no encontrado")
                 case 500:
-                    throw new Error(`Internal Server Issue: ${error.response}`)
+                    throw new Error("Problemas del servidor")
                 default:
                     return Promise.reject(error)
             }

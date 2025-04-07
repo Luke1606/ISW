@@ -7,10 +7,7 @@ const handleRequest = async (method, url, options = {}) => {
         const response = await managementApi[method](url, options)
         return response.data
     } catch (error) {
-        const errorStatus = error.request.status
-        const errorHeader = error.request.statusText
-        const errorMessage = error.response.data.error
-        throw new Error(`${errorStatus} ${errorHeader}: ${errorMessage}`)
+        throw new Error(error.message || "Error desconocido. Se está trabajando en la causa")
     }
 }
 
