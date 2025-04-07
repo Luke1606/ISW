@@ -1,32 +1,39 @@
 import { Suspense } from "react"
 import { useParams } from "react-router-dom"
-import useList from "../../hooks/management/useList"
+import { Search, Plus, Edit, Trash2, FileText, Check, X } from "lucide-react"
+import { useListDataStates, useItemSelectionControl, useListModals, usePermisions } from "../../hooks/management/useList"
 import Modal from "../common/Modal"
 import PaginationButtons from "../common/PaginationButtons"
-import { 
-    Search, 
-    Plus, 
-    Edit, 
-    Trash2,
-    FileText, 
-    Check, 
-    X,
-} from "lucide-react"
+import FormComponent from "./Forms/FormComponent"
+
 
 const List = () => {
     const { datatype, relatedUserId } = useParams()
 
     const {
-        formik, 
-        state, 
-        setState,
-        permissions, 
-        options, 
-        handleDelete, 
-        handleOptions, 
-        navigate,
-        paginationParams
-    } = useList(datatype, relatedUserId)
+        currentData,
+        loading,
+        paginationParams,
+        handleSearch,
+        handleDelete
+    } = useListDataStates(datatype, relatedUserId)
+
+    const permissions = usePermisions(datatype)
+
+    const {
+        itemOptions,
+        handleOptions,
+        selectedItemId,
+        setSelectedItemId
+    } = useItemSelectionControl(datatype)
+
+    const {
+        openManageForm,
+        manageFormParams,
+        manageFormModalVisibility,
+        deleteConfirmationModalVisibility,
+        setdeleteConfirmationModalVisibility,
+    } = useListModals()
 
     return (
         <div className="manage-container">
@@ -34,13 +41,14 @@ const List = () => {
             <form 
                 role="search" 
                 className="search-form"
-                onSubmit={formik.handleSubmit}
+                onSubmit={handleSearch}
                 >
                 <input
                     className="form-input search-input"
                     type="text"
+                    name="search"
                     placeholder="Buscar en Akademos..."
-                    {...formik.getFieldProps("search")}/>
+                    />
 
                 <button
                     title="Buscar"
@@ -58,7 +66,8 @@ const List = () => {
                     <button 
                         title="Agregar"
                         className="add-button"
-                        onClick={() => navigate(`/form/${datatype}`)}>
+                        onClick={() => openManageForm({datatype: datatype})}
+                        >
                         <Plus size={40}/>
                     </button>}
 
@@ -66,12 +75,8 @@ const List = () => {
                         <button 
                             title="Eliminar varios"
                             className="delete-button"
-                            onClick={() => {
-                            setState((prev) => ({
-                                ...prev,
-                                deleteConfirmationModalVisibility: true
-                                }))   
-                            }}>
+                            onClick={() => setdeleteConfirmationModalVisibility(true)}
+                            >
                             <Trash2 size={40}/>
                         </button>}
                 </div>
@@ -83,77 +88,85 @@ const List = () => {
                 <div
                     className="manage-list"
                     >
-                    { state?.data?.[state.currentPage]?.length > 0? state.data[state.currentPage].map((item, index) => (
-                        <div key={`${item.id}-${index}`} className="list-item">
-                            <h3 className="list-item-title">
-                                {item.name}
-                            </h3>
+                    { loading? 
+                    <span className="spinner"/>
+                    :
+                    currentData?.length > 0?
+                        currentData?.map((item, index) => (
+                            <div key={`${item.id}-${index}`} className="list-item">
+                                <h3 className="list-item-title">
+                                    {item.name}
+                                </h3>
 
-                            <div className="list-button-container button-container">
-                                { permissions.edit && 
-                                    <button 
-                                        title="Editar"
-                                        className="edit-button list-button"
-                                        onClick={() => navigate(`/form/${datatype}/${item.id}`)}>
-                                        <Edit size={50}/>
-                                    </button>}
+                                <div className="list-button-container button-container">
+                                    <button
+                                        title="Ver detalles"
+                                        className="details-button list-button"
+                                        onClick={() => openManageForm({datatype: datatype, idData: item.id, view: true})}
+                                        >
+                                        <FileText size={50}/>
+                                    </button>
 
-                                { permissions.del && 
-                                    <button 
-                                        title="Eliminar"
-                                        className="delete-button list-button"
-                                        onClick={() => {
-                                            setState((prev) => ({
-                                                ...prev, 
-                                                selectedItemId: item.id,
-                                                deleteConfirmationModalVisibility: true
-                                            }))   
-                                        }}>
-                                        <Trash2 size={50}/>
-                                    </button>}
-
-                                <button
-                                    title="Ver detalles"
-                                    className="details-button list-button"
-                                    onClick={() => navigate(`/form/${datatype}/${item.id}/${true}`)}>
-                                    <FileText size={50}/>
-                                </button>
-
-                                <select 
-                                    className="button options-button list-button" 
-                                    title="Más opciones"
-                                    onChange={handleOptions}
-                                    >
-                                    <option className="option-element" value="" disabled>Seleccione una opción...</option>
-                                    {options.map((option, index) => (
-                                        <option
-                                            key={index}
-                                            className="option-element"
-                                            value={option.value}
+                                    { permissions.edit && 
+                                        <button 
+                                            title="Editar"
+                                            className="edit-button list-button"
+                                            onClick={() => openManageForm({datatype: datatype, idData: item.id})}
                                             >
-                                            {option.label}
+                                            <Edit size={50}/>
+                                        </button>}
+
+                                    { permissions.del && 
+                                        <button 
+                                            title="Eliminar"
+                                            className="delete-button list-button"
+                                            onClick={() => {
+                                                setSelectedItemId(item.id)
+                                                setdeleteConfirmationModalVisibility(true)
+                                                }}>
+                                            <Trash2 size={50}/>
+                                        </button>}
+                                
+                                    <select 
+                                        className="button options-button list-button" 
+                                        title="Más opciones"
+                                        defaultValue={""}
+                                        onChange={handleOptions}
+                                        onClick={()=>setSelectedItemId(item.id)}
+                                        >
+                                        <option 
+                                            className="option-element" 
+                                            value="" 
+                                            disabled
+                                            >
+                                            Seleccione una opción...
                                         </option>
-                                    ))}
-                                </select>
+
+                                        {itemOptions.map((option, index) => (
+                                            <option
+                                                key={index}
+                                                className="option-element"
+                                                value={option.value}
+                                                >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                    ))
+                        ))
                     : 
-                    <h3 className="list-item-title">
-                        No hay elementos que mostrar. <br />
-                        {/* mensaje de error */}
-                        { state.error && 
-                        <span className='error'>
-                            {state.error.message}
-                        </span> }
-                    </h3>}
+                        <h3 className="list-item-title">
+                            No hay elementos que mostrar.
+                        </h3>}
                 </div>
 
-                <PaginationButtons paginationParams={paginationParams}/>
+                <PaginationButtons 
+                    paginationParams={paginationParams}/>
             </Suspense>
             
             {/* modal de confirmacion de eliminado */}
-            <Modal isOpen={state.deleteConfirmationModalVisibility}>
+            <Modal isOpen={deleteConfirmationModalVisibility}>
                 <div 
                     className="confirmation-modal"
                     >
@@ -169,7 +182,7 @@ const List = () => {
                         <button 
                             className="accept-button modal-button"
                             title="Aceptar"
-                            onClick={() => handleDelete(datatype, state.selectedItemId, relatedUserId)}>
+                            onClick={() => handleDelete(datatype, selectedItemId, relatedUserId)}>
                             <Check size={30}/>
                         </button>
                         
@@ -177,13 +190,15 @@ const List = () => {
                             className="cancel-button modal-button"
                             title="Cancelar"
 
-                            onClick={() => setState(
-                                (prev) => ({ ...prev, deleteConfirmationModalVisibility: false })
-                            )}>
+                            onClick={() => setdeleteConfirmationModalVisibility(false)}>
                             <X size={30}/>
                         </button>
                     </div>
                 </div>
+            </Modal>
+
+            <Modal isOpen={manageFormModalVisibility}>
+                <FormComponent formParams={manageFormParams}/>
             </Modal>
         </div>
     )

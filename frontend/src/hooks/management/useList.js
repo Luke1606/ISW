@@ -1,125 +1,203 @@
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useFormik } from 'formik'
 import useDebouncedApiCall from '../common/useDebouncedApiCall'
 import ManagementService from '../../services/ManagementService'
 import { AuthContext } from "../../contexts/AuthContext"
 import datatypes from '../../js-files/Datatypes'
 
-const useList = (datatype, relatedUserId) => {
-    const [state, setState] = useState({
-        data: [[]],
-        currentPage: 0,
-        totalPages: 0,
-        searchTerm: '',
-        error: null,
-        deleteConfirmationModalVisibility: false,
-        selectedItemId: null,
-    })
-    const navigate = useNavigate()
-    const { user } = useContext(AuthContext)
-    const permissions = usePermisions(datatype, user)
-    const [ options, setOptions ] = useState([])
-
-    const formik = useFormik({
-        initialValues: {search: ""},
-        onSubmit: (values) => {
-            setState(prev => ({ ...prev, searchTerm: values.search }))
-            getData(values.search)
-        }
-    })
-
-    const getData = useDebouncedApiCall(async (searchTerm) => {
+export const useListDataStates = (datatype, relatedUserId) => {
+    const [ loading, setLoading ] = useState(false)
+    const [ data, setData ] = useState({})
+    const [ currentPage, setCurrentPage ] = useState(0)
+    const [ totalPages, setTotalPages ] = useState(0)
+    const [ currentData, setCurrentData ] = useState([])
+    
+    const getData = useDebouncedApiCall(async (searchTerm="") => {
         try {
-            setState(prev => ({ ...prev, loading: true }))
+            setLoading(true)
             const response = await ManagementService.getAllData(datatype, searchTerm, relatedUserId)
-            setState(prev => ({
-                ...prev,
-                data: response.data || [[]],
-                totalPages: response.total_pages || 0,
-                currentPage: 0,
-                loading: false,
-            }))
+            setData(response.data || [[]])
+            setTotalPages(response.totalPages || 0)
+            setCurrentPage(0)
+            setCurrentData(data[0])
         } catch (error) {
-            setState(prev => ({ ...prev, error, loading: false }))
+            console.error(error)
+        } finally {
+            setLoading(false)
         }
     })
 
-    const getOptions = useDebouncedApiCall(async (datatype, user, selectedItemId) => {
-        let options = []
-        if (datatype === datatypes.student) {
-            options.push({ value: `/tree`, label: 'Listar Evidencias' })
-    
-            const pendingRequests = await hasPendingRequests(selectedItemId)
-            if (user?.role === datatypes.user.dptoInf && pendingRequests)
-                options.push({ value: `/form`, label: 'Aprobar solicitud', params: { id: selectedItemId, datatype: datatypes.request } });
-    
-            const unconfiguredDefenseTribunal = await hasUnconfiguredDefenseTribunal(selectedItemId)
-            if (user?.role === datatypes.user.dptoInf && unconfiguredDefenseTribunal)
-                options.push({ value: `/form`, label: 'Configurar defensa y tribunal', params: { id: selectedItemId, datatype: datatypes.defense_tribunal } });
-    
-            if (user?.role !== datatypes.user.dptoInf && !unconfiguredDefenseTribunal)
-                options.push({ value: `/form`, label: 'Ver datos de defensa y tribunal', params: { id: selectedItemId, datatype: datatypes.defense_tribunal, readOnly: true } });
-    
-            const pendingTribunal = await hasPendingTribunal(selectedItemId);
-            if (user?.role === datatypes.user.decan && pendingTribunal) 
-                options.push({ value: `/form`, label: 'Aprobar tribunal', params: { id: selectedItemId, datatype: datatypes.tribunal } })
-    
-            if (user?.role !== datatypes.user.professor)
-                options.push({ value: `/tree`, label: 'Listar actas de defensa', params: { id: selectedItemId, datatype: datatypes.defense_act } })
-    
-            if (user?.role === datatypes.user.professor)
-                options.push({ value: `/tree`, label: 'Gestionar actas de defensa', params: { id: selectedItemId, datatype: datatypes.defense_act } })
-        }
-        setOptions(options)
-    }, 300)
+    useEffect(() => {
+        getData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     useEffect(() => {
-        getData(state.searchTerm)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [state.searchTerm])
-    
-    useEffect(() => {
-        getOptions(datatype, user, state.selectedItemId)
+        setCurrentData(data[currentPage])
+    }, [data, currentPage])
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [datatype, state.selectedItemId])
+    const handleSearch = (e) => {
+        e.preventDefault()
+        const searchTerm = e.target.elements.search.value
+        getData(searchTerm)
+    }
 
+    // logica de eliminacion
     const handleDelete = async (datatype, id, relatedUserId) => {
         try {
             await ManagementService.deleteData(datatype, id, relatedUserId)
-            getData(state.searchTerm)
+            getData()
         } catch (error) {
-            setState(prev => ({ ...prev, error }))
+            console.error(error)
         }
-    }
-
-    const handleOptions = (event) => {
-        const value = event.target.value;
-        if (value) {
-            navigate(value)
-        }
-    }
-    
-    // logica de paginado
-    const [ currentPage, setCurrentPage ] = useState(0)
-    
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage)
     }
 
     const paginationParams = {
-        totalPages: state?.totalPages,
+        totalPages: totalPages,
         currentPage: currentPage,
-        handlePageChange: handlePageChange,
+        handlePageChange: setCurrentPage,
         pageControl: true,
         loop: false,
     }
 
-    return { formik, state, setState, permissions, options, handleDelete, handleOptions, navigate, paginationParams }
+    return {
+        currentData,
+        loading,
+        paginationParams,
+        handleSearch,
+        handleDelete
+    }
 }
 
-const usePermisions = (datatype, user) => {
+export const useItemSelectionControl = (datatype) => {
+    const [ selectedItemId, setSelectedItemId ] = useState(null)
+    const [ itemOptions, setItemOptions ] = useState([])
+    const { user } = useContext(AuthContext)
+
+    const getOptions = useDebouncedApiCall(async () => {
+        let options = []
+
+        const hasPendingRequests = async (studentId) => {
+            try {   
+                if(await ManagementService.getData('solicitud_pendiente', studentId))
+                    return true
+                return false
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        
+        const hasUnconfiguredDefenseTribunal = async (studentId) => {
+            try {
+                if(await ManagementService.getData('defensa_tribunal_sin_configurar', studentId))
+                    return true
+                return false
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        
+        const hasPendingTribunal = async (studentId) => {
+            try {
+                if(await ManagementService.getData('tribunal_pendiente', studentId))
+                    return true
+                return false   
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        if (datatype === datatypes.user.student) {
+            options.push({ 
+                value: `/list/${datatypes.evidence}`, label: 'Listar Evidencias' 
+            })
+            if (selectedItemId) {
+                const pendingRequests = await hasPendingRequests(selectedItemId) || false
+
+                if (user?.role === datatypes.user.dptoInf && pendingRequests)
+                    options.push({ 
+                        value: `/form/${datatypes.request}/${selectedItemId}`, label: 'Aprobar solicitud' 
+                    })
+        
+                const unconfiguredDefenseTribunal = await hasUnconfiguredDefenseTribunal(selectedItemId) || true
+
+                if (user?.role === datatypes.user.dptoInf && unconfiguredDefenseTribunal)
+                    options.push({ 
+                        value: `/form/${datatypes.defense_tribunal}/${selectedItemId}`, label: 'Configurar defensa y tribunal'
+                    })
+        
+                if (user?.role !== datatypes.user.dptoInf && !unconfiguredDefenseTribunal)
+                    options.push({ 
+                        value: `/form/${datatypes.defense_tribunal}/${selectedItemId}/${true}`, label: 'Ver datos de defensa y tribunal' 
+                    })
+        
+                const pendingTribunal = await hasPendingTribunal(selectedItemId) || false
+                if (user?.role === datatypes.user.decan && pendingTribunal) 
+                    options.push({ 
+                        value: `/form/${datatypes.tribunal}/${selectedItemId}`, label: 'Aprobar tribunal'
+                    })
+        
+                if (user?.role !== datatypes.user.professor && !unconfiguredDefenseTribunal && !pendingTribunal)
+                    options.push({ 
+                        value: `/list/${datatypes.defense_act}`, label: 'Listar actas de defensa'
+                    })
+
+                if (user?.role === datatypes.user.professor && !unconfiguredDefenseTribunal && !pendingTribunal)
+                    options.push({
+                        value: `/list/${datatypes.defense_act}`, label: 'Gestionar actas de defensa'
+                    })
+            }
+        }
+        setItemOptions(options)
+    }, 300)
+
+
+    useEffect(() => {
+        if (datatype===datatypes.user.student)
+            getOptions()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [datatype, selectedItemId, user])
+
+    // logica para cuando se seleccione una opcion de un elemento estudiante
+    const navigate = useNavigate()
+
+    const handleOptions = (event) => {
+        const value = event.target.value
+        if (value) {
+            navigate(value)
+        }
+    }
+
+    return {
+        itemOptions,
+        handleOptions,
+        selectedItemId,
+        setSelectedItemId
+    }
+}
+
+export const useListModals = (datatype) => {
+    const [deleteConfirmationModalVisibility, setdeleteConfirmationModalVisibility] = useState(false)
+    const [manageFormModalVisibility, setmanageFormModalVisibility] = useState(false)
+    const [manageFormParams, setManageFormParams] = useState({})
+
+    const openManageForm = (params={ datatype: datatype }) => {
+        setManageFormParams(params)
+        setmanageFormModalVisibility(true)
+    }
+
+    return {
+        openManageForm,
+        manageFormParams,
+        manageFormModalVisibility,
+        deleteConfirmationModalVisibility,
+        setdeleteConfirmationModalVisibility,
+    }
+}
+
+export const usePermisions = (datatype) => {
+    const { user } = useContext(AuthContext)
+
     let permissions = {
         add: false,
         edit: false,
@@ -159,26 +237,5 @@ const usePermisions = (datatype, user) => {
             }
             break
     }
-
     return permissions
 }
-
-const hasPendingRequests = async (studentId) => {
-    if(await ManagementService.getData(`/solicitud_pendiente/${studentId}`).data)
-        return true
-    return false
-}
-
-const hasUnconfiguredDefenseTribunal = async (studentId) => {
-    if(await ManagementService.getData(`/defensa_tribunal_sin_configurar/${studentId}`).data)
-        return true
-    return false
-}
-
-const hasPendingTribunal = async (studentId) => {
-    if(await ManagementService.getData(`/tribunal_pendiente/${studentId}`).data)
-        return true
-    return false
-}
-
-export default useList
