@@ -3,7 +3,7 @@
 // import useGenericForm from "../../../hooks/common/useGenericForm"
 // import Modal from "../../common/Modal"
 
-const RequestForm = (params) => {
+export const RequestForm = (params) => {
     // return (
     //     <>
     //         <label className="form-label" htmlFor="usuario"> Nombre del estudiante: </label>
@@ -21,8 +21,6 @@ const RequestForm = (params) => {
     //     </>)
 }
 
-const ReadOnlyRequestForm = (prevValues) => {
+export const ReadOnlyRequestForm = (prevValues) => {
 
 }
-
-export { RequestForm, ReadOnlyRequestForm }

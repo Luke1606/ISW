@@ -3,7 +3,7 @@
 // import useGenericForm from "../../../hooks/common/useGenericForm"
 // import Modal from "../../common/Modal"
 
-const DefenseActForm = (params) => {
+export const DefenseActForm = (params) => {
     // return (
     //     <>
     //         <label className="form-label" htmlFor="nombre"> Nombre: </label>
@@ -18,8 +18,6 @@ const DefenseActForm = (params) => {
     //     )
 }
 
-const ReadOnlyDefenseActForm = (prevValues) => {
+export const ReadOnlyDefenseActForm = (prevValues) => {
 
 }
-
-export { DefenseActForm, ReadOnlyDefenseActForm }

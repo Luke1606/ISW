@@ -3,7 +3,7 @@
 // import useGenericForm from "../../../hooks/common/useGenericForm"
 // import Modal from "../../common/Modal"
 
-const DefenseTribunalForm = (params) => {
+export const DefenseTribunalForm = (params) => {
     // return (
     //     <>
     //         <label className="form-label" htmlFor="">Seleccione una fecha:</label>
@@ -23,11 +23,11 @@ const DefenseTribunalForm = (params) => {
     //     </>)
 }
 
-const ReadOnlyDefenseTribunalForm = (prevValues) => {
+export const ReadOnlyDefenseTribunalForm = (prevValues) => {
 
 }
 
-// const TribunalAprovalForm = (params) => {
+// export const TribunalAprovalForm = (params) => {
 
 //     return (
 //         <>
@@ -48,5 +48,3 @@ const ReadOnlyDefenseTribunalForm = (prevValues) => {
 //             <input className="form-input" type="radio" />
 //         </>
 //         )
-
-export { DefenseTribunalForm, ReadOnlyDefenseTribunalForm }

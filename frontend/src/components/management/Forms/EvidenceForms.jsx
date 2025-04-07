@@ -4,7 +4,7 @@
 // import Modal from "../../common/Modal"
 // import { useNavigate } from "react-router-dom"
 
-const EvidenceForm = ({values, functions}) => {
+export const EvidenceForm = ({values, functions}) => {
 //     const initialValues = {
 //         name: values.prevValues.name || "",
 //         description: values.prevValues.description || "",
@@ -166,7 +166,7 @@ const EvidenceForm = ({values, functions}) => {
 //         </>)
 }
 
-const ReadOnlyEvidenceForm = ({prevValues}) => {
+export const ReadOnlyEvidenceForm = ({prevValues}) => {
 //     const navigate = useNavigate()
 //     return (
 //         <>
@@ -214,5 +214,3 @@ const ReadOnlyEvidenceForm = ({prevValues}) => {
 //         </>
 //     )
 }
-
-export { EvidenceForm, ReadOnlyEvidenceForm }

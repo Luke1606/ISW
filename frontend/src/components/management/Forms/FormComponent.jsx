@@ -1,5 +1,4 @@
 
-import { useParams } from "react-router-dom"
 import datatypes from "../../../js-files/Datatypes"
 import { useDropPopup } from "../../../hooks/common/usePopup"
 import useForm from "../../../hooks/management/useForm"
@@ -9,11 +8,13 @@ import { DefenseTribunalForm, ReadOnlyDefenseTribunalForm } from "./DefenseTribu
 import { DefenseActForm, ReadOnlyDefenseActForm } from "./DefenseActForms"
 import { UserForm, ReadOnlyUserForm } from "./UserForms"
 
+const FormComponent = ({formParams}) => {
+    const datatype = formParams.datatype
+    const idData = formParams.idData
+    const view = formParams.view
 
-const FormComponent = () => {
-    const { dataType, idData, readOnly }= useParams()
-    const { prevValues, handleSubmit } = useForm(dataType, idData, ) 
-    
+    const { prevValues, handleSubmit } = useForm(datatype, idData)
+
     const popupId = 'form-popup'
     const { 
         openerRef,
@@ -35,51 +36,48 @@ const FormComponent = () => {
         } 
     }
 
-    let children
+    let specificForm
 
-    switch (dataType) {
+    switch (datatype) {
         case datatypes.evidence:
-            children = readOnly? 
+            specificForm = view?
                 <ReadOnlyEvidenceForm prevValues={prevValues}/> 
                 : 
                 <EvidenceForm values={params.values} functions={params.functions}/>
             break 
         case datatypes.request:
-            children = readOnly?
+            specificForm = view?
                 <ReadOnlyRequestForm prevValues={prevValues}/>
                 :
                 <RequestForm values={params.values} functions={params.functions}/>
             break
         case datatypes.defense_tribunal:    
-            children = readOnly?
+            specificForm = view?
                 <ReadOnlyDefenseTribunalForm prevValues={prevValues}/>
                 :
                 <DefenseTribunalForm values={params.values} functions={params.functions}/>
             break
         // case datatypes.tribunal:
-        //     children = readOnly?
-        //         <ReadOnlyDefenseActForm prevValues={prevValues}/>
-        //         :
-        //         <TribunalAprovalForm values={params.values} functions={params.functions}/>
+        //     children = <TribunalAprovalForm values={params.values} functions={params.functions}/>
         //     break
         case datatypes.defense_act:    
-            children = readOnly?
+            specificForm = view?
                 <ReadOnlyDefenseActForm prevValues={prevValues}/>
                 :
                 <DefenseActForm values={params.values} functions={params.functions}/>
             break
-        case datatypes.professor || datatypes.student:
-            children = readOnly?
-                <ReadOnlyUserForm dataType={dataType} prevValues={prevValues}/>
-                :
-                <UserForm datatype={dataType} values={params.values} functions={params.functions}/>
+            case datatypes.user.professor:
+            case datatypes.user.student:
+                specificForm = view?
+                    <ReadOnlyUserForm prevValues={prevValues}/>
+                    :
+                    <UserForm datatype={datatype} values={params.values} functions={params.functions}/>
             break
+            default:
+                console.warn(`El tipo de dato ${datatype} no coincide con ningun formulario configurado.`);
+                break
     }
-    return (
-        <div className="manage-container">
-            {children}
-        </div>
-    )
+    return specificForm
 }
 
 export default FormComponent
