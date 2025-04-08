@@ -12,7 +12,7 @@ const useDropPopup = (id, onClose = () => {}) => {
     const toggleVisible = (e) => {
         e.stopPropagation()
         if (id === openerRef.current?.dataset.popupId) {
-            setVisible((prevState) => !prevState)
+            setVisible((prev) => !prev)
         }
     }
 

@@ -7,7 +7,8 @@ import { EvidenceForm, ReadOnlyEvidenceForm } from "./EvidenceForms"
 import { RequestForm, ReadOnlyRequestForm } from "./RequestForms"
 import { DefenseTribunalForm, ReadOnlyDefenseTribunalForm } from "./DefenseTribunalForms"
 import { DefenseActForm, ReadOnlyDefenseActForm } from "./DefenseActForms"
-import { UserForm, ReadOnlyUserForm } from "./UserForms"
+import ReadOnlyUserForm from "./Users/ReadOnlyUserForm"
+import UserForm from "./Users/UserForm"
 
 const FormComponent = ({formParams}) => {
     const datatype = formParams.datatype
@@ -16,7 +17,7 @@ const FormComponent = ({formParams}) => {
 
     const { loading, prevValues, handleSubmit } = useForm(datatype, idData)
 
-    const popupId = 'form-popup'
+    const popupId = `${datatype}-form-popup`
     const { 
         openerRef,
         dropPopupRef,
@@ -26,6 +27,7 @@ const FormComponent = ({formParams}) => {
 
     const values = {
             prevValues, 
+            popupId,
             openerRef, 
             dropPopupRef, 
             isVisible
@@ -76,7 +78,7 @@ const FormComponent = ({formParams}) => {
                 specificForm = view?
                     <ReadOnlyUserForm prevValues={prevValues}/>
                     :
-                    <UserForm values={values} functions={functions}/>
+                    <UserForm datatype={datatype} values={values} functions={functions}/>
             break
             default:
                 console.warn(`El tipo de dato ${datatype} no coincide con ningun formulario configurado.`);
