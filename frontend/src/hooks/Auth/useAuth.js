@@ -3,7 +3,7 @@ import AuthService from "../../services/AuthService"
 import { AuthContext } from "../../contexts/AuthContext"
 
 const useAuth = () => {
-    const [isAuthorized, setIsAuthorized] = useState(null)
+    const [ isAuthorized, setIsAuthorized ] = useState(null)
     const { authStatusChanged } = useContext(AuthContext)
 
     useEffect(() => {
@@ -18,9 +18,9 @@ const useAuth = () => {
         }
         checkAuthorized()
         
-        const interval = setInterval(async () => {
+        const interval = setInterval(() => {
             checkAuthorized()
-        }, 30000)
+        }, 30 * 1000)
         return () => clearInterval(interval)
     }, [authStatusChanged])
 
