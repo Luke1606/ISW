@@ -1,6 +1,5 @@
 import Layout from "./components/common/layout/Layout"
 import HomeComponent from "./components/home/HomeComponent"
-import LoginComponent from "./components/login/LoginComponent"
 import ProtectedRoutesComponent from "./components/ProtectedRoutesComponent"
 import ListComponent from "./components/management/ListComponent"
 import NotificationCenter from "./components/notifications/NotificationCenter"
@@ -14,10 +13,6 @@ const routes = [
             {
                 index: true,
                 element: <HomeComponent />,
-            },
-            {
-                path: "login",
-                element: <LoginComponent />,
             },
             {
                 path: "*",
