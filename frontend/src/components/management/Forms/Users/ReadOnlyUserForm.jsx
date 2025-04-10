@@ -1,13 +1,12 @@
 import PropTypes from "prop-types"
-import datatypes from '../../../../js-files/Datatypes'
+import datatypes from '../../../../consts/datatypes'
 
-const ReadOnlyUserForm = ({prevValues}) => {
+const ReadOnlyUserForm = ({closeModal, prevValues}) => {
     if (!prevValues) return null
 
     return (
-        <form
+        <section
             className='form-container manage-form' 
-            onSubmit={()=> null}
             >
             <label 
                 className='form-label' 
@@ -64,8 +63,8 @@ const ReadOnlyUserForm = ({prevValues}) => {
 
                     <input 
                         className='form-input' 
-                        type='group' 
-                        id='cargo'
+                        type='text' 
+                        id='group'
                         value={prevValues.group} 
                         readOnly/>
                 </>
@@ -88,22 +87,23 @@ const ReadOnlyUserForm = ({prevValues}) => {
 
                 <button 
                     className='accept-button'
-                    type='submit'
+                    onClick={closeModal}
                     >
                     Aceptar
                 </button>
-        </form>
+        </section>
     )
 }
 
 ReadOnlyUserForm.propTypes = {
+    closeModal: PropTypes.func.isRequired,
     prevValues: PropTypes.shape({
         user: PropTypes.shape({
             name: PropTypes.string.isRequired,
             username: PropTypes.string.isRequired,
             user_role: PropTypes.string.isRequired,
         }),
-        faculty: PropTypes.bool,
+        faculty: PropTypes.string,
         group: PropTypes.number,
     }),
 }

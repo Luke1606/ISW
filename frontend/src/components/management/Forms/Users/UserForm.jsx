@@ -2,13 +2,11 @@ import PropTypes from "prop-types"
 import * as Yup from 'yup'
 import { useMemo } from 'react'
 import useGenericForm from '../../../../hooks/common/useGenericForm'
-import datatypes from '../../../../js-files/Datatypes'
+import datatypes from '../../../../consts/datatypes'
 
-const UserForm = ({datatype, values, functions}) => {
-    const prevValues = values.prevValues
-
+const UserForm = ({datatype, closeModal, prevValues, handleSubmit}) => {
     let specificInitialValues 
-    
+
     if (datatype === datatypes.user.student)
         specificInitialValues = {
             faculty: prevValues?.faculty || '',
@@ -62,7 +60,20 @@ const UserForm = ({datatype, values, functions}) => {
         ...specificSchema   
     }), [specificSchema])
 
-    const { formik, formState } = useGenericForm(functions.handleSubmit, initialValues, validationSchema)
+    const submitFunction = async (values) => {
+        const realValues = {
+            user: {
+                name: values?.name,
+                username: values?.username,
+            },
+            faculty: values?.faculty,
+            group: values?.group,
+        }
+        await handleSubmit(datatype, prevValues?.user?.id, realValues)
+        closeModal()
+    }
+
+    const formik = useGenericForm(submitFunction, initialValues, validationSchema)
 
     return (
         <form
@@ -259,20 +270,18 @@ const UserForm = ({datatype, values, functions}) => {
                 </>}
 
                 <div className="button-container">
-                <button
+                    <button
                         type="submit"
                         className="accept-button"
                         title="Aceptar"
-                        onClick={functions.toggleVisible}
-                        data-popup-id={values.popupId}
-                        ref={values.openerRef}
                         disabled={
-                            formState.pending || Object.keys(formik.errors).length > 0
+                            !formik.isValid
                         }
                         style={
-                            formState.pending || Object.keys(formik.errors).length > 0
-                                ? { backgroundColor: "gray" }
-                                : {}
+                            !formik.isValid?
+                                { backgroundColor: 'gray' }
+                                :
+                                {}
                         }
                         >
                         Aceptar
@@ -280,7 +289,7 @@ const UserForm = ({datatype, values, functions}) => {
 
                     <button 
                         className='cancel-button'
-                        onClick={()=>null}
+                        onClick={closeModal}
                         >
                         Cancelar
                     </button>
@@ -291,25 +300,18 @@ const UserForm = ({datatype, values, functions}) => {
 
 UserForm.propTypes = {
     datatype: PropTypes.oneOf(Object.values(datatypes.user)),
-    values: PropTypes.shape({
-        prevValues: PropTypes.shape({
-            user: PropTypes.shape({
-                name: PropTypes.string.isRequired,
-                username: PropTypes.string.isRequired,
-                user_role: PropTypes.string.isRequired,
-            }),
-            faculty: PropTypes.string,
-            group: PropTypes.number,
+    closeModal: PropTypes.func.isRequired,
+    prevValues: PropTypes.shape({
+        user: PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            username: PropTypes.string.isRequired,
+            user_role: PropTypes.string.isRequired,
         }),
-        popupId: PropTypes.string.isRequired,
-        openerRef: PropTypes.object,
-        dropPopupRef: PropTypes.object,
-        isVisible: PropTypes.bool,
+        faculty: PropTypes.string,
+        group: PropTypes.number,
     }),
-    functions: PropTypes.shape({
-        toggleVisible: PropTypes.func.isRequired,
-        handleSubmit: PropTypes.func.isRequired,
-    }),
+    handleSubmit: PropTypes.func.isRequired,
 }
 
 export default UserForm
