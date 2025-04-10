@@ -99,7 +99,27 @@ button:hover, .button:hover {
 
 /* error */
 .error-container {
-    background-color: rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    height: 70vh;
+    border-radius: 20px;
+    background: var(--primary-transparent-gradient);
+    color: white;
+}
+
+.error-title {
+    font-size: 4rem;
+}
+
+.error-text {
+    font-size: 2.5rem;
+}
+
+.error-icon {
+    width: 25rem;
 }
 
 /* loading spinner */
@@ -463,6 +483,7 @@ button:hover, .button:hover {
 /* *********Sidemenu********* */
 .sidemenu {
     position: fixed;
+    left: 0;
     display: flex;
     top: 70px;
     width: 20%;
@@ -470,47 +491,50 @@ button:hover, .button:hover {
     margin: 10px auto;
     padding: 60px 0;
     justify-content: center;
-    background: linear-gradient(to top, rgb(255, 246, 212), rgb(255, 239, 182));
+    background: var(--primary-gradient);
     color: white; 
-    z-index: 1;
+    z-index: 0;
     opacity: 0; 
     transform: translateX(-100%); 
     transition: transform 0.3s ease, opacity 0.3s ease; 
     overflow-y: auto;
 }
   
-.sidemenu .visible {
+.sidemenu-visible {
       opacity: 1;
       transform: translateX(0); 
-  }
+}
   
-.sidemenu .hidden {
+.sidemenu-hidden {
       opacity: 0; 
       transform: translateX(-100%); 
-  }
+}
   
 .sidemenu-ul {
+    margin-top: 4rem;
     list-style-type: none;
     padding: 0;
-  }
+}
   
 .sidemenu-li {
-    padding: 20px;
-    font-size: 25px;
+    display: flex;
+    width: 90%;
+    justify-content: flex-start;
+    align-items: center;
+    padding: .2rem;
+    margin: 2rem auto;
+    font-size: 1.8rem;
     font-weight: 800;
     text-align: center;
     cursor: pointer;
-    transition: transform 0.2s, color 0.2s, font-size 0.2s; 
-  }
-  
+    transition: border-bottom, transform 0.2s ease; 
+}
+
 .sidemenu-li:hover {
     border-radius: 15%;
-    border-bottom: 4px solid cyan;
+    border-bottom: .2rem solid var(--primary-light-tone);
     transform: scale(1.1);
-    color: cyan;
-    background-color: rgb(30, 0, 67); 
-    box-shadow: 0 0 18px 15px rgb(35, 2, 117);
-  }  
+}
 
 /* *********Footer********* */
 .footer {
@@ -639,7 +663,7 @@ button:hover, .button:hover {
 
 .main-content {
     padding: 10rem 0;
-    background-image: 
+    background-image:
         linear-gradient(to right, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.2)),
         url(/background.jpg);
     background-size: cover;
@@ -706,9 +730,48 @@ button:hover, .button:hover {
     background: var(--primary-transparent-gradient);
 }
 
+@media (max-width: 1024px) {
+    .home-hero {
+        flex-direction: column;
+        width: 80%;
+    }
+    .home-hero-title {
+        font-size: 2rem;
+        margin-bottom: .5rem;
+        padding: 30px;
+        filter: drop-shadow(0 0 10px black);
+        transition: all 0.2s ease-in-out;
+        cursor: default;
+    }
+    .home-hero-text {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        max-width: 95%;
+        gap: .1rem;
+    }
+}
+
+/* @media (max-width: 768px) {
+    .manage-container {
+        width: 95%;
+    }
+
+    .manage-buttons {
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-input {
+        width: 90%;
+    }
+} */
+
 /* *********List********* */
 .manage-container {
-    width: 75%;
+    width: 65%;
+    margin-left: 20rem;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -825,6 +888,7 @@ button:hover, .button:hover {
 
 @media (max-width: 1024px) {
     .manage-container {
+        margin-left: 10rem;
         width: 90%;
         padding: 1rem;
     }
@@ -861,8 +925,6 @@ button:hover, .button:hover {
     align-items: center; 
     justify-content: center; 
     padding: 20px; 
-    margin-top: 50px;
-    margin-bottom: 50px;
     font-family: Arial, sans-serif; 
     font-size: 1.3rem;
     border-radius: 10px;
@@ -898,7 +960,7 @@ button:hover, .button:hover {
 
 .icon-container {
     position: absolute; 
-    top: -32px; 
+    top: -.5rem; 
     display: flex;
     justify-content: center;
     padding-bottom: 8px;
@@ -908,7 +970,7 @@ button:hover, .button:hover {
     height: 100px; 
     width: 100px; 
     border-radius: 50%;
-    background-color: var(--primary-tone); 
+    background: var(--primary-gradient); 
     display: flex;
     align-items: center;
     justify-content: center;
