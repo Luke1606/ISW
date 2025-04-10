@@ -4,6 +4,8 @@ import routes from "./routes"
 import ToastNotification from "./components/common/ToastNotification"
 import { AuthProvider } from "./contexts/AuthContext"
 import useUserActivity from './hooks/Auth/useUserActivity'
+import { ModalProvider } from "./contexts/ModalContext"
+import { LoadingProvider } from "./contexts/LoadingContext"
 
 const router = createBrowserRouter(routes, {
     future: {
@@ -14,15 +16,20 @@ const router = createBrowserRouter(routes, {
 
 const App = () => {
     useUserActivity()
+    
     return (
         <>
             <ToastNotification />
 
-            <AuthProvider>
-                <Suspense fallback={<span className="spin"/>}>
-                    <RouterProvider router={router} />
-                </Suspense>
-            </AuthProvider>
+            <Suspense fallback={<span className="spin"/>}>
+                <AuthProvider>
+                    <LoadingProvider>
+                        <ModalProvider>
+                            <RouterProvider router={router} />
+                        </ModalProvider>
+                    </LoadingProvider>
+                </AuthProvider>
+            </Suspense>
         </>
     )
 }
