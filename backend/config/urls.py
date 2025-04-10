@@ -24,6 +24,6 @@ urlpatterns = [
         'get': 'list', 'post': 'create'
     }), name='gateway'),
     path('management/<str:datatype>/<uuid:pk>/', ManagementGatewayView.as_view({
-        'get': 'retrieve', 'put': 'update', 'delete': 'destroy'
+        'get': 'retrieve', 'patch': 'update', 'delete': 'destroy'
     }), name='gateway-specific'),
 ]

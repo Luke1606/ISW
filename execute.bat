@@ -7,7 +7,7 @@ call activate
 REM Volver al directorio backend
 cd ../../backend
 
-REM Iniciar el servidor de Django
+REM Iniciar el servidor de Django Rest Framework
 start cmd /k "python manage.py runserver"
 
 REM Cambiar al directorio frontend
