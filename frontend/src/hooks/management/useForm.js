@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import useDebouncedApiCall from '../common/useDebouncedApiCall'
 import ManagementService from '../../services/ManagementService'
 import NotificationService from '../../services/NotificationService'
+import { useLoading, useModal } from '../common/useContexts'
 
-const useForm = (datatype, idData) => {
-    const [ loading, setLoading ] = useState(false)
+const useForm = (datatype, idData, relatedUserId) => {
+    const { loading, setLoading } = useLoading()
     const [ prevValues, setPrevValues ] = useState(null)
-
+    
     const getPrevValues = useDebouncedApiCall(async (datatype, id) => {
+        if (!id) return
         setLoading(true)
         try {
             const response = await ManagementService.getData(datatype, id)
@@ -24,8 +26,7 @@ const useForm = (datatype, idData) => {
     })
 
     useEffect(() => {
-        if (idData)
-            getPrevValues(datatype, idData)
+        getPrevValues(datatype, idData, relatedUserId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [datatype, idData])
     
@@ -37,7 +38,28 @@ const useForm = (datatype, idData) => {
     return { loading, prevValues, handleSubmit }
 }
 
-export default useForm
+const useFormParams = (datatype) => {
+    const [ manageFormParams, setManageFormParams ] = useState({datatype: datatype})
+    const { openModal, closeModal } = useModal()
+    const formModalId = 'form-modal'
+    
+    const openManageForm = (datatype, params={}) => {
+        const formParams = {
+            datatype: datatype,
+            ...params
+        }
+        setManageFormParams(formParams)
+        openModal(formModalId)
+    }
+
+    const closeManageForm = () => {
+        closeModal(formModalId)
+    }
+
+    return { manageFormParams, openManageForm, closeManageForm, formModalId}
+}
+
+export { useForm, useFormParams }
 
 
 

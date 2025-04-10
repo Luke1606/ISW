@@ -1,18 +1,17 @@
-import { Suspense } from 'react'
 import { useParams } from 'react-router-dom'
 import { Search, Plus, Edit, Trash2, FileText, Check, X } from 'lucide-react'
-import { useListDataStates, useItemSelectionControl, useListModals, usePermisions } from '../../hooks/management/useList'
+import { useListDataStates, useItemSelectionControl, usePermisions } from '../../hooks/management/useList'
 import Modal from '../common/Modal'
 import PaginationButtons from '../common/PaginationButtons'
 import FormComponent from './Forms/FormComponent'
-
+import { useModal } from '../../hooks/common/useContexts'
+import { useFormParams } from '../../hooks/management/useForm'
 
 const List = () => {
     const { datatype, relatedUserId } = useParams()
 
     const {
         currentData,
-        loading,
         paginationParams,
         handleSearch,
         handleDelete
@@ -27,13 +26,11 @@ const List = () => {
         setSelectedItemId
     } = useItemSelectionControl(datatype)
 
-    const {
-        openManageForm,
-        manageFormParams,
-        manageFormModalVisibility,
-        deleteConfirmationModalVisibility,
-        setdeleteConfirmationModalVisibility,
-    } = useListModals()
+    const deleteModalId = 'delete-modal'
+
+    const {isOpen, openModal, closeModal} = useModal()
+
+    const { manageFormParams, openManageForm, formModalId } = useFormParams(datatype)
 
     return (
         <div className='manage-container'>
@@ -66,7 +63,7 @@ const List = () => {
                     <button 
                         title='Agregar'
                         className='add-button'
-                        onClick={() => openManageForm({datatype: datatype})}
+                        onClick={() => openManageForm(datatype)}
                         >
                         <Plus size={40}/>
                     </button>}
@@ -75,98 +72,91 @@ const List = () => {
                         <button 
                             title='Eliminar varios'
                             className='delete-button'
-                            onClick={() => setdeleteConfirmationModalVisibility(true)}
+                            onClick={() => openModal(deleteModalId)}
                             >
                             <Trash2 size={40}/>
                         </button>}
                 </div>
 
             {/* Lista de elementos */}
-            <Suspense
-                fallback={<span className='spinner'/>}
+            <div
+                className='manage-list'
                 >
-                <div
-                    className='manage-list'
-                    >
-                    { loading? 
-                    <span className='spinner'/>
-                    :
-                    currentData?.length > 0?
-                        currentData?.map((item, index) => (
-                            <div key={`${item.id}-${index}`} className='list-item'>
-                                <h3 className='list-item-title'>
-                                    {item.name}
-                                </h3>
+                { currentData?.length > 0?
+                    currentData?.map((item, index) => (
+                        <div key={`${item.id}-${index}`} className='list-item'>
+                            <h3 className='list-item-title'>
+                                {item.name}
+                            </h3>
 
-                                <div className='list-button-container button-container'>
-                                    <button
-                                        title='Ver detalles'
-                                        className='details-button list-button'
-                                        onClick={() => openManageForm({datatype: datatype, idData: item.id, view: true})}
+                            <div className='list-button-container button-container'>
+                                <button
+                                    title='Ver detalles'
+                                    className='details-button list-button'
+                                    onClick={() => openManageForm(datatype, { idData: item.id, view: true })}
+                                    >
+                                    <FileText size={50}/>
+                                </button>
+
+                                { permissions.edit && 
+                                    <button 
+                                        title='Editar'
+                                        className='edit-button list-button'
+                                        onClick={() => openManageForm(datatype, { idData: item.id })}
                                         >
-                                        <FileText size={50}/>
-                                    </button>
+                                        <Edit size={50}/>
+                                    </button>}
 
-                                    { permissions.edit && 
-                                        <button 
-                                            title='Editar'
-                                            className='edit-button list-button'
-                                            onClick={() => openManageForm({datatype: datatype, idData: item.id})}
-                                            >
-                                            <Edit size={50}/>
-                                        </button>}
-
-                                    { permissions.del && 
-                                        <button 
-                                            title='Eliminar'
-                                            className='delete-button list-button'
-                                            onClick={() => {
-                                                setSelectedItemId(item.id)
-                                                setdeleteConfirmationModalVisibility(true)
-                                                }}>
-                                            <Trash2 size={50}/>
-                                        </button>}
-                                
-                                    <select 
-                                        className='button options-button list-button' 
-                                        title='Más opciones'
-                                        defaultValue={''}
-                                        onChange={handleOptions}
-                                        onClick={()=>setSelectedItemId(item.id)}
+                                { permissions.del && 
+                                    <button 
+                                        title='Eliminar'
+                                        className='delete-button list-button'
+                                        onClick={() => {
+                                            setSelectedItemId(item.id)
+                                            openModal(deleteModalId)
+                                            }}>
+                                        <Trash2 size={50}/>
+                                    </button>}
+                            
+                                <select 
+                                    className='button options-button list-button' 
+                                    title='Más opciones'
+                                    defaultValue={'default'}
+                                    onChange={handleOptions}
+                                    onClick={()=>setSelectedItemId(item.id)}
+                                    >
+                                    <option 
+                                        className='option-element' 
+                                        value='default' 
+                                        disabled
                                         >
-                                        <option 
-                                            className='option-element' 
-                                            value='' 
-                                            disabled
+                                        -- Seleccione una opción --
+                                    </option>
+
+                                    {itemOptions.map((option, index) => (
+                                        <option
+                                            key={index}
+                                            className='option-element'
+                                            value={option.value}
                                             >
-                                            -- Seleccione una opción --
+                                            {option.label}
                                         </option>
-
-                                        {itemOptions.map((option, index) => (
-                                            <option
-                                                key={index}
-                                                className='option-element'
-                                                value={option.value}
-                                                >
-                                                {option.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
+                                    ))}
+                                </select>
                             </div>
-                        ))
-                    : 
-                        <h3 className='list-item-title'>
-                            No hay elementos que mostrar.
-                        </h3>}
-                </div>
+                        </div>
+                    ))
+                : 
+                    <h3 className='list-item-title'>
+                        No hay elementos que mostrar.
+                    </h3>}
+            </div>
 
-                <PaginationButtons 
-                    paginationParams={paginationParams}/>
-            </Suspense>
+            <PaginationButtons 
+                paginationParams={paginationParams}/>
             
             {/* modal de confirmacion de eliminado */}
-            <Modal isOpen={deleteConfirmationModalVisibility}>
+            <Modal isOpen={isOpen(deleteModalId)}>
                 <div 
                     className='confirmation-modal'
                     >
@@ -190,14 +180,14 @@ const List = () => {
                             className='cancel-button modal-button'
                             title='Cancelar'
 
-                            onClick={() => setdeleteConfirmationModalVisibility(false)}>
+                            onClick={() => closeModal(deleteModalId)}>
                             <X size={30}/>
                         </button>
                     </div>
                 </div>
             </Modal>
 
-            <Modal isOpen={manageFormModalVisibility}>
+            <Modal isOpen={isOpen(formModalId)}>
                 <FormComponent formParams={manageFormParams}/>
             </Modal>
         </div>
