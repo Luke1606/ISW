@@ -1,22 +1,12 @@
+import PropTypes from 'prop-types'
 import { useContext, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
 import { User } from "lucide-react"
 import * as Yup from "yup"
 import { AuthContext } from "../../contexts/AuthContext"
 import useGenericForm from "../../hooks/common/useGenericForm"
-import { useDropPopup } from "../../hooks/common/usePopup"
-import Modal from "../common/Modal"
 
-const LoginComponent = () => {
+const LoginForm = ({modalId, closeModal}) => {
     const { login } = useContext(AuthContext)
-    const navigate = useNavigate()
-    const popupId = 'login-popup'
-    const { 
-        openerRef,
-        dropPopupRef,
-        isVisible,
-        toggleVisible,
-    } = useDropPopup(popupId, ()=> navigate('/'))
 
     const initialValues = {
         username: "",
@@ -40,22 +30,25 @@ const LoginComponent = () => {
             }),
         [])
 
-    const {
-        formik,
-        formState,
-    } = useGenericForm(login, initialValues, validationSchema)
+    const submitFunction = async (values) => {
+        await login(values)
+        closeModal(modalId)
+    }
+
+    const formik = useGenericForm(submitFunction, initialValues, validationSchema)
 
     return (
         <>
             <form className="form-container" onSubmit={formik.handleSubmit}>
                 <div className="icon-container">
                     <div className="icon-circle">
-                        <User className="icon" />
+                        <User className="icon" size={50}/>
                     </div>
                 </div>
 
                 <h1>Autenticación</h1>
 
+                
                 <label 
                     className="form-label" 
                     htmlFor="username"
@@ -103,22 +96,20 @@ const LoginComponent = () => {
                     >
                     {formik.errors.password}
                 </span>
-
+                
                 <div className="button-container">
                     <button
                         type="submit"
                         className="accept-button"
                         title="Aceptar"
-                        onClick={toggleVisible}
-                        data-popup-id={popupId}
-                        ref={openerRef}
                         disabled={
-                            formState.pending || Object.keys(formik.errors).length > 0
+                            !formik.isValid
                         }
                         style={
-                            formState.pending || Object.keys(formik.errors).length > 0
-                                ? { backgroundColor: "gray" }
-                                : {}
+                            !formik.isValid?
+                                { backgroundColor: 'gray' }
+                                :
+                                {}
                         }
                         >
                         Aceptar
@@ -128,30 +119,19 @@ const LoginComponent = () => {
                         type="button"
                         className="cancel-button"
                         title="Cancelar"
-                        onClick={() => navigate("/")}
+                        onClick={() => closeModal(modalId)}
                         >
                         Cancelar
                     </button>
                 </div>
             </form>
-
-            <Modal
-                isOpen={isVisible}
-                >
-                <div 
-                    className=""
-                    data-popup-id={popupId}
-                    ref={dropPopupRef}
-                    >
-                    <p
-                        className="modal-content"
-                        >
-                        {formState.message}
-                    </p>
-                </div>
-            </Modal>
         </>
     )
 }
 
-export default LoginComponent
+LoginForm.propTypes = {
+    modalId: PropTypes.string.isRequired,
+    closeModal: PropTypes.func.isRequired,
+}
+
+export default LoginForm
