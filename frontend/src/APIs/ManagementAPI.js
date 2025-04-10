@@ -17,11 +17,11 @@ export const apiGetAllData = (datatype, searchTerm, relatedUserId) =>
 export const apiGetData = (datatype, id, relatedUserId) =>
     handleRequest('get', `${datatype}/${id}/`, { params: { related_user_id: relatedUserId } })
 
-export const apiCreateData = (datatype, data, relatedUserId) =>
-    handleRequest('post', `${datatype}/`, { data, params: { related_user_id: relatedUserId } })
+export const apiCreateData = (datatype, data) =>
+    handleRequest('post', `${datatype}/`, { data })
 
-export const apiUpdateData = (datatype, id, data, relatedUserId) =>
-    handleRequest('put', `${datatype}/${id}/`, { data, params: { related_user_id: relatedUserId } })
+export const apiUpdateData = (datatype, id, data) =>
+    handleRequest('patch', `${datatype}/${id}/`, { data })
 
-export const apiDeleteData = (datatype, id, relatedUserId) =>
-    handleRequest('delete', `${datatype}/${id}/`, { params: { related_user_id: relatedUserId } })
+export const apiDeleteData = (datatype, id) =>
+    handleRequest('delete', `${datatype}/${id}/`)

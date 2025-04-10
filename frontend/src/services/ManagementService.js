@@ -15,16 +15,16 @@ class ManagementService {
         return await apiGetData(datatype, id, relatedUserId)
     }
     
-    async createData(datatype, data, relatedUserId) {
-        return await apiCreateData(datatype, data, relatedUserId)
+    async createData(datatype, data) {
+        return await apiCreateData(datatype, data)
     }
     
-    async updateData(datatype, id, data, relatedUserId) {
-        return await apiUpdateData(datatype, id, data, relatedUserId)
+    async updateData(datatype, id, data) {
+        return await apiUpdateData(datatype, id, data)
     }
     
-    async deleteData(datatype, id, relatedUserId) {
-        return await apiDeleteData(datatype, id, relatedUserId)
+    async deleteData(datatype, id) {
+        return await apiDeleteData(datatype, id)
     }
 }
 
