@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 import FlipCard from "./FlipCard"
 import PaginationButtons from "./PaginationButtons"
 
-export const CardCarousel = ({ elements }) => {
+const CardCarousel = ({ elements }) => {
 	const [isHovering, setIsHovering] = useState(false)
 
 	const [ currentElement, setCurrentElement ] = useState(0)
@@ -67,3 +67,5 @@ CardCarousel.propTypes = {
 		})
 	)
 }
+
+export default CardCarousel

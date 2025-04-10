@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import Modal from '../Modal'
-import { useDropPopup } from "../../../hooks/common/usePopup"
+import useDropPopup from "../../../hooks/common/useDropPopup"
 
 const Footer = () => {
     const popupId = 'footer-popup'
