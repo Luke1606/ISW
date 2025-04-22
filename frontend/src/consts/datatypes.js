@@ -9,7 +9,8 @@ const datatypes = {
     request: 'request',
     defense_tribunal: 'defense_tribunal',
     tribunal: 'tribunal',
-    defense_act: 'defense_act'
+    defense_act: 'defense_act',
+    report: 'report'
 }
 
 export default datatypes

@@ -1,31 +1,34 @@
 import { useEffect } from 'react'
-import AuthService from "../../services/AuthService"
+import AuthService from '../../services/AuthService'
+import _ from 'lodash'
 
-const useUserActivity = () => {
+const useUserActivity = (timeoutDuration = 10 * 60 * 1000, events = ['mousemove', 'keydown', 'scroll']) => {
     useEffect(() => {
         AuthService.setUserActive(true)
         
         let timeout
         
-        const resetActivityTimeout = () => {
+        const resetActivityTimeout = _.debounce(() => {
             AuthService.setUserActive(true)
+            
             clearTimeout(timeout)
             timeout = setTimeout(
                 () => AuthService.setUserActive(false)
-                , 60000 * 10)
-        }
+                , timeoutDuration)
+        }, 300)
 
-        window.addEventListener('mousemove', resetActivityTimeout)
-        window.addEventListener('keydown', resetActivityTimeout)
-        window.addEventListener('scroll', resetActivityTimeout)
+        events.forEach(event => {
+            window.addEventListener(event, resetActivityTimeout, { passive: true })
+        })
 
         return () => {
+            clearTimeout(timeout)
             AuthService.setUserActive(false)
-            window.removeEventListener('mousemove', resetActivityTimeout)
-            window.removeEventListener('keydown', resetActivityTimeout)
-            window.removeEventListener('scroll', resetActivityTimeout)
+            events.forEach(event => {
+                window.removeEventListener(event, resetActivityTimeout)
+            })
         }
-    }, [])
+    }, [timeoutDuration, events])
 }
 
 export default useUserActivity

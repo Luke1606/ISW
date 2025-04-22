@@ -1,13 +1,13 @@
 import { Outlet, Navigate } from "react-router-dom"
-import useAuth from '../hooks/auth/useAuth'
+import useAuth from "../hooks/Auth/useAuth"
 
 const ProtectedRoutesComponent = () => {
-    const isAuthorized  = useAuth()
-
+    const { isAuthorized }  = useAuth()
+    
     if (isAuthorized === null)
-        return <span className="spinner"/>
+        return null
 
-    return isAuthorized ? <Outlet /> : <Navigate to="/login" />
+    return isAuthorized ? <Outlet /> : <Navigate to="/" />
 }
 
 export default ProtectedRoutesComponent

@@ -52,7 +52,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = CustomUser
-        fields = 'name', 'pic', 'username', 'user_role'
+        fields = 'id', 'name', 'pic', 'username', 'user_role'
 
 
 class StudentSerializer(serializers.ModelSerializer):

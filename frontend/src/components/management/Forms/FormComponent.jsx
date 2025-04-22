@@ -1,88 +1,119 @@
-/* eslint-disable react/prop-types */
-
-import datatypes from "../../../js-files/Datatypes"
-import { useDropPopup } from "../../../hooks/common/usePopup"
-import useForm from "../../../hooks/management/useForm"
-import { EvidenceForm, ReadOnlyEvidenceForm } from "./EvidenceForms"
-import { RequestForm, ReadOnlyRequestForm } from "./RequestForms"
-import { DefenseTribunalForm, ReadOnlyDefenseTribunalForm } from "./DefenseTribunalForms"
-import { DefenseActForm, ReadOnlyDefenseActForm } from "./DefenseActForms"
-import { UserForm, ReadOnlyUserForm } from "./UserForms"
+import PropTypes from 'prop-types'
+import datatypes from '../../../consts/datatypes'
+import { useForm, useFormParams } from '../../../hooks/management/useForm'
+import { EvidenceForm, ReadOnlyEvidenceForm } from './EvidenceForms'
+import { RequestForm, ReadOnlyRequestForm } from './RequestForms'
+import { DefenseTribunalForm, ReadOnlyDefenseTribunalForm } from './DefenseTribunalForms'
+import { DefenseActForm, ReadOnlyDefenseActForm } from './DefenseActForms'
+import ReadOnlyUserForm from './Users/ReadOnlyUserForm'
+import UserForm from './Users/UserForm'
 
 const FormComponent = ({formParams}) => {
-    const datatype = formParams.datatype
-    const idData = formParams.idData
-    const view = formParams.view
+    const datatype = formParams?.datatype
+    const idData = formParams?.idData
+    const relatedUserId = formParams?.relatedUserId
+    const view = formParams?.view
 
-    const { loading, prevValues, handleSubmit } = useForm(datatype, idData)
+    const { loading, prevValues, handleSubmit } = useForm(datatype, idData, relatedUserId)
 
-    const popupId = 'form-popup'
-    const { 
-        openerRef,
-        dropPopupRef,
-        isVisible,
-        toggleVisible,
-    } = useDropPopup(popupId)
+    const { closeManageForm } = useFormParams(datatype)
 
-    const values = {
-            prevValues, 
-            openerRef, 
-            dropPopupRef, 
-            isVisible
-    }
-    
-    const functions = {
-        handleSubmit,
-        toggleVisible
-    }
-
-    if (loading) {
-        return <span className="spinner"/>
-    }
-
+    if (loading) return null
 
     let specificForm
 
     switch (datatype) {
         case datatypes.evidence:
             specificForm = view?
-                <ReadOnlyEvidenceForm prevValues={prevValues}/> 
+                <ReadOnlyEvidenceForm 
+                    closeModal={closeManageForm} 
+                    prevValues={prevValues}
+                    /> 
                 : 
-                <EvidenceForm values={values} functions={functions}/>
+                <EvidenceForm 
+                    closeModal={closeManageForm} 
+                    prevValues={prevValues} 
+                    handleSubmit={handleSubmit} 
+                    />
             break 
         case datatypes.request:
             specificForm = view?
-                <ReadOnlyRequestForm prevValues={prevValues}/>
+                <ReadOnlyRequestForm
+                    closeModal={closeManageForm} 
+                    prevValues={prevValues}
+                    />
                 :
-                <RequestForm values={values} functions={functions}/>
+                <RequestForm
+                    closeModal={closeManageForm} 
+                    prevValues={prevValues}
+                    handleSubmit={handleSubmit} 
+                    />
             break
         case datatypes.defense_tribunal:    
             specificForm = view?
-                <ReadOnlyDefenseTribunalForm prevValues={prevValues}/>
+                <ReadOnlyDefenseTribunalForm 
+                    closeModal={closeManageForm} 
+                    prevValues={prevValues}/>
                 :
-                <DefenseTribunalForm values={values} functions={functions}/>
+                <DefenseTribunalForm 
+                    closeModal={closeManageForm} 
+                    prevValues={prevValues} 
+                    handleSubmit={handleSubmit} 
+                    />
             break
         // case datatypes.tribunal:
         //     children = <TribunalAprovalForm values={params.values} functions={params.functions}/>
         //     break
         case datatypes.defense_act:    
             specificForm = view?
-                <ReadOnlyDefenseActForm prevValues={prevValues}/>
+                <ReadOnlyDefenseActForm 
+                    closeModal={closeManageForm} 
+                    prevValues={prevValues}
+                    />
                 :
-                <DefenseActForm values={values} functions={functions}/>
+                <DefenseActForm 
+                    closeModal={closeManageForm} 
+                    prevValues={prevValues} 
+                    handleSubmit={handleSubmit} 
+                    />
             break
-            case datatypes.user.professor:
-            case datatypes.user.student:
-                specificForm = view?
-                    <ReadOnlyUserForm prevValues={prevValues}/>
-                    :
-                    <UserForm values={values} functions={functions}/>
+        case datatypes.user.professor:
+        case datatypes.user.student:
+            specificForm = view?
+                <ReadOnlyUserForm 
+                    closeModal={closeManageForm} 
+                    prevValues={prevValues}
+                    />
+                :
+                <UserForm 
+                    datatype={datatype} 
+                    closeModal={closeManageForm} 
+                    prevValues={prevValues} 
+                    handleSubmit={handleSubmit} 
+                    />
             break
-            default:
-                console.warn(`El tipo de dato ${datatype} no coincide con ningun formulario configurado.`);
-                break
+        default:
+            console.warn(`El tipo de dato ${datatype} no coincide con ningun formulario configurado.`);
+            break
     }
     return specificForm
+}
+
+FormComponent.propTypes = {
+    formParams: PropTypes.shape({
+        datatype: PropTypes.oneOf([
+            ...Object.values(datatypes.user),
+            datatypes.evidence,
+            datatypes.request,
+            datatypes.defense_tribunal,
+            datatypes.tribunal,
+            datatypes.defense_act,
+            datatypes.report
+        ]).isRequired,
+        idData: PropTypes.string,
+        relatedUserId: PropTypes.string,
+        view: PropTypes.bool,
+    }),
 }
 
 export default FormComponent

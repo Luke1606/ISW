@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import useDebouncedApiCall from '../common/useDebouncedApiCall'
 import ManagementService from '../../services/ManagementService'
 import { AuthContext } from "../../contexts/AuthContext"
-import datatypes from '../../js-files/Datatypes'
+import datatypes from '../../consts/datatypes'
+import { useLoading } from '../common/useContexts'
 
 export const useListDataStates = (datatype, relatedUserId) => {
-    const [ loading, setLoading ] = useState(false)
+    const { setLoading } = useLoading()
     const [ data, setData ] = useState({})
     const [ currentPage, setCurrentPage ] = useState(0)
     const [ totalPages, setTotalPages ] = useState(0)
@@ -16,9 +17,9 @@ export const useListDataStates = (datatype, relatedUserId) => {
         try {
             setLoading(true)
             const response = await ManagementService.getAllData(datatype, searchTerm, relatedUserId)
-            setData(response.data || [[]])
-            setTotalPages(response.totalPages || 0)
             setCurrentPage(0)
+            setData(response.data || {})
+            setTotalPages(response.totalPages || 0)
             setCurrentData(data[0])
         } catch (error) {
             console.error(error)
@@ -29,11 +30,11 @@ export const useListDataStates = (datatype, relatedUserId) => {
 
     useEffect(() => {
         getData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [getData])
 
     useEffect(() => {
-        setCurrentData(data[currentPage])
+        if (Object.values(data).length > 0)
+            setCurrentData(data[currentPage])
     }, [data, currentPage])
 
     const handleSearch = (e) => {
@@ -62,7 +63,6 @@ export const useListDataStates = (datatype, relatedUserId) => {
 
     return {
         currentData,
-        loading,
         paginationParams,
         handleSearch,
         handleDelete
@@ -108,43 +108,50 @@ export const useItemSelectionControl = (datatype) => {
         }
 
         if (datatype === datatypes.user.student) {
-            options.push({ 
-                value: `/list/${datatypes.evidence}`, label: 'Listar Evidencias' 
+            options.push({
+                value: `/list/${datatypes.evidence}/${selectedItemId}`,
+                label: 'Listar Evidencias'
             })
             if (selectedItemId) {
                 const pendingRequests = await hasPendingRequests(selectedItemId) || false
 
                 if (user?.role === datatypes.user.dptoInf && pendingRequests)
                     options.push({ 
-                        value: `/form/${datatypes.request}/${selectedItemId}`, label: 'Aprobar solicitud' 
+                        value: `/form/${datatypes.request}/${selectedItemId}`, 
+                        label: 'Aprobar solicitud' 
                     })
         
                 const unconfiguredDefenseTribunal = await hasUnconfiguredDefenseTribunal(selectedItemId) || true
 
                 if (user?.role === datatypes.user.dptoInf && unconfiguredDefenseTribunal)
                     options.push({ 
-                        value: `/form/${datatypes.defense_tribunal}/${selectedItemId}`, label: 'Configurar defensa y tribunal'
+                        value: `/form/${datatypes.defense_tribunal}/${selectedItemId}`, 
+                        label: 'Configurar defensa y tribunal'
                     })
         
                 if (user?.role !== datatypes.user.dptoInf && !unconfiguredDefenseTribunal)
                     options.push({ 
-                        value: `/form/${datatypes.defense_tribunal}/${selectedItemId}/${true}`, label: 'Ver datos de defensa y tribunal' 
+                        value: `/form/${datatypes.defense_tribunal}/${selectedItemId}/${true}`, 
+                        label: 'Ver datos de defensa y tribunal' 
                     })
         
                 const pendingTribunal = await hasPendingTribunal(selectedItemId) || false
                 if (user?.role === datatypes.user.decan && pendingTribunal) 
                     options.push({ 
-                        value: `/form/${datatypes.tribunal}/${selectedItemId}`, label: 'Aprobar tribunal'
+                        value: `/form/${datatypes.tribunal}/${selectedItemId}`, 
+                        label: 'Aprobar tribunal'
                     })
         
                 if (user?.role !== datatypes.user.professor && !unconfiguredDefenseTribunal && !pendingTribunal)
                     options.push({ 
-                        value: `/list/${datatypes.defense_act}`, label: 'Listar actas de defensa'
+                        value: `/list/${datatypes.defense_act}`, 
+                        label: 'Listar actas de defensa'
                     })
 
                 if (user?.role === datatypes.user.professor && !unconfiguredDefenseTribunal && !pendingTribunal)
                     options.push({
-                        value: `/list/${datatypes.defense_act}`, label: 'Gestionar actas de defensa'
+                        value: `/list/${datatypes.defense_act}`, 
+                        label: 'Gestionar actas de defensa'
                     })
             }
         }
@@ -176,25 +183,6 @@ export const useItemSelectionControl = (datatype) => {
     }
 }
 
-export const useListModals = (datatype) => {
-    const [deleteConfirmationModalVisibility, setdeleteConfirmationModalVisibility] = useState(false)
-    const [manageFormModalVisibility, setmanageFormModalVisibility] = useState(false)
-    const [manageFormParams, setManageFormParams] = useState({})
-
-    const openManageForm = (params={ datatype: datatype }) => {
-        setManageFormParams(params)
-        setmanageFormModalVisibility(true)
-    }
-
-    return {
-        openManageForm,
-        manageFormParams,
-        manageFormModalVisibility,
-        deleteConfirmationModalVisibility,
-        setdeleteConfirmationModalVisibility,
-    }
-}
-
 export const usePermisions = (datatype) => {
     const { user } = useContext(AuthContext)
 
@@ -205,7 +193,7 @@ export const usePermisions = (datatype) => {
         otherOptions: false,
     }
 
-    switch (user?.role) {
+    switch (user?.user_role) {
         case datatypes.user.student:
             if (datatype === datatypes.evidence) {
                 permissions.add = true

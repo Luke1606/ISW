@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { AuthContext } from "../../contexts/AuthContext"
-import { Bell, File } from 'lucide-react'
+import { Bell } from 'lucide-react'
 
 const useHeaderOptions = () => {
     let options = []
@@ -11,11 +11,6 @@ const useHeaderOptions = () => {
             title: "Notificaciones",
             action: "/notifications",
             icon: Bell,
-        },
-        {
-            title: "Reporte",
-            action: "#",
-            icon: File
         })
 
     return options

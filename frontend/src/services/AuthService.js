@@ -22,12 +22,14 @@ class AuthService {
                 id: response.userData.user_id,
                 name: response.userData.name,
                 pic: response.userData.pic,
-                role: response.userData.role,
+                user_role: response.userData.role,
             }
             authApi.setToken(tokens.ACCESS_TOKEN_KEY, response.tokens.access)
             authApi.setToken(tokens.REFRESH_TOKEN_KEY, response.tokens.refresh)
             authApi.setToken(tokens.USER_TOKEN_KEY, user)
-
+            
+            this.setUserActive(true)
+            
             return user
         }
         console.log('Ocurrio un error: ', response)
@@ -53,6 +55,7 @@ class AuthService {
     }
 
     async checkAuth() {
+        if (!this.getUserActive) this.logout()
         const token = authApi.getToken(tokens.ACCESS_TOKEN_KEY)
 
         if(token) {

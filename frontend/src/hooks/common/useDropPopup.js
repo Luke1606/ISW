@@ -1,18 +1,12 @@
 import { useState, useRef, useEffect } from "react"
 
-const useSimplePopup = () => {
-    const [isVisible, setVisible] = useState(false)
-
-    return {isVisible, setVisible}
-}
-
 const useDropPopup = (id, onClose = () => {}) => {
     const [isVisible, setVisible] = useState(false)
     
     const toggleVisible = (e) => {
         e.stopPropagation()
         if (id === openerRef.current?.dataset.popupId) {
-            setVisible((prevState) => !prevState)
+            setVisible((prev) => !prev)
         }
     }
 
@@ -50,6 +44,7 @@ const useDropPopup = (id, onClose = () => {}) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isVisible])
 
     return {
@@ -60,4 +55,4 @@ const useDropPopup = (id, onClose = () => {}) => {
     }
 }
 
-export { useSimplePopup, useDropPopup }
+export default useDropPopup
