@@ -1,12 +1,18 @@
 import PropTypes from 'prop-types'
-import { useContext, useMemo } from "react"
+import { useMemo } from "react"
 import { User } from "lucide-react"
 import * as Yup from "yup"
-import { AuthContext } from "../../contexts/AuthContext"
 import useGenericForm from "../../hooks/common/useGenericForm"
+import useAuth from '../../hooks/Auth/useAuth'
 
+/**
+ * @description Componente formulario para iniciar sesión, utiliza el hook {@link useGenericForm} para la gestión del formulario y obtiene la función {@link login} a ejecutar al envio del formulario se obtiene del hook {@link useAuth}.
+ * @param {string} `modalId`- id del modal asociado a la función {@link closeModal}.
+ * @param {function} `closeModal`- Función para cerrar el modal donde se renderiza el componente a través del `modalId`. 
+ * @returns Estructura del componente formulario.
+ */
 const LoginForm = ({modalId, closeModal}) => {
-    const { login } = useContext(AuthContext)
+    const { login } = useAuth()
 
     const initialValues = {
         username: "",
@@ -17,7 +23,7 @@ const LoginForm = ({modalId, closeModal}) => {
         () =>
             Yup.object().shape({
                 username: Yup.string()
-                    .min(3, 'El nombre de usuario debe tener al menos 4 caracteres')
+                    .min(3, 'El nombre de usuario debe tener al menos 3 caracteres')
                     .required('El nombre de usuario es obligatorio')
                     .matches(/^[a-zA-Z0-9]*$/, 'El nombre no puede contener caracteres especiales'),
                 password: Yup.string()

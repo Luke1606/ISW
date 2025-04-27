@@ -6,6 +6,10 @@ import { User } from "lucide-react"
 import useAuth from "../../../hooks/Auth/useAuth"
 import { useModal } from "../../../hooks/common/useContexts"
 
+/**
+ * @description Header de la aplicación que contiene opciones, perfil y botón de `login/logout`.
+ * @returns Estructura del header de la aplicación con un perfil popup que contiene la información del usuario y las opciones correspondientes. Además del botón de `login/logout`.
+ */
 const Header = () => {
     const options = useHeaderOptions()
     const { user, logout } = useAuth()

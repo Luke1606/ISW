@@ -8,8 +8,16 @@ import { ModalProvider } from "./contexts/ModalContext"
 import { LoadingProvider } from "./contexts/LoadingContext"
 
 /**
- * @param {Object} routes - Arreglo que contiene todas las rutas del sitio con sus paths, elements y sub-rutas (children).
- * @returns {Object} router - Objeto enrutador creado a partir de routes y usando las tags de características experimentales o de futuras versiones (v7) del react-router.
+ * @description Crea un enrutador basado en las rutas del sitio.
+ *
+ * @param {Array} routes - Arreglo que contiene todas las rutas del sitio:
+ *  - `path`: Ruta del sitio (string).
+ *  - `element`: Componente asociado a la ruta (React.ReactNode).
+ *  - `children`: Sub-rutas opcionales (array).
+ * @returns {Object} `router` - Objeto enrutador basado en React Router.
+ *  Utiliza las características experimentales:
+ *  - `v7_startTransition`: Mejora de rendimiento para transiciones.
+ *  - `v7_relativeSplatPath`: Manejo más limpio de rutas relativas. 
  */
 const router = createBrowserRouter(routes, {
     future: {
@@ -19,14 +27,15 @@ const router = createBrowserRouter(routes, {
 })
 
 /**
- * @description Estructura principal de la aplicación.
+ * @description Estructura principal de providers de la aplicación. Tambien ejecuta el {@link useUserActivity}.
+ * 
  * @returns Estructura de la aplicación compuesta por los siguientes componentes:
- * - <ToastNotification />: Muestra notificaciones emergentes en la interfaz.
- * - <Suspense fallback={<span className="spin"/>}>: Suspende la carga de componentes hijos hasta que estén disponibles, mostrando un spinner mientras tanto.
- * - <AuthProvider>: Provee contexto para la autenticación de usuarios.
- * - <LoadingProvider>: Provee manejo centralizado de estados de carga.
- * - <ModalProvider>: Provee funcionalidad para abrir y cerrar modales dentro de la aplicación.
- * - <RouterProvider router={router}>: Gestiona el enrutamiento utilizando la configuración definida en "router".
+ * - {@link ToastNotification}: Para notificaciones emergentes en la interfaz.
+ * - {@link Suspense}: Suspende la carga de componentes hijos hasta que estén disponibles, mostrando un spinner (<span className="spin"/>) mientras tanto.
+ * - {@link AuthProvider}: Provider para la autenticación de usuarios.
+ * - {@link LoadingProvider}: Provider para manejo centralizado de estados de carga.
+ * - {@link ModalProvider}: Provider para funcionalidad de abrir y cerrar modales dentro de la aplicación.
+ * - {@link RouterProvider}: Gestiona el enrutamiento utilizando la configuración definida en {@link router}.
  */
 const App = () => {
     useUserActivity()

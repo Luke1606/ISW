@@ -1,3 +1,6 @@
+/**
+ * @description Contiene todos los tipos de datos a manejar en la aplicación para un manejo centralizado.
+ */
 const datatypes = {
     user: {
         student: "student",

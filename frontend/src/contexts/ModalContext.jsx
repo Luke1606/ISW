@@ -1,8 +1,16 @@
 import PropTypes from "prop-types"
 import { createContext, useState } from "react"
 
+/**
+ * @description Contexto diseñado para manejo centralizado de modals.
+ */
 const ModalContext = createContext()
 
+/**
+ * @description Provider diseñado para manejo del {@link ModalContext}
+ * @param {React.ReactNode} children 
+ * @returns Provider que permite a los componentes hijos acceder a {@link isOpen}, {@link openModal} y {@link closeModal} para verificar si un modal está abierto, abrirlo y cerrarlo, todas a partir de un `modalId`.
+ */
 const ModalProvider = ({ children }) => {
 	const [modals, setModals] = useState({})
 

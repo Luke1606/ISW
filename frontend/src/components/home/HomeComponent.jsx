@@ -7,12 +7,19 @@ import LoginForm from './LoginForm'
 import datatypes from '../../consts/datatypes'
 import featureItems from '../../consts/featureItems'
 
+/**
+ * @description Componente que renderiza la página principal de la aplicación.
+ * @returns Componente principal compuesto por un hero que que contiene un mensaje de bienvenida (variante dependiendo del usuario autenticado, si hay uno) y un carousel de características del sistema y el botón `acceder/comenzar` para autenticarse.
+ */
 const HomeComponent = () => {
     const navigate = useNavigate()
     const { user } = useAuth()
 	const modalId = 'loginForm-modal'
 	const { isOpen, openModal, closeModal } = useModal()
 
+    /**
+     * Función a ejecutar cuando se toque en el botón `acceder/comenzar` dependiendo del rol del usuario autenticado, si hay uno, ya sea navegar a la página de gestión o abrir el modal de login. 
+     */
 	const accessFunction = () => {
 		if (user) {
 			switch (user?.user_role) {

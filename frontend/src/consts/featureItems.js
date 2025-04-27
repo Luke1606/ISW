@@ -9,6 +9,9 @@ import administration from '../assets/administration.png'
 import security from '../assets/security.jpg'
 import akademos from '../assets/akademos.png'
 
+/**
+ * @description Arreglo de elementos a mostrar en el `CardCarousel` del `HomeComponent`
+ */
 const featureItems = [
 	{
 	  icon: { alt: 'Gran cantidad de carpetas', src: evidence },

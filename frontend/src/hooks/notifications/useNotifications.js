@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import useDebouncedApiCall from '../common/useDebouncedApiCall'
+import useDebouncedFunction from '../common/useDebouncedFunction'
 import NotificationService from '../../services/NotificationService'
 
 const useNotifications = () => {
     const [notifications, setNotifications] = useState([])
     const [pendingOperations, setPendingOperations] = useState([])
 
-    const getNotifications = useDebouncedApiCall( async () => {
+    const getNotifications = useDebouncedFunction( async () => {
         const response = await NotificationService.get()
 
         if (response) {
@@ -32,7 +32,7 @@ const useNotifications = () => {
         }
     }, [getNotifications])
 
-    const syncPendingOperations = useDebouncedApiCall( async () => {
+    const syncPendingOperations = useDebouncedFunction( async () => {
         try {
             for (const operation of pendingOperations) {
                 if (operation.type === 'markAsRead') {

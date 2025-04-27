@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useDebouncedApiCall from '../common/useDebouncedApiCall'
+import useDebouncedFunction from '../common/useDebouncedFunction'
 import ManagementService from '../../services/ManagementService'
 import { AuthContext } from "../../contexts/AuthContext"
 import datatypes from '../../consts/datatypes'
@@ -13,7 +13,7 @@ export const useListDataStates = (datatype, relatedUserId) => {
     const [ totalPages, setTotalPages ] = useState(0)
     const [ currentData, setCurrentData ] = useState([])
     
-    const getData = useDebouncedApiCall(async (searchTerm="") => {
+    const getData = useDebouncedFunction(async (searchTerm="") => {
         try {
             setLoading(true)
             const response = await ManagementService.getAllData(datatype, searchTerm, relatedUserId)
@@ -74,7 +74,7 @@ export const useItemSelectionControl = (datatype) => {
     const [ itemOptions, setItemOptions ] = useState([])
     const { user } = useContext(AuthContext)
 
-    const getOptions = useDebouncedApiCall(async () => {
+    const getOptions = useDebouncedFunction(async () => {
         let options = []
 
         const hasPendingRequests = async (studentId) => {

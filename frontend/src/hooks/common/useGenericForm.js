@@ -1,10 +1,18 @@
+
 import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
-import useDebouncedApiCall from './useDebouncedApiCall'
+import useDebouncedFunction from './useDebouncedFunction'
 import NotificationService from '../../services/NotificationService'
 import { useLoading } from '../../hooks/common/useContexts'
 
+/**
+ * @description Hook para gestion de formularios utilizando {@link useFormik} y `Yup`.
+ * @param {function} `submitFunction`
+ * @param {Object} `initialValues`
+ * @param {Obbject} `validationSchema`- Esquema de validacion definido con `Yup` para integración con `useFormik`.
+ * @returns {Object} `formik`
+ */
 const useGenericForm = (submitFunction, initialValues, validationSchema = {}) => {
     const [formState, setFormState] = useState({
         success: false,
@@ -16,7 +24,7 @@ const useGenericForm = (submitFunction, initialValues, validationSchema = {}) =>
         initialValues,
         validationSchema,
         validateOnChange: true,
-        onSubmit: useDebouncedApiCall(async (values) => {
+        onSubmit: useDebouncedFunction(async (values) => {
             setLoading(true)
 
             const result = await submitFunction(values)
@@ -32,7 +40,7 @@ const useGenericForm = (submitFunction, initialValues, validationSchema = {}) =>
     })
 
   useEffect(() => {
-    // mostrar un toast si hay un error general o si la autenticación fue exitosa
+    // mostrar un toast si hay un error general o si la operación fue exitosa
     if (formState.message != '') {
         const notification = {
             title: formState.success?

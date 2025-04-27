@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import useDebouncedApiCall from '../common/useDebouncedApiCall'
+import useDebouncedFunction from '../common/useDebouncedFunction'
 import ManagementService from '../../services/ManagementService'
 import NotificationService from '../../services/NotificationService'
 import { useLoading, useModal } from '../common/useContexts'
@@ -8,7 +8,7 @@ const useForm = (datatype, idData, relatedUserId) => {
     const { loading, setLoading } = useLoading()
     const [ prevValues, setPrevValues ] = useState(null)
     
-    const getPrevValues = useDebouncedApiCall(async (datatype, id) => {
+    const getPrevValues = useDebouncedFunction(async (datatype, id) => {
         if (!id) return
         setLoading(true)
         try {
