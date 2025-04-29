@@ -28,9 +28,9 @@ class Request(BaseModel):
         Tipos de ECE seleccionables para la solicitud.
         """
         TD = 'Tesis', 'Trabajo de diploma'
-        PF = 'Portfolio', 'Portafolio'
+        PF = 'Portafolio', 'Portafolio'
         AA = 'Art Cient', 'Defensa de Artículos Científicos'
-        EX = 'Exhibición', 'Exhibición'
+        EX = 'Exhimición', 'Exhimición'
 
     selected_ece = models.CharField(
         max_length=20,

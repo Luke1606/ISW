@@ -1,43 +1,66 @@
+import PropTypes from "prop-types"
+import { useMemo } from "react"
+import * as Yup from "yup"
+import useGenericForm from "../../../../../logic/hooks/common/useGenericForm"
+import datatypes from "../../../../../data/datatypes"
+import FormButtons from "../../../../components/FormButtons"
 
-import { useMemo } from "react";
-import * as Yup from "yup";
-import useGenericForm from "../../../../../logic/hooks/common/useGenericForm";
-import Modal from "../../../../components/Modal";
-
-export const RequestForm = ({ values = {}, functions = {} }) => {
-    const prevValues = values.prevValues || {};
-    const exerciseOptions = [
-        { value: "estudiante", label: "Ejercicio para estudiantes" },
-        { value: "profesor", label: "Ejercicio para profesores" },
-        { value: "dptoInformatica", label: "Ejercicio para departamento de informática" },
-        { value: "secretaria", label: "Ejercicio para secretaría" },
-        { value: "decano", label: "Ejercicio para decanato" }
-    ];
-
+/**
+ * @description Ventana para agregar o editar un acta de defensa.
+ * @param {string} `modalId` - Id del modal en el que se renderiza este componente.
+ * @param {function} `closeModal`- Función para cerrar el modal en el que se renderiza este componente.
+ * @param {Object} `prevValues`- Contiene toda la información del acta de defensa a mostrar.
+ * @param {function} `handleSubmit`- Función a ejecutar al envío del formulario.
+ * @returns Estructura de los campos a mostrar con la información del acta de defensa contenida en prevValues.
+ */
+export const RequestForm = ({ modalId, closeModal, prevValues, handleSubmit }) => {
     const initialValues = {
-        studentName: prevValues.nombre || "",
-        selectedExercise: prevValues.ejercicio || "",
-        additionalInfo: prevValues.infoAdicional || ""
-    };
+        selectedECE: prevValues.selected_ece || '',
+    }
 
     const validationSchema = useMemo(() => Yup.object().shape({
         studentName: Yup.string()
             .required('El nombre del estudiante es obligatorio')
             .min(3, 'El nombre debe tener al menos 3 caracteres'),
         
-        selectedExercise: Yup.string()
+        selectedECE: Yup.string()
             .required('Debe seleccionar un ejercicio'),
             
         additionalInfo: Yup.string()
             .max(500, 'La información adicional no puede exceder los 500 caracteres')
-    }), []);
+    }), [])
 
-    const { formik, formState } = useGenericForm(
-        functions.handleSubmit || (() => {}),
+    const submitFunction = async (values) => {
+        const newValues = {
+            name: values?.name,
+            faculty: values?.faculty,
+            attachment: values?.attachment,
+        }
+        await handleSubmit(datatypes.request, prevValues?.id, newValues)
+        closeModal(modalId)
+    }
+    const formik = useGenericForm(
+        submitFunction,
         initialValues,
         validationSchema
-    );
+    )
 
+    const exerciseOptions = [
+        { value: 'TD', label: 'Trabajo de diploma'},
+        { value: 'PF', label: 'Portafolio'},
+        { value: 'AA', label: 'Defensa de Artículos Científicos'},
+        { value: 'EX', label: 'Exhimición'},  
+    ]
+
+    const printOptions = (option) => (
+        <option 
+            key={option.value} 
+            value={option.value}
+            className='option-element'
+            >
+            {option.label}
+        </option>
+    )
     return (
         <form
             className='form-container manage-form'
@@ -62,14 +85,14 @@ export const RequestForm = ({ values = {}, functions = {} }) => {
                 {formik.errors.studentName}
             </span>
 
-            <label className="form-label" htmlFor="selectedExercise">
+            <label className="form-label" htmlFor="selectedECE">
                 Seleccione el ejercicio deseado:
             </label>
             
             <select
                 className="form-select"
-                id="selectedExercise"
-                {...formik.getFieldProps('selectedExercise')}
+                id="selectedECE"
+                {...formik.getFieldProps('selectedECE')}
             >
                 <option value="" disabled>-- Escoja una opción --</option>
                 {exerciseOptions.map((option) => (
@@ -81,9 +104,9 @@ export const RequestForm = ({ values = {}, functions = {} }) => {
             
             <span
                 className="error"
-                style={formik.errors.selectedExercise && formik.touched.selectedExercise ? {} : { visibility: "hidden" }}
+                style={formik.errors.selectedECE && formik.touched.selectedECE ? {} : { visibility: "hidden" }}
             >
-                {formik.errors.selectedExercise}
+                {formik.errors.selectedECE}
             </span>
 
             <label className="form-label" htmlFor="additionalInfo">
@@ -105,95 +128,18 @@ export const RequestForm = ({ values = {}, functions = {} }) => {
                 {formik.errors.additionalInfo}
             </span>
 
-            <div className="button-container">
-                <button
-                    className='accept-button'
-                    type='submit'
-                    disabled={formState.pending || !formik.isValid}
-                >
-                    {formState.pending ? 'Enviando...' : 'Enviar Solicitud'}
-                </button>
-
-                <button
-                    className='cancel-button'
-                    type='button'
-                    onClick={functions.goBack || (() => {})}
-                >
-                    Cancelar
-                </button>
-            </div>
-
-            <Modal isOpen={functions.isVisible}>
-                <div className="modal-content">
-                    <p>{formState.message}</p>
-                    <button
-                        className="modal-close-button"
-                        onClick={functions.toggleVisible}
-                    >
-                        Cerrar
-                    </button>
-                </div>
-            </Modal>
+            <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>
         </form>
     );
 };
 
-export const ReadOnlyRequestForm = ({ prevValues = {} }) => {
-    const exerciseOptions = {
-        estudiante: "Ejercicio para estudiantes",
-        profesor: "Ejercicio para profesores",
-        dptoInformatica: "Ejercicio para departamento de informática",
-        secretaria: "Ejercicio para secretaría",
-        decano: "Ejercicio para decanato"
-    };
-
-    return (
-        <form
-            className='form-container manage-form'
-            onSubmit={() => null}
-        >
-            <label className="form-label">
-                Nombre del estudiante:
-            </label>
-            <input
-                className="form-input"
-                type="text"
-                value={prevValues.nombre || ""}
-                readOnly
-            />
-
-            <label className="form-label">
-                Ejercicio solicitado:
-            </label>
-            <input
-                className="form-input"
-                type="text"
-                value={exerciseOptions[prevValues.ejercicio] || prevValues.ejercicio || ""}
-                readOnly
-            />
-
-            {prevValues.infoAdicional && (
-                <>
-                    <label className="form-label">
-                        Información adicional:
-                    </label>
-                    <textarea
-                        className="form-input"
-                        rows="4"
-                        value={prevValues.infoAdicional}
-                        readOnly
-                    />
-                </>
-            )}
-
-            <button
-                className='accept-button'
-                type='button'
-                onClick={() => window.history.back()}
-            >
-                Volver
-            </button>
-        </form>
-    );
-};
-
+RequestForm.propTypes = {
+    modalId: PropTypes.string.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    prevValues: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        student: PropTypes.string.isRequired,
+        selected_ece: PropTypes.string.isRequired,
+    }),
+    handleSubmit: PropTypes.func.isRequired,
+}

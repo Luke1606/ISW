@@ -6,7 +6,7 @@ import { AuthContext } from "../../contexts/AuthContext"
 import datatypes from '../../../data/datatypes'
 import { useLoading } from '../common/useContexts'
 
-export const useListDataStates = (datatype, relatedUserId) => {
+const useListDataStates = (datatype, relatedUserId) => {
     const { setLoading } = useLoading()
     const [ data, setData ] = useState({})
     const [ currentPage, setCurrentPage ] = useState(0)
@@ -69,7 +69,7 @@ export const useListDataStates = (datatype, relatedUserId) => {
     }
 }
 
-export const useItemSelectionControl = (datatype) => {
+const useItemSelectionControl = (datatype) => {
     const [ selectedItemId, setSelectedItemId ] = useState(null)
     const [ itemOptions, setItemOptions ] = useState([])
     const { user } = useContext(AuthContext)
@@ -183,7 +183,7 @@ export const useItemSelectionControl = (datatype) => {
     }
 }
 
-export const usePermisions = (datatype) => {
+const usePermisions = (datatype) => {
     const { user } = useContext(AuthContext)
 
     let permissions = {
@@ -227,3 +227,6 @@ export const usePermisions = (datatype) => {
     }
     return permissions
 }
+
+const listHooks = { usePermisions, useItemSelectionControl, useListDataStates }
+export default listHooks

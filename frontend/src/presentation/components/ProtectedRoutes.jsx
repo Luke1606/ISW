@@ -1,11 +1,11 @@
-import { Outlet, Navigate } from "react-router-dom"
-import useAuth from "../../logic/hooks/Auth/useAuth"
+import { Outlet, Navigate } from 'react-router-dom'
+import { useAuth } from '@/logic'
 
 /**
  * @description Utiliza {@link useAuth} para verificar si el usuario esta autorizado y dependiendo de esto mostrar el contenido de {@link Outlet} o enviarlo a la ruta principal '/'
  * @returns Dependiendo de {@link isAuthorized} renderiza el {@link Outlet} o redirecciona al usuario a la página principal para que se autentique.
  */
-const ProtectedRoutesComponent = () => {
+const ProtectedRoutes = () => {
     const { isAuthorized }  = useAuth()
     
     if (isAuthorized === null)
@@ -14,4 +14,4 @@ const ProtectedRoutesComponent = () => {
     return isAuthorized ? <Outlet /> : <Navigate to="/" />
 }
 
-export default ProtectedRoutesComponent
+export default ProtectedRoutes

@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types'
-import { useMemo } from "react"
-import { User } from "lucide-react"
-import * as Yup from "yup"
+import { useMemo } from 'react'
+import { User } from 'lucide-react'
+import * as Yup from 'yup'
 import useGenericForm from "../../../logic/hooks/common/useGenericForm"
 import useAuth from '../../../logic/hooks/Auth/useAuth'
+import FormButtons from '../../components/FormButtons'
 
 /**
  * @description Componente formulario para iniciar sesión, utiliza el hook {@link useGenericForm} para la gestión del formulario y obtiene la función {@link login} a ejecutar al envio del formulario se obtiene del hook {@link useAuth}.
@@ -103,33 +104,7 @@ const LoginForm = ({modalId, closeModal}) => {
                     {formik.errors.password}
                 </span>
                 
-                <div className="button-container">
-                    <button
-                        type="submit"
-                        className="accept-button"
-                        title="Aceptar"
-                        disabled={
-                            !formik.isValid
-                        }
-                        style={
-                            !formik.isValid?
-                                { backgroundColor: 'gray' }
-                                :
-                                {}
-                        }
-                        >
-                        Aceptar
-                    </button>
-
-                    <button
-                        type="button"
-                        className="cancel-button"
-                        title="Cancelar"
-                        onClick={() => closeModal(modalId)}
-                        >
-                        Cancelar
-                    </button>
-                </div>
+                <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>
             </form>
         </>
     )

@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react"
-import AuthService from "../../services/AuthService"
-import { AuthContext } from "../../contexts/AuthContext"
-import { useLoading } from "../common/useContexts"
+import { useContext, useEffect, useState } from 'react'
+import { AuthContext } from '../../'
+import { AuthService } from '../../'
+import { useLoading } from '../'
 
 /**
  * @description Se encarga de manejar y proveer los estados y funciones asociadas a la autenticación y permisos de usuarios. 

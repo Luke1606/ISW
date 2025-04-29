@@ -1,6 +1,6 @@
-import { useContext } from "react"
-import { ModalContext } from "../../contexts/ModalContext"
-import { LoadingContext } from "../../contexts/LoadingContext"
+import { useContext } from 'react'
+import { ModalContext } from '../../'
+import { LoadingContext } from '../../'
 
 /**
  * Hooks personalizados que permiten consumir instancias de ModalContext y LoadingContext de manera sencilla.

@@ -1,8 +1,13 @@
-import axios from "axios"
-import * as authApi from "./AuthAPI"
-import * as tokens from "./Constants"
+/**
+ * @fileoverview Este archivo contiene funciones relacionadas con la configuración de APIs, utilizando la lógica definida en {@link authApi}.
+ * @module apiConfig
+ * @description Configuración de interceptors para todas las APIs del sistema.
+ */
+import axios from 'axios'
+import { authApi } from './'
+import { tokens } from '@/data'
 
-export const setupInterceptors = (instance) => {
+const setupInterceptors = (instance) => {
     instance.interceptors.request.use(
         (config) => {
             const token = authApi.getToken(tokens.ACCESS_TOKEN_KEY)
@@ -62,8 +67,10 @@ export const setupInterceptors = (instance) => {
     )
 }
 
-export const createApiInstance = (baseURL) => {
+const createApiInstance = (baseURL) => {
     const instance = axios.create({ baseURL })
     setupInterceptors(instance)
     return instance
 }
+
+export default createApiInstance

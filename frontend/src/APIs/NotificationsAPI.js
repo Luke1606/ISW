@@ -1,10 +1,10 @@
-import { createApiInstance } from "./APIConfig"
+import { createApiInstance } from "./index"
 
-const notificationsApi = createApiInstance("http://localhost:8000/notifications/")
+const notificationsApiInstance = createApiInstance("http://localhost:8000/notifications/")
 
 const handleRequest = async (method, url='', options = {}) => {
     try {
-        const response = await notificationsApi[method](url, options)
+        const response = await notificationsApiInstance[method](url, options)
         return response.data
     } catch (error) {
         const errorStatus = error.request.status
@@ -14,11 +14,14 @@ const handleRequest = async (method, url='', options = {}) => {
     }
 }
 
-export const getNotifications = () =>
+const getNotifications = () =>
     handleRequest('get')
 
-export const markNotificationAsRead = (id) =>
+const markNotificationAsRead = (id) =>
     handleRequest('put', `${id}/`)
 
-export const deleteNotification = (id) =>
+const deleteNotification = (id) =>
     handleRequest('delete', `${id}/`)
+
+const notificationsApi = {getNotifications, markNotificationAsRead, deleteNotification}
+export default notificationsApi
