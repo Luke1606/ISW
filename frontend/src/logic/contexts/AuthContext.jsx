@@ -1,6 +1,6 @@
 import PropTypes from "prop-types"
 import { createContext, useState, useEffect } from "react"
-import AuthService from "../services/AuthService"
+import { AuthService } from '@/logic'
 
 /**
  * @description Contexto diseñado para manejo centralizado de autenticación de usuarios.

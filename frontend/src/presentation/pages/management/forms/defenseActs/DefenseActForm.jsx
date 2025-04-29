@@ -3,6 +3,7 @@ import { useMemo } from "react"
 import * as Yup from "yup"
 import useGenericForm from "../../../../../logic/hooks/common/useGenericForm"
 import datatypes from "../../../../../data/datatypes"
+import FormButtons from "../../../../components/FormButtons"
 
 /**
  * @description Ventana para agregar o editar un acta de defensa.
@@ -122,31 +123,7 @@ const DefenseActForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                 {formik.errors.attachment}
             </span>
 
-            <div className="button-container">
-                <button
-                    type='submit'
-                    className='accept-button'
-                    title='Aceptar'
-                    disabled={
-                        !formik.isValid
-                    }
-                    style={
-                        !formik.isValid?
-                            { backgroundColor: 'gray' }
-                            :
-                            {}
-                    }
-                    >
-                    Aceptar
-                </button>
-
-                <button 
-                    className='cancel-button'
-                    onClick={() => closeModal(modalId)}
-                    >
-                    Cancelar
-                </button>
-            </div>
+            <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>
         </form>
     )
 }

@@ -1,15 +1,19 @@
 import PropTypes from 'prop-types'
-import datatypes from '../../../data/datatypes'
-import { useForm, useFormParams } from '../../../logic/hooks/management/useForm'
-import { EvidenceForm, ReadOnlyEvidenceForm } from './Forms/evidences/EvidenceForms'
-import { RequestForm, ReadOnlyRequestForm } from './Forms/requests/RequestForms'
-import { DefenseTribunalForm, ReadOnlyDefenseTribunalForm } from './Forms/defenseTribunals/DefenseTribunalForms'
-import DefenseActForm from './Forms/defenseActs/DefenseActForm'
-import ReadOnlyDefenseActForm from './Forms/defenseActs/ReadOnlyDefenseActForm'
-import ReadOnlyUserForm from './forms/users/ReadOnlyUserForm'
-import UserForm from './forms/users/UserForm'
+import { datatypes } from '@/data'
+import { useForm, useFormParams } from '@/logic'
+import { 
+    EvidenceForm, 
+    ReadOnlyEvidenceForm,
+    RequestForm,
+    DefenseTribunalForm, 
+    ReadOnlyDefenseTribunalForm,
+    DefenseActForm,
+    ReadOnlyDefenseActForm,
+    UserForm,
+    ReadOnlyUserForm
+} from './'
 
-const FormComponent = ({formParams}) => {
+const Form = ({formParams}) => {
     const datatype = formParams?.datatype
     const idData = formParams?.idData
     const relatedUserId = formParams?.relatedUserId
@@ -22,6 +26,11 @@ const FormComponent = ({formParams}) => {
     if (loading) return null
 
     let specificForm
+
+    const printError = () => {
+        console.warn('Función no permitida.')
+        return null
+    }
 
     switch (datatype) {
         case datatypes.evidence:
@@ -40,37 +49,34 @@ const FormComponent = ({formParams}) => {
                     />
             break 
         case datatypes.request:
-            specificForm = view?
-                <ReadOnlyRequestForm
-                    modalId={formModalId}
-                    closeModal={closeManageForm} 
-                    values={prevValues}
-                    />
-                :
-                <RequestForm
-                    modalId={formModalId}
-                    closeModal={closeManageForm} 
-                    prevValues={prevValues}
-                    handleSubmit={handleSubmit} 
-                    />
+            if (view) printError()
+
+            specificForm = <RequestForm
+                                modalId={formModalId}
+                                closeModal={closeManageForm} 
+                                prevValues={prevValues}
+                                handleSubmit={handleSubmit} 
+                                />
             break
-        case datatypes.defense_tribunal:    
-            specificForm = view?
-                <ReadOnlyDefenseTribunalForm 
-                    modalId={formModalId}
-                    closeModal={closeManageForm} 
-                    values={prevValues}/>
-                :
-                <DefenseTribunalForm 
-                modalId={formModalId}
-                    closeModal={closeManageForm} 
-                    prevValues={prevValues} 
-                    handleSubmit={handleSubmit} 
-                    />
+        case datatypes.tribunal:
+        case datatypes.defense_tribunal:
+            if (datatype===datatypes.tribunal && view) printError()
+            else {
+                specificForm = view?
+                    <ReadOnlyDefenseTribunalForm 
+                        modalId={formModalId}
+                        closeModal={closeManageForm} 
+                        values={prevValues}/>
+                    :
+                    <DefenseTribunalForm 
+                        datatype={datatype}
+                        modalId={formModalId}
+                        closeModal={closeManageForm}
+                        prevValues={prevValues} 
+                        handleSubmit={handleSubmit} 
+                        />
+            }
             break
-        // case datatypes.tribunal:
-        //     children = <TribunalAprovalForm values={params.values} functions={params.functions}/>
-        //     break
         case datatypes.defense_act:    
             specificForm = view?
                 <ReadOnlyDefenseActForm 
@@ -110,7 +116,7 @@ const FormComponent = ({formParams}) => {
     return specificForm
 }
 
-FormComponent.propTypes = {
+Form.propTypes = {
     formParams: PropTypes.shape({
         datatype: PropTypes.oneOf([
             ...Object.values(datatypes.user),
@@ -127,4 +133,4 @@ FormComponent.propTypes = {
     }),
 }
 
-export default FormComponent
+export default Form

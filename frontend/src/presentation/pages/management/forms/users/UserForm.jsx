@@ -3,6 +3,7 @@ import * as Yup from 'yup'
 import { useMemo } from 'react'
 import useGenericForm from '../../../../../logic/hooks/common/useGenericForm'
 import datatypes from '../../../../../data/datatypes'
+import FormButtons from "../../../../components/FormButtons"
 
 /**
  * @description Ventana para agregar o editar un usuario ya sea profesor o estudiante.
@@ -84,6 +85,37 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
 
     const formik = useGenericForm(submitFunction, initialValues, validationSchema)
 
+    /**
+     * Distintas opciones a mostrar en el elemento `select` con id de valor `faculty-select`
+     */
+    const facultyOptions = [
+        { value: 'FTI', label: 'Facultad de Tecnologías Interactivas' },
+        { value: 'FTE', label: 'Facultad de Tecnologías Educativas' },
+        { value: 'CITEC', label: 'Facultad de Ciencias y Tecnologías Computacionales' },
+        { value: 'FTL', label: 'Facultad de Tecnologías Libres' },
+        { value: 'FCS', label: 'Facultad de Ciberseguridad' },
+        { value: 'FIO', label: 'Facultad de Información Organizacional' },
+    ]
+
+    /**
+     * Distintas opciones a mostrar en el elemento `select` con id de valor `faculty-select`
+     */
+    const docentRoleOptions = [
+        { value: datatypes.user.professor, label: 'Profesor' },
+        { value: datatypes.user.dptoInf, label: 'Profesor miembro del Departamento de Informática' },
+        { value: datatypes.user.decan, label: 'Miembro del Decanato ' },
+    ]
+
+    const printOptions = (option) => (
+        <option 
+            key={option.value} 
+            value={option.value}
+            className='option-element'
+            >
+            {option.label}
+        </option>
+    )
+
     return (
         <form
             className='form-container manage-form' 
@@ -157,48 +189,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
                             >
                             -- Seleccione una facultad -- 
                         </option>
-                        
-                        <option 
-                            className='option-element' 
-                            value={'FTI'}
-                            > 
-                            Facultad de Tecnologías Interactivas 
-                        </option>
-                        
-                        <option 
-                            className='option-element' 
-                            value={'FTE'}
-                            > 
-                            Facultad de Tecnologías Educativas
-                        </option>
-
-                        <option 
-                            className='option-element' 
-                            value={'CITEC'}
-                            > 
-                            Facultad de Ciencias y Tecnologías Computacionales
-                        </option>
-
-                        <option 
-                            className='option-element' 
-                            value={'FTL'}
-                            > 
-                            Facultad de Tecnologías Libres
-                        </option>
-
-                        <option 
-                            className='option-element' 
-                            value={'FCS'}
-                            > 
-                            Facultad de Ciberseguridad 
-                        </option>
-
-                        <option 
-                            className='option-element' 
-                            value={'FIO'}
-                            > 
-                            Facultad de Información Organizacional
-                        </option>
+                        {facultyOptions.map(printOptions)}
                     </select>
 
                     <span
@@ -253,27 +244,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
                             >
                             -- Seleccione un cargo -- 
                         </option>
-                        
-                        <option 
-                            className='option-element' 
-                            value={datatypes.user.professor}
-                            > 
-                            Profesor 
-                        </option>
-                        
-                        <option 
-                            className='option-element' 
-                            value={datatypes.user.dptoInf}
-                            > 
-                            Profesor miembro del Departamento de Informática 
-                        </option>
-                        
-                        <option 
-                            className='option-element' 
-                            value={datatypes.user.decan}
-                            > 
-                            Miembro del Decanato 
-                        </option>
+                        {docentRoleOptions.map(printOptions)}
                     </select>
 
                     <span
@@ -284,31 +255,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
                     </span>
                 </>}
 
-            <div className='button-container'>
-                <button
-                    type='submit'
-                    className='accept-button'
-                    title='Aceptar'
-                    disabled={
-                        !formik.isValid
-                    }
-                    style={
-                        !formik.isValid?
-                            { backgroundColor: 'gray' }
-                            :
-                            {}
-                    }
-                    >
-                    Aceptar
-                </button>
-
-                <button 
-                    className='cancel-button'
-                    onClick={() => closeModal(modalId)}
-                    >
-                    Cancelar
-                </button>
-            </div>
+            <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>
         </form>
     )
 }

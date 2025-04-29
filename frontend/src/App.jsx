@@ -1,12 +1,8 @@
-import { Suspense } from "react"
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import routes from "./presentation/routes"
-import ErrorBoundary from "./presentation/components/error/ErrorBoundary"
-import ToastNotification from "./presentation/components/ToastNotification"
-import { AuthProvider } from "./logic/contexts/AuthContext"
-import useUserActivity from './logic/hooks/Auth/useUserActivity'
-import { ModalProvider } from "./logic/contexts/ModalContext"
-import { LoadingProvider } from "./logic/contexts/LoadingContext"
+import { Suspense } from 'react'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import routes from './presentation'
+import { ErrorBoundary, ToastNotification } from './presentation'
+import { AuthProvider, useUserActivity, ModalProvider, LoadingProvider } from './logic'
 
 /**
  * @description Crea un enrutador basado en las rutas del sitio.
@@ -15,6 +11,7 @@ import { LoadingProvider } from "./logic/contexts/LoadingContext"
  *  - `path`: Ruta del sitio (string).
  *  - `element`: Componente asociado a la ruta (React.ReactNode).
  *  - `children`: Sub-rutas opcionales (array).
+ * 
  * @returns {Object} `router` - Objeto enrutador basado en React Router.
  *  Utiliza las características experimentales:
  *  - `v7_startTransition`: Mejora de rendimiento para transiciones.

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import AuthService from '../../services/AuthService'
-import useDebouncedFunction from '../common/useDebouncedFunction'
+import { AuthService } from '../../'
+import { useDebouncedFunction } from '../'
 
 /**
  * @description Vigila la actividad del usuario para que al cumplirse {@link timeoutDuration} si el usuario no ha ejecutado ninguno de los eventos en {@link events} se cambie con {@link AuthService.setUserActive} a false y se trate al usuario como inactivo según la configuracion de {@link AuthService}.

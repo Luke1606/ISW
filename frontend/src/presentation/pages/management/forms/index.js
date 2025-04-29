@@ -1,0 +1,6 @@
+export * from './defenseActs'
+export * from './defenseTribunals'
+export * from './evidences'
+export * from './reports'
+export * from './requests'
+export * from './users'

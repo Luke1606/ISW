@@ -1,9 +1,11 @@
-import Layout from "./components/layout/Layout"
-import HomeComponent from "./pages/home/HomeComponent"
-import ProtectedRoutesComponent from "./components/ProtectedRoutesComponent"
-import ListComponent from "./pages/management/ListComponent"
-import NotificationCenter from "./pages/notifications/NotificationCenter"
-import ErrorComponent from "./components/error/ErrorComponent"
+import { 
+    NotificationCenter, 
+    ProtectedRoutes, 
+    Layout, 
+    Home, 
+    List, 
+    Error
+} from './'
 
 const routes = [
     {
@@ -12,18 +14,18 @@ const routes = [
         children: [
             {
                 index: true,
-                element: <HomeComponent />,
+                element: <Home />,
             },
             {
                 path: "*",
                 element: (
-                    <ErrorComponent
+                    <Error
                         errorTitle="Dirección no encontrada"
                         errorDescription="La ruta especificada no corresponde a ninguna dirección. Verifique la ruta."
                     />
             )},
             {
-                element: <ProtectedRoutesComponent />,
+                element: <ProtectedRoutes />,
                 children: [
                     {
                         path: "notifications",
@@ -31,7 +33,7 @@ const routes = [
                     },
                     {
                         path: "list/:datatype/:relatedUserId?",
-                        element: <ListComponent />,
+                        element: <List />,
                     },
                 ],
             },

@@ -2,9 +2,9 @@
 import PropTypes from 'prop-types'
 import { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
-import useDebouncedFunction from './useDebouncedFunction'
-import NotificationService from '../../services/NotificationService'
-import { useLoading } from '../../hooks/common/useContexts'
+import { useDebouncedFunction } from './'
+import { NotificationService } from '../../'
+import { useLoading } from '../'
 
 /**
  * @description Hook para gestion de formularios utilizando {@link useFormik} y `Yup`.

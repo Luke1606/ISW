@@ -1,6 +1,6 @@
-import * as authApi from "../../APIs/AuthAPI"
-import * as tokens from "../../APIs/Constants"
-import NotificationService from "./NotificationService"
+import {authApi} from '@/APIs'
+import {tokens} from '@/data'
+import { NotificationService } from "./"
 
 class AuthService {
     constructor () {

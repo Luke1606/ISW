@@ -1,11 +1,10 @@
 import { useParams } from 'react-router-dom'
 import { Search, Plus, Edit, Trash2, FileText, Check, X } from 'lucide-react'
-import { useListDataStates, useItemSelectionControl, usePermisions } from '../../../logic/hooks/management/useList'
+import { listHooks, useFormParams } from '../../../logic/hooks/management'
 import Modal from '../../components/Modal'
 import PaginationButtons from '../../components/PaginationButtons'
-import FormComponent from './FormComponent'
+import Form from './FormComponent'
 import { useModal } from '../../../logic/hooks/common/useContexts'
-import { useFormParams } from '../../../logic/hooks/management/useForm'
 
 const List = () => {
     const { datatype, relatedUserId } = useParams()
@@ -15,16 +14,16 @@ const List = () => {
         paginationParams,
         handleSearch,
         handleDelete
-    } = useListDataStates(datatype, relatedUserId)
+    } = listHooks.useListDataStates(datatype, relatedUserId)
 
-    const permissions = usePermisions(datatype)
+    const permissions = listHooks.usePermisions(datatype)
 
     const {
         itemOptions,
         handleOptions,
         selectedItemId,
         setSelectedItemId
-    } = useItemSelectionControl(datatype)
+    } = listHooks.useItemSelectionControl(datatype)
 
     const deleteModalId = 'delete-modal'
 
@@ -188,7 +187,7 @@ const List = () => {
             </Modal>
 
             <Modal isOpen={isOpen(formModalId)}>
-                <FormComponent formParams={manageFormParams}/>
+                <Form formParams={manageFormParams}/>
             </Modal>
         </div>
     )
