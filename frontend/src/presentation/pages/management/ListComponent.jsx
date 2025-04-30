@@ -1,10 +1,8 @@
 import { useParams } from 'react-router-dom'
 import { Search, Plus, Edit, Trash2, FileText, Check, X } from 'lucide-react'
-import { listHooks, useFormParams } from '../../../logic/hooks/management'
-import Modal from '../../components/Modal'
-import PaginationButtons from '../../components/PaginationButtons'
-import Form from './FormComponent'
-import { useModal } from '../../../logic/hooks/common/useContexts'
+import { listHooks, useFormParams, useModal } from '@/logic'
+import { Modal, PaginationButtons } from '../../'
+import { Form } from './'
 
 const List = () => {
     const { datatype, relatedUserId } = useParams()

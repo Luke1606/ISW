@@ -11,7 +11,7 @@ import {
     ReadOnlyDefenseActForm,
     UserForm,
     ReadOnlyUserForm
-} from './'
+} from '.'
 
 const Form = ({formParams}) => {
     const datatype = formParams?.datatype
