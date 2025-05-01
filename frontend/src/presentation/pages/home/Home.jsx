@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth, useModal } from '@/logic'
-import { LoginForm, Modal, CardCarousel } from '@/presentation'
 import { datatypes, featureItems } from '@/data/'
+import { LoginForm, Modal, CardCarousel } from '@/presentation'
 
 /**
  * @description Componente que renderiza la página principal de la aplicación.

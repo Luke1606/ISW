@@ -1,17 +1,17 @@
-import PropTypes from "prop-types"
-import { useMemo } from "react"
-import * as Yup from "yup"
-import useGenericForm from "../../../../../logic/hooks/common/useGenericForm"
-import datatypes from "../../../../../data/datatypes"
-import FormButtons from "../../../../components/FormButtons"
+import PropTypes from 'prop-types'
+import { useMemo } from 'react'
+import * as Yup from 'yup'
+import { datatypes } from '@/data'
+import { useGenericForm } from '@/logic'
+import { FormButtons } from '@/presentation'
 
 /**
- * @description Ventana para agregar o editar un acta de defensa.
+ * @description Ventana para agregar o editar un solicitud.
  * @param {string} `modalId` - Id del modal en el que se renderiza este componente.
  * @param {function} `closeModal`- Función para cerrar el modal en el que se renderiza este componente.
- * @param {Object} `prevValues`- Contiene toda la información del acta de defensa a mostrar.
+ * @param {Object} `prevValues`- Contiene toda la información de la solicitud a mostrar.
  * @param {function} `handleSubmit`- Función a ejecutar al envío del formulario.
- * @returns Estructura de los campos a mostrar con la información del acta de defensa contenida en prevValues.
+ * @returns Estructura de los campos a mostrar con la información de la solicitud contenida en prevValues.
  */
 const RequestForm = ({ modalId, closeModal, prevValues, handleSubmit }) => {
     const initialValues = {
@@ -32,11 +32,10 @@ const RequestForm = ({ modalId, closeModal, prevValues, handleSubmit }) => {
 
     const submitFunction = async (values) => {
         const newValues = {
-            name: values?.name,
-            faculty: values?.faculty,
-            attachment: values?.attachment,
+            student: prevValues?.student,
+            selectedECE: values?.selectedECE,
         }
-        await handleSubmit(datatypes.request, prevValues?.id, newValues)
+        await handleSubmit(datatypes.request, prevValues?.student, newValues)
         closeModal(modalId)
     }
     const formik = useGenericForm(
@@ -52,86 +51,52 @@ const RequestForm = ({ modalId, closeModal, prevValues, handleSubmit }) => {
         { value: 'EX', label: 'Exhimición'},  
     ]
 
-    const printOptions = (option) => (
-        <option 
-            key={option.value} 
-            value={option.value}
-            className='option-element'
-            >
-            {option.label}
-        </option>
-    )
     return (
         <form
             className='form-container manage-form'
             onSubmit={formik.handleSubmit}
         >
-            <label className="form-label" htmlFor="studentName">
-                Nombre del estudiante:
-            </label>
-            
-            <input
-                className="form-input"
-                id="studentName"
-                type="text"
-                placeholder="Ingrese el nombre completo"
-                {...formik.getFieldProps('studentName')}
-            />
-            
-            <span
-                className="error"
-                style={formik.errors.studentName && formik.touched.studentName ? {} : { visibility: "hidden" }}
-            >
-                {formik.errors.studentName}
-            </span>
-
-            <label className="form-label" htmlFor="selectedECE">
+            <label 
+                className='form-label'
+                htmlFor='ece-select'
+                >
                 Seleccione el ejercicio deseado:
             </label>
             
             <select
-                className="form-select"
-                id="selectedECE"
+                className='form-select'
+                id='ece-select'
                 {...formik.getFieldProps('selectedECE')}
             >
-                <option value="" disabled>-- Escoja una opción --</option>
+                <option 
+                    value='' 
+                    disabled
+                    >
+                    -- Escoja una categoría --
+                </option>
+                
                 {exerciseOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
+                    <option 
+                        key={option.value} 
+                        value={option.value}
+                        className='option-element'
+                        >
                         {option.label}
                     </option>
                 ))}
             </select>
             
             <span
-                className="error"
-                style={formik.errors.selectedECE && formik.touched.selectedECE ? {} : { visibility: "hidden" }}
-            >
+                className='error'
+                style={formik.errors.selectedECE && formik.touched.selectedECE ? {} : { visibility: 'hidden' }}
+                >
                 {formik.errors.selectedECE}
-            </span>
-
-            <label className="form-label" htmlFor="additionalInfo">
-                Información adicional (opcional):
-            </label>
-            
-            <textarea
-                className="form-input"
-                id="additionalInfo"
-                rows="4"
-                placeholder="Proporcione detalles adicionales sobre su solicitud..."
-                {...formik.getFieldProps('additionalInfo')}
-            />
-            
-            <span
-                className="error"
-                style={formik.errors.additionalInfo && formik.touched.additionalInfo ? {} : { visibility: "hidden" }}
-            >
-                {formik.errors.additionalInfo}
             </span>
 
             <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>
         </form>
-    );
-};
+    )
+}
 
 RequestForm.propTypes = {
     modalId: PropTypes.string.isRequired,

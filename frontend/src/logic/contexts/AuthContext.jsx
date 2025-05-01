@@ -61,7 +61,6 @@ const AuthProvider = ({ children }) => {
     const logout = () => {
         AuthService.logout()
         setUser(null)
-        setAuthStatusChanged(true)
     }
 
     return (
