@@ -1,4 +1,4 @@
-import { createApiInstance } from "./index"
+import { createApiInstance } from './'
 
 const notificationsApiInstance = createApiInstance("http://localhost:8000/notifications/")
 

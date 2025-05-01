@@ -1,18 +1,18 @@
 /* eslint-disable react/prop-types */
 import { useMemo } from 'react'
 import * as Yup from 'yup'
+import { datatypes } from '@/data'
 import { useGenericForm } from '@/logic'
+import { FormButtons } from '@/presentation'
 
-const EvidenceForm = ({ values = {}, functions = {} }) => {
-    const prevValues = values.prevValues || {};
-
+const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
     const initialValues = {
         name: prevValues?.name || '',
         description: prevValues?.description || '',
-        isUrl: values.isUrl || false,
-        url: prevValues?.url || '',
-        file: null
-    };
+        attachmentType: prevValues.attachment_type || '',
+        url: prevValues?.attachment_url || '',
+        file: prevValues?.attachment_file || null
+    }
 
     const validationSchema = useMemo(() => Yup.object().shape({
         name: Yup.string()
@@ -23,43 +23,58 @@ const EvidenceForm = ({ values = {}, functions = {} }) => {
         description: Yup.string()
             .required('La descripción es obligatoria'),
         
+        attachment_type: Yup.string()
+            .required('El tipo de adjunto es obligatorio')   
+            .oneOf(['url', 'file']),
+        
         url: Yup.string()
-            .when('isUrl', {
-                is: true,
-                then: Yup.string().url('Debe ser una URL válida').required('La URL es requerida'),
+            .when('attachmentType', {
+                is: 'url',
+                then: Yup.string()
+                    .required('La URL es obligaroria')
+                    .url('Debe ser una URL válida'),
                 otherwise: Yup.string().notRequired()
             }),
             
         file: Yup.mixed()
-            .when('isUrl', {
-                is: false,
-                then: Yup.mixed().required('El archivo es requerido'),
+            .when('attachmentType', {
+                is: 'file',
+                then: Yup.mixed()
+                    .required('El archivo es obligatorio'),
                 otherwise: Yup.mixed().notRequired()
             })
-    }), []);
+    }), [])
 
-    const { formik, formState } = useGenericForm(
-        functions.handleSubmit || (() => {}),
-        initialValues,
-        validationSchema
-    );
+    const submitFunction = async (values) => {
+        const newValues = {
+            name: values?.name,
+            description: values?.description,
+            attachmentType: values.attachment_type,
+            url: values?.attachment_url,
+            file: values?.attachment_file
+        }
+        await handleSubmit(datatypes.evidence, prevValues?.id, newValues)
+        closeModal(modalId)
+    }
+
+    const formik = useGenericForm(submitFunction, initialValues, validationSchema)
 
     const handleAttachmentTypeChange = (e) => {
-        const isUrl = e.target.value === 'true';
-        formik.setFieldValue('isUrl', isUrl);
+        const attachmentType = e.target.value;
+        formik.setFieldValue('attachmentType', attachmentType);
         
-        if (!isUrl) {
+        if (attachmentType === 'url') {
             formik.setFieldValue('url', '');
         } else {
             formik.setFieldValue('file', null);
         }
-    };
+    }
 
     return (
         <form
             className='form-container manage-form'
             onSubmit={formik.handleSubmit}
-        >
+            >
             <label className='form-label' htmlFor='name'>
                 Nombre de la evidencia:
             </label>
@@ -70,12 +85,12 @@ const EvidenceForm = ({ values = {}, functions = {} }) => {
                 type='text'
                 placeholder='Ej: Informe final 2023'
                 {...formik.getFieldProps('name')}
-            />
+                />
             
             <span
                 className="error"
                 style={formik.errors.name && formik.touched.name ? {} : { visibility: "hidden" }}
-            >
+                >
                 {formik.errors.name}
             </span>
 
@@ -89,12 +104,12 @@ const EvidenceForm = ({ values = {}, functions = {} }) => {
                 rows='4'
                 placeholder='Describa la evidencia...'
                 {...formik.getFieldProps('description')}
-            />
+                />
 
             <span
                 className="error"
                 style={formik.errors.description && formik.touched.description ? {} : { visibility: "hidden" }}
-            >
+                >
                 {formik.errors.description}
             </span>
 
@@ -159,12 +174,12 @@ const EvidenceForm = ({ values = {}, functions = {} }) => {
                         id='file'
                         type='file'
                         onChange={(e) => formik.setFieldValue('file', e.target.files[0])}
-                    />
+                        />
                     
                     <span
                         className="error"
                         style={formik.errors.file && formik.touched.file ? {} : { visibility: "hidden" }}
-                    >
+                        >
                         {formik.errors.file}
                     </span>
                 </>
@@ -188,25 +203,9 @@ const EvidenceForm = ({ values = {}, functions = {} }) => {
                 </>
             )}
 
-            <div className="button-container">
-                <button
-                    className='accept-button'
-                    type='submit'
-                    disabled={formState.pending || !formik.isValid}
-                >
-                    {formState.pending ? 'Guardando...' : 'Aceptar'}
-                </button>
-
-                <button
-                    className='cancel-button'
-                    type='button'
-                    onClick={functions.goBack || (() => {})}
-                >
-                    Cancelar
-                </button>
-            </div>
+            <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>        
         </form>
-    );
-};
+    )
+}
 
 export default EvidenceForm

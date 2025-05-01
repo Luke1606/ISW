@@ -1,4 +1,4 @@
-import { createApiInstance } from "./index"
+import { createApiInstance } from './'
 
 const managementApiInstance = createApiInstance("http://localhost:8000/management/")
 
