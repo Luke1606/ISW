@@ -2,9 +2,8 @@ import PropTypes from 'prop-types'
 import { useMemo } from 'react'
 import { User } from 'lucide-react'
 import * as Yup from 'yup'
-import useGenericForm from "../../../logic/hooks/common/useGenericForm"
-import useAuth from '../../../logic/hooks/Auth/useAuth'
-import FormButtons from '../../components/FormButtons'
+import { FormButtons } from '@/presentation'
+import { useGenericForm, useAuth } from '@/logic/'
 
 /**
  * @description Componente formulario para iniciar sesión, utiliza el hook {@link useGenericForm} para la gestión del formulario y obtiene la función {@link login} a ejecutar al envio del formulario se obtiene del hook {@link useAuth}.
@@ -16,8 +15,8 @@ const LoginForm = ({modalId, closeModal}) => {
     const { login } = useAuth()
 
     const initialValues = {
-        username: "",
-        password: "",
+        username: '',
+        password: ''
     }
 
     const validationSchema = useMemo(
@@ -28,12 +27,12 @@ const LoginForm = ({modalId, closeModal}) => {
                     .required('El nombre de usuario es obligatorio')
                     .matches(/^[a-zA-Z0-9]*$/, 'El nombre no puede contener caracteres especiales'),
                 password: Yup.string()
-                    .min(10, "La contraseña debe tener al menos 10 caracteres")
-                    .matches(/[a-z]/, "La contraseña debe contener al menos una letra minúscula")
-                    .matches(/[A-Z]/, "La contraseña debe contener al menos una letra mayúscula")
-                    .matches(/[0-9]/, "La contraseña debe contener al menos un número")
-                    .matches(/[\W_]/, "La contraseña debe contener al menos un caracter especial")
-                    .required("La contraseña es obligatoria"),
+                    .min(10, 'La contraseña debe tener al menos 10 caracteres')
+                    .matches(/[a-z]/, 'La contraseña debe contener al menos una letra minúscula')
+                    .matches(/[A-Z]/, 'La contraseña debe contener al menos una letra mayúscula')
+                    .matches(/[0-9]/, 'La contraseña debe contener al menos un número')
+                    .matches(/[\W_]/, 'La contraseña debe contener al menos un caracter especial')
+                    .required('La contraseña es obligatoria'),
             }),
         [])
 
@@ -46,10 +45,10 @@ const LoginForm = ({modalId, closeModal}) => {
 
     return (
         <>
-            <form className="form-container" onSubmit={formik.handleSubmit}>
-                <div className="icon-container">
-                    <div className="icon-circle">
-                        <User className="icon" size={50}/>
+            <form className='form-container' onSubmit={formik.handleSubmit}>
+                <div className='icon-container'>
+                    <div className='icon-circle'>
+                        <User className='icon' size={50}/>
                     </div>
                 </div>
 
@@ -57,49 +56,49 @@ const LoginForm = ({modalId, closeModal}) => {
 
                 
                 <label 
-                    className="form-label" 
-                    htmlFor="username"
+                    className='form-label' 
+                    htmlFor='username'
                     >
                     Nombre de usuario:
                 </label>
 
                 <input
-                    className="form-input"
-                    type="text"
-                    id="username"
-                    placeholder="Ingrese su nombre de usuario"
-                    autoComplete="username"
-                    {...formik.getFieldProps("username")}
+                    className='form-input'
+                    type='text'
+                    id='username'
+                    placeholder='Ingrese su nombre de usuario'
+                    autoComplete='username'
+                    {...formik.getFieldProps('username')}
                 />
 
                 <span
-                    className="error"
-                    style={formik.errors.username && formik.touched.username ? {} : { visibility: "hidden" }}
+                    className='error'
+                    style={formik.errors.username && formik.touched.username ? {} : { visibility: 'hidden' }}
                     >
                     {formik.errors.username}
                 </span>
 
                 <label 
-                    className="form-label" 
-                    htmlFor="password" 
-                    id="label-password"
+                    className='form-label' 
+                    htmlFor='password' 
+                    id='label-password'
                     >
                     Contraseña:
                 </label>
 
                 <input
-                    className="form-input"
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Ingrese su contraseña"
-                    autoComplete="current-password"
-                    {...formik.getFieldProps("password")}
+                    className='form-input'
+                    type='password'
+                    id='password'
+                    name='password'
+                    placeholder='Ingrese su contraseña'
+                    autoComplete='current-password'
+                    {...formik.getFieldProps('password')}
                 />
 
                 <span
-                    className="error"
-                    style={formik.errors.password && formik.touched.password ? {} : { visibility: "hidden" }}
+                    className='error'
+                    style={formik.errors.password && formik.touched.password ? {} : { visibility: 'hidden' }}
                     >
                     {formik.errors.password}
                 </span>

@@ -1,9 +1,9 @@
-import PropTypes from "prop-types"
-import { useMemo } from "react"
-import * as Yup from "yup"
-import useGenericForm from "../../../../../logic/hooks/common/useGenericForm"
-import datatypes from "../../../../../data/datatypes"
-import FormButtons from "../../../../components/FormButtons"
+import PropTypes from 'prop-types'
+import { useMemo } from 'react'
+import * as Yup from 'yup'
+import { useGenericForm } from '@/logic'
+import { datatypes } from '@/data'
+import { FormButtons, FilePreviewer } from '@/presentation'
 
 /**
  * @description Ventana para agregar o editar un acta de defensa.
@@ -122,6 +122,17 @@ const DefenseActForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
             >
                 {formik.errors.attachment}
             </span>
+
+            {formik.values.attachment &&
+                <>
+                    <label className='form-label'>
+                        Adjunto actual:
+                    </label>
+                    
+                    <FilePreviewer 
+                        source={formik.values.attachment}
+                        />
+            </>}
 
             <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>
         </form>

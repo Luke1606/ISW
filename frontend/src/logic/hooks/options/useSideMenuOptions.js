@@ -1,9 +1,8 @@
 import { useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { File } from 'lucide-react'
-import datatypes from '../../../data/datatypes'
-import useAuth from "../auth/useAuth"
-import { useFormParams } from '../management/useForm'
+import { datatypes } from '@/data'
+import { useAuth, useFormParams } from '../'
 
 /**
  * 

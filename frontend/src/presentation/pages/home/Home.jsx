@@ -1,13 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth, useModal } from '@/logic'
-import { LoginForm, Modal, CardCarousel } from '@/presentation'
 import { datatypes, featureItems } from '@/data/'
+import { LoginForm, Modal, CardCarousel } from '@/presentation'
 
 /**
  * @description Componente que renderiza la página principal de la aplicación.
  * @returns Componente principal compuesto por un hero que que contiene un mensaje de bienvenida (variante dependiendo del usuario autenticado, si hay uno) y un carousel de características del sistema y el botón `acceder/comenzar` para autenticarse.
  */
-const HomeComponent = () => {
+const Home = () => {
     const navigate = useNavigate()
     const { user } = useAuth()
 
@@ -70,4 +70,4 @@ const HomeComponent = () => {
     )
 }
 
-export default HomeComponent
+export default Home

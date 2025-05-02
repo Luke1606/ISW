@@ -1003,8 +1003,10 @@ button:hover, .button:hover {
     height: fit-content;
 }
 
-.form-select {
-    width: 80%;
-    height: 3rem;
-    font-size: 1.5rem;
+.file-preview {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-top: 5px;
 }

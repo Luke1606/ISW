@@ -1,7 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../../'
-import { AuthService } from '../../'
-import { useLoading } from '../'
+import { AuthContext, AuthService, useLoading } from '@/logic'
 
 /**
  * @description Se encarga de manejar y proveer los estados y funciones asociadas a la autenticación y permisos de usuarios. 
@@ -23,7 +21,7 @@ const useAuth = () => {
                 const result = await AuthService.checkAuth()
                 setIsAuthorized(result)
             } catch (error) {
-                console.error("Error verificando autorización:", error)
+                console.error('Error verificando autorización:', error)
                 setIsAuthorized(false)
             } finally {
                 setLoading(false)

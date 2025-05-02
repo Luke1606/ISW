@@ -1,7 +1,7 @@
-import { toast } from 'react-toastify'
 import Push from 'push.js'
-import { getNotifications, markNotificationAsRead, deleteNotification } from '../../APIs/NotificationsAPI'
-import AuthService from './AuthService'
+import { toast } from 'react-toastify'
+import { notificationsApi } from '@/APIs'
+import { AuthService } from './'
 
 class NotificationService {
     constructor (url, maxReconnectAttempts) {
@@ -13,15 +13,15 @@ class NotificationService {
     }
 
     async get () {
-        return await getNotifications()
+        return await notificationsApi.getNotifications()
     }
 
     async markAsRead (id) {
-        return await markNotificationAsRead(id)
+        return await notificationsApi.markNotificationAsRead(id)
     }
 
     async delete (id) {
-        return await deleteNotification(id)
+        return await notificationsApi.deleteNotification(id)
     }
 
     showToast (newNotification, type='info') {

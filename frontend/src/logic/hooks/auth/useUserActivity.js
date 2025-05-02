@@ -18,6 +18,7 @@ const useUserActivity = (timeoutDuration = 10 * 60 * 1000, events = ['mousemove'
         AuthService.setUserActive(true)
         
         clearTimeout(timeout)
+
         timeout = setTimeout(
             () => AuthService.setUserActive(false)
             , timeoutDuration)
@@ -37,8 +38,7 @@ const useUserActivity = (timeoutDuration = 10 * 60 * 1000, events = ['mousemove'
                 window.removeEventListener(event, resetActivityTimeout)
             })
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [timeoutDuration, events])
+    }, [timeoutDuration, events, resetActivityTimeout, timeout])
 }
 
 export default useUserActivity

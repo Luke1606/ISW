@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useLoading, useDebouncedFunction } from '../common'
-import { ManagementService, NotificationService } from '../services'
+import { useLoading, useDebouncedFunction } from '../'
+import { ManagementService, NotificationService } from '../../'
 
 const useForm = (datatype, idData, relatedUserId) => {
     const { loading, setLoading } = useLoading()

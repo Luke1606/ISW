@@ -1,5 +1,6 @@
-import { useCallback, useRef, useEffect } from "react"
-import _ from "lodash"
+import { useCallback, useRef, useEffect } from 'react'
+import _ from 'lodash'
+
 /**
  * @description Utiliza {@link _.debounce} y {@link useCallback} para optimizar el funcionamiento de un {@link callback}.
  * @param {function(): any} callback - función anónima o funcion flecha a envolver en la función debounced a devolver.

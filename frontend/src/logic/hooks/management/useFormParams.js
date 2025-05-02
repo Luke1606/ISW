@@ -1,11 +1,11 @@
-import { useState } from "react"
-import { useModal } from "../common"
-import { datatypes } from "../../../data"
+import { useState } from 'react'
+import { datatypes } from '@/data'
+import { useModal } from '../'
 
 const useFormParams = (datatype) => {
     const [ manageFormParams, setManageFormParams ] = useState({datatype: datatype})
     const { openModal, closeModal } = useModal()
-    console.log(datatype);
+
     if (!datatype && !Object.values(datatypes).includes(datatype) && !Object.values(datatypes.user).includes(datatype)) {
         console.warn(`Se intento manejar un formulario proporcionando ${datatype} como tipo de dato, el cual no es válido`)
         return null

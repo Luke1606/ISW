@@ -1,25 +1,17 @@
 import PropTypes from 'prop-types'
-import { FilePreviewer } from '@/presentation/'
 
-/**
- * @description Ventana para mostrar detalles de un acta de defensa.
- * @param {string} `modalId` - Id del modal en el que se renderiza este componente.
- * @param {function} `closeModal- Función para cerrar el modal en el que se renderiza este componente.
- * @param {Object} `values`- Contiene toda la información del acta de defensa a mostrar.
- * @returns Estructura de los campos a mostrar con la información del acta de defensa contenida en `values`.
- */
-const ReadOnlyDefenseActForm = ({modalId, closeModal, values}) => {
+const ReadOnlyEvidenceForm = ({modalId, closeModal, values}) => {
     if (!values) return null
-    
+
     return (
         <section
-            className='form-container manage-form' 
+        className='form-container manage-form' 
             >
             <label 
                 className='form-label' 
                 htmlFor='name'
                 >
-                Nombre del acta:
+                Nombre de la evidencia:
             </label>
             
             <input
@@ -32,41 +24,46 @@ const ReadOnlyDefenseActForm = ({modalId, closeModal, values}) => {
 
             <label 
                 className='form-label' 
-                htmlFor='descripcion'
+                htmlFor='description'
                 >
                 Descripción:
             </label>
             
             <textarea
                 className='form-input'
-                id='descripcion'
+                id='description'
                 rows='4'
                 value={values?.description || ''}
                 readOnly
             />
 
-            <label 
-                className='form-label'
-                htmlFor='attachment'
-                >
-                Documento adjunto:
+            <label className='form-label'>
+                Adjunto:
             </label>
             
-            <FilePreviewer 
-                source={values.attachment}
-                />
+            <div className='current-attachment'>
+                {values.attachment_type === 'url'?
+                    <a href={values.attachment_url} target='_blank' rel='noopener noreferrer' />
+                :
+                    <img
+                        src={URL.createObjectURL(values.attachment_file)}
+                        alt='Vista previa'
+                        title='Vista previa'
+                        className='file-preview'
+                        />}
+            </div>
 
             <button
                 className='accept-button'
                 onClick={() => closeModal(modalId)}
-            >
+                >
                 Aceptar
             </button>
         </section>
     )
 }
 
-ReadOnlyDefenseActForm.propTypes = {
+ReadOnlyEvidenceForm.propTypes = {
     modalId: PropTypes.string.isRequired,
     closeModal: PropTypes.func.isRequired,
     values: PropTypes.shape({
@@ -74,8 +71,10 @@ ReadOnlyDefenseActForm.propTypes = {
         student: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
         description: PropTypes.string,
-        attachment: PropTypes.instanceOf(File).isRequired,
+        attachment_type: PropTypes.string.isRequired,
+        attachment_url: PropTypes.instanceOf(URL).isRequired,
+        attachment_file: PropTypes.instanceOf(File).isRequired,
     }),
 }
 
-export default ReadOnlyDefenseActForm
+export default ReadOnlyEvidenceForm
