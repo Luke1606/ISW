@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -174,6 +175,13 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+# Configuracion de tokens simplejwt
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "BLACKLIST_AFTER_ROTATION": True,
+}
 
 # Configuración para archivos de medios (imágenes)
 MEDIA_URL = '/media/'

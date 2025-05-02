@@ -24,6 +24,11 @@ const router = createBrowserRouter(routes, {
     },
 })
 
+const UserActivityMonitor = () => {
+    useUserActivity()
+    return null // No necesita renderizar nada
+}
+
 /**
  * @description Estructura principal de providers de la aplicación. Tambien ejecuta el {@link useUserActivity}.
  * 
@@ -37,8 +42,6 @@ const router = createBrowserRouter(routes, {
  * - {@link RouterProvider}- Gestiona el enrutamiento utilizando la configuración definida en {@link router}.
  */
 const App = () => {
-    useUserActivity()
-    
     return (
         <>
         <ErrorBoundary>
@@ -48,6 +51,7 @@ const App = () => {
                 <AuthProvider>
                     <LoadingProvider>
                         <ModalProvider>
+                            <UserActivityMonitor />
                             <RouterProvider router={router} />
                         </ModalProvider>
                     </LoadingProvider>

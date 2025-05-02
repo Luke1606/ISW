@@ -21,7 +21,7 @@ const AuthProvider = ({ children }) => {
          * @description Obtiene la información del usuario siempre que su estatus cambia ({@link authStatusChanged} es `true`).
          */
         const fetchUser = () => {
-            const userInfo = AuthService.getLoggedUserInfo()
+            const userInfo = AuthService.getSessionInfo()
             setUser(userInfo)
             setAuthStatusChanged(false)
         }
