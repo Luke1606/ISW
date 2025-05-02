@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import * as Yup from 'yup'
+import PropTypes from 'prop-types'
 import { useDebouncedFunction, useGenericForm } from '@/logic'
 import { SearchableSelect, FormButtons } from '@/presentation'
 import { datatypes } from '@/data'
@@ -26,7 +27,8 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
         return datatype === datatypes.defense_tribunal?
             Yup.object().shape({
                 defenseDate: Yup.date()
-                .required('La fecha es obligatoria')
+                    .required('La fecha es obligatoria')
+                    .matches(/^\d{4}-\d{2}-\d{2}$/, 'Formato de fecha incorrecto')
                     .min(new Date(), 'La fecha no puede ser en el pasado'),
             
                 president: Yup.string()
@@ -38,8 +40,8 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
                 vocal: Yup.string()
                 .required('El vocal es requerido'),
                 
-                substitute: Yup.string()
-                .required('El suplente es requerido')
+                tutors: Yup.array().of(Yup.string())
+                .required('El campo tutor(es) es obligatorio')
             })
             :
             Yup.object().shape({
@@ -51,9 +53,10 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
 
     const formik = useGenericForm( handleSubmit, initialValues, validationSchema)
 
-    const professorOptions = professors.map((id, name)=> {
-        return { value: id, label: name }
-    })
+    const professorOptions = professors.map(professor => ({ 
+        value: professor.id, 
+        label: professor.name 
+    }))    
 
     return (
         <form
@@ -76,9 +79,9 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
             
             <span
                 className='error'
-                style={formik.errors.date && formik.touched.date ? {} : { visibility: 'hidden' }}
+                style={formik.errors.defenseDate && formik.touched.defenseDate ? {} : { visibility: 'hidden' }}
                 >
-                {formik.errors.date}
+                {formik.errors.defenseDate}
             </span>
 
             <label 
@@ -148,6 +151,22 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
             <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>
         </form>
     )
+}
+
+DefenseTribunalForm.propTypes = {
+    datatype: PropTypes.oneOf([datatypes.tribunal, datatypes.defense_tribunal]),
+    modalId: PropTypes.string.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    prevValues: PropTypes.shape({
+        date: PropTypes.instanceOf(Date),
+        president: PropTypes.string,
+        secretary: PropTypes.string,
+        vocal: PropTypes.string,
+        opponent: PropTypes.string,
+        tutors: PropTypes.arrayOf(PropTypes.string),
+        state: PropTypes.oneOf(['pending', 'aproved', 'unaproved'])
+    })
 }
 
 export default DefenseTribunalForm

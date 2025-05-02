@@ -1,12 +1,16 @@
-const ReadOnlyEvidenceForm = ({ prevValues = {} }) => {
-    if (!prevValues.user) return null;
+import PropTypes from 'prop-types'
+
+const ReadOnlyEvidenceForm = ({modalId, closeModal, values}) => {
+    if (!values) return null
 
     return (
-        <form
-            className='form-container manage-form'
-            onSubmit={() => null}
-        >
-            <label className='form-label' htmlFor='name'>
+        <section
+        className='form-container manage-form' 
+            >
+            <label 
+                className='form-label' 
+                htmlFor='name'
+                >
                 Nombre de la evidencia:
             </label>
             
@@ -14,11 +18,14 @@ const ReadOnlyEvidenceForm = ({ prevValues = {} }) => {
                 className='form-input'
                 id='name'
                 type='text'
-                value={prevValues.name || ''}
+                value={values?.name || ''}
                 readOnly
             />
 
-            <label className='form-label' htmlFor='description'>
+            <label 
+                className='form-label' 
+                htmlFor='description'
+                >
                 Descripción:
             </label>
             
@@ -26,18 +33,7 @@ const ReadOnlyEvidenceForm = ({ prevValues = {} }) => {
                 className='form-input'
                 id='description'
                 rows='4'
-                value={prevValues.description || ''}
-                readOnly
-            />
-
-            <label className='form-label'>
-                Tipo de adjunto:
-            </label>
-            
-            <input
-                className='form-input'
-                type='text'
-                value={prevValues.isUrl ? 'URL Externa' : 'Archivo Local'}
+                value={values?.description || ''}
                 readOnly
             />
 
@@ -45,33 +41,40 @@ const ReadOnlyEvidenceForm = ({ prevValues = {} }) => {
                 Adjunto:
             </label>
             
-            {prevValues.isUrl ? (
-                <a
-                    className='form-input attachment-link'
-                    href={prevValues.adjunto}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    {prevValues.adjunto}
-                </a>
-            ) : (
-                <input
-                    className='form-input'
-                    type='text'
-                    value={prevValues.adjunto?.name || 'Archivo cargado'}
-                    readOnly
-                />
-            )}
+            <div className='current-attachment'>
+                {values.attachment_type === 'url'?
+                    <a href={values.attachment_url} target='_blank' rel='noopener noreferrer' />
+                :
+                    <img
+                        src={URL.createObjectURL(values.attachment_file)}
+                        alt='Vista previa'
+                        title='Vista previa'
+                        className='file-preview'
+                        />}
+            </div>
 
             <button
                 className='accept-button'
-                type='button'
-                onClick={() => navigate(-1)}
-            >
-                Volver
+                onClick={() => closeModal(modalId)}
+                >
+                Aceptar
             </button>
-        </form>
-    );
-};
+        </section>
+    )
+}
+
+ReadOnlyEvidenceForm.propTypes = {
+    modalId: PropTypes.string.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    values: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        student: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        description: PropTypes.string,
+        attachment_type: PropTypes.string.isRequired,
+        attachment_url: PropTypes.instanceOf(URL).isRequired,
+        attachment_file: PropTypes.instanceOf(File).isRequired,
+    }),
+}
 
 export default ReadOnlyEvidenceForm

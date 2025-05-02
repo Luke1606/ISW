@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+import PropTypes from 'prop-types'
 import { useMemo } from 'react'
 import * as Yup from 'yup'
 import { datatypes } from '@/data'
@@ -20,8 +20,7 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
             .required('El nombre es obligatorio')
             .matches(/^[\w\s]+$/, 'No se permiten caracteres especiales'),
         
-        description: Yup.string()
-            .required('La descripción es obligatoria'),
+        description: Yup.string(),
         
         attachment_type: Yup.string()
             .required('El tipo de adjunto es obligatorio')   
@@ -60,13 +59,13 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
     const formik = useGenericForm(submitFunction, initialValues, validationSchema)
 
     const handleAttachmentTypeChange = (e) => {
-        const attachmentType = e.target.value;
-        formik.setFieldValue('attachmentType', attachmentType);
+        const attachmentType = e.target.value
+        formik.setFieldValue('attachmentType', attachmentType)
         
         if (attachmentType === 'url') {
-            formik.setFieldValue('url', '');
+            formik.setFieldValue('url', '')
         } else {
-            formik.setFieldValue('file', null);
+            formik.setFieldValue('file', null)
         }
     }
 
@@ -88,8 +87,8 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                 />
             
             <span
-                className="error"
-                style={formik.errors.name && formik.touched.name ? {} : { visibility: "hidden" }}
+                className='error'
+                style={formik.errors.name && formik.touched.name ? {} : { visibility: 'hidden' }}
                 >
                 {formik.errors.name}
             </span>
@@ -107,8 +106,8 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                 />
 
             <span
-                className="error"
-                style={formik.errors.description && formik.touched.description ? {} : { visibility: "hidden" }}
+                className='error'
+                style={formik.errors.description && formik.touched.description ? {} : { visibility: 'hidden' }}
                 >
                 {formik.errors.description}
             </span>
@@ -117,13 +116,13 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                 Tipo de adjunto:
             </label>
 
-            <div className="radio-group">
-                <label className="radio-label">
+            <div className='radio-group'>
+                <label className='radio-label'>
                     <input
-                        type="radio"
-                        name="isUrl"
-                        value="true"
-                        checked={formik.values.isUrl === true}
+                        type='radio'
+                        name='attachmentType'
+                        value='url'
+                        checked={formik.values.attachmentType === 'url'}
                         onChange={handleAttachmentTypeChange}
                     />
                     <span>URL Externa</span>
@@ -131,17 +130,17 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                 
                 <label className="radio-label">
                     <input
-                        type="radio"
-                        name="isUrl"
-                        value="false"
-                        checked={formik.values.isUrl === false}
+                        type='radio'
+                        name='attachmentType'
+                        value='file'
+                        checked={formik.values.attachmentType === 'file'}
                         onChange={handleAttachmentTypeChange}
                     />
                     <span>Archivo Local</span>
                 </label>
             </div>
 
-            {formik.values.isUrl ? (
+            {formik.values.attachmentType === 'url'? (
                 <>
                     <label className='form-label' htmlFor='url'>
                         URL:
@@ -157,9 +156,9 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                     />
                     
                     <span
-                        className="error"
-                        style={formik.errors.url && formik.touched.url ? {} : { visibility: "hidden" }}
-                    >
+                        className='error'
+                        style={formik.errors.url && formik.touched.url ? {} : { visibility: 'hidden' }}
+                        >
                         {formik.errors.url}
                     </span>
                 </>
@@ -177,35 +176,52 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                         />
                     
                     <span
-                        className="error"
-                        style={formik.errors.file && formik.touched.file ? {} : { visibility: "hidden" }}
+                        className='error'
+                        style={formik.errors.file && formik.touched.file ? {} : { visibility: 'hidden' }}
                         >
                         {formik.errors.file}
                     </span>
                 </>
             )}
 
-            {prevValues.adjunto && (
+            {(formik.values.url || formik.values.file) &&
                 <>
                     <label className='form-label'>
                         Adjunto actual:
                     </label>
                     
-                    <div className="current-attachment">
-                        {prevValues.isUrl ? (
-                            <a href={prevValues.adjunto} target="_blank" rel="noopener noreferrer">
-                                {prevValues.adjunto}
-                            </a>
-                        ) : (
-                            <span>{prevValues.adjunto.name || "Archivo cargado"}</span>
-                        )}
+                    <div className='current-attachment'>
+                        {formik.values.attachmentType === 'url'?
+                            <a href={formik.values.url} target='_blank' rel='noopener noreferrer' />
+                        :
+                            <img
+                                src={URL.createObjectURL(formik.values.file)}
+                                alt='Vista previa'
+                                title='Vista previa'
+                                className='file-preview'
+                                />
+                        }
                     </div>
-                </>
-            )}
+                </>}
 
             <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>        
         </form>
     )
+}
+
+EvidenceForm.propTypes = {
+    modalId: PropTypes.string.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    prevValues: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        student: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        description: PropTypes.string,
+        attachment_type: PropTypes.string.isRequired,
+        attachment_url: PropTypes.instanceOf(URL).isRequired,
+        attachment_file: PropTypes.instanceOf(File).isRequired,
+    }),
+    handleSubmit: PropTypes.func.isRequired,
 }
 
 export default EvidenceForm

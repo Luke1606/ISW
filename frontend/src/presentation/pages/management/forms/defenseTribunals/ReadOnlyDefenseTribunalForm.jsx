@@ -1,68 +1,103 @@
-const ReadOnlyDefenseTribunalForm = ({ values = {} }) => {
+import PropTypes from 'prop-types'
+
+const ReadOnlyDefenseTribunalForm = ({modalId, closeModal, values}) => {
     return (
-        <form
+        <section
             className='form-container manage-form'
-            onSubmit={() => null}
-        >
-            <label className="form-label">
+            >
+            <label 
+                className='form-label'
+                htmlFor='defense-date'
+                >
                 Fecha de defensa:
             </label>
             <input
-                className="form-input"
-                type="text"
-                value={values.date || ""}
+                className='form-input'
+                id='defense-date'
+                type='date'
+                value={values.date instanceof Date ? values.date.toISOString().split('T')[0] : values.date}
                 readOnly
-            />
+                />
 
-            <label className="form-label">
+            <label 
+                className='form-label'
+                htmlFor='president'
+                >
                 Presidente del tribunal:
             </label>
-            <input
-                className="form-input"
-                type="text"
-                value={values.president || ""}
-                readOnly
-            />
 
-            <label className="form-label">
+            <input
+                className='form-input'
+                id='president'
+                type='text'
+                value={values.president}
+                readOnly
+                />
+
+            <label 
+                className='form-label'
+                htmlFor='secretary'
+                >
                 Secretario del tribunal:
             </label>
             <input
-                className="form-input"
-                type="text"
-                value={values.secretary || ""}
+                className='form-input'
+                id='secretary'
+                type='text'
+                value={values.secretary}
                 readOnly
             />
 
-            <label className="form-label">
+            <label 
+                className='form-label'
+                htmlFor='vocal'
+                >
                 Vocal del tribunal:
             </label>
             <input
-                className="form-input"
-                type="text"
-                value={values.vocal || ""}
+                className='form-input'
+                id='vocal'
+                type='text'
+                value={values.vocal}
                 readOnly
             />
 
-            <label className="form-label">
-                Suplente del tribunal:
+            <label 
+                className='form-label'
+                >
+                Tutores:
             </label>
-            <input
-                className="form-input"
-                type="text"
-                value={values.substitute || ""}
-                readOnly
-            />
+            {values.tutors.map((tutor, index) => (
+                <input
+                    key={index}
+                    className='form-input'
+                    type='text'
+                    value={tutor}
+                    readOnly
+                    />
+            ))}
 
             <button
                 className='accept-button'
-                type='button'
-                onClick={() => window.history.back()}
-            >
-                Volver
+                onClick={() => closeModal(modalId)}
+                >
+                Aceptar
             </button>
-        </form>
-    );
+        </section>
+    )
+}
+
+ReadOnlyDefenseTribunalForm.propTypes = {
+    modalId: PropTypes.string.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    values: PropTypes.shape({
+        date: PropTypes.instanceOf(Date).isRequired,
+        president: PropTypes.string.isRequired,
+        secretary: PropTypes.string.isRequired,
+        vocal: PropTypes.string.isRequired,
+        opponent: PropTypes.string.isRequired,
+        tutors: PropTypes.arrayOf(PropTypes.string).isRequired,
+    })
 }
 
 export default ReadOnlyDefenseTribunalForm
