@@ -1,5 +1,5 @@
 export { default as Modal } from './Modal'
-export { default as Previewer } from './Previewer'
+export { default as FilePreviewer } from './FilePreviewer'
 export { default as Layout } from './layout/Layout'
 export { default as FormButtons } from './FormButtons'
 export { default as ProtectedRoutes } from './ProtectedRoutes'

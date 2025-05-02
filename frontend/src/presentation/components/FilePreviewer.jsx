@@ -1,9 +1,22 @@
 import { useState, useEffect } from 'react'
-import { Document, Page } from 'react-pdf'
-import { getClass } from 'file-icons-js'
+import '@fortawesome/fontawesome-free/css/all.min.css'
 import PropTypes from 'prop-types'
 
-const Previewer = ({ source }) => {
+
+const fileIcons = {
+    video: 'fas fa-file-video',
+    docx: 'fas fa-file-word',
+    xlsx: 'fas fa-file-excel',
+    zip: 'fas fa-file-archive',
+    default: 'fas fa-file'
+  };
+  
+const getFileIcon = (name) => {
+    const ext = name.split('.').pop().toLowerCase()
+    return fileIcons[ext] || fileIcons.default
+}
+
+const FilePreviewer = ({ source }) => {
     const [fileType, setFileType] = useState(null)
     const [fileURL, setFileURL] = useState(null)
 
@@ -12,7 +25,7 @@ const Previewer = ({ source }) => {
             const fileName = source.name.toLowerCase()
             const ext = fileName.split('.').pop()
             const url = URL.createObjectURL(source)
-            setFileURL(url);
+            setFileURL(url)
 
             if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
                 setFileType('image')
@@ -22,30 +35,30 @@ const Previewer = ({ source }) => {
                 setFileType('other') // Para archivos que no tienen previsualización directa
             }
         }
-    }, [source]);
+    }, [source])
 
-    if (!fileType) return null;
+    if (!fileType) return null
 
     return (
         <div className='preview-container'>
             {fileType === 'image' && <img src={fileURL} alt='Vista previa' className='preview-image' />}
             {fileType === 'pdf' && (
-                <Document file={fileURL}>
-                    <Page pageNumber={1} />
-                </Document>
+                <iframe src={fileURL} width='500px' height='250px' style={{ border: 'none' }}/>
             )}
             <div className='preview-info'>
-                {fileType === 'other' && (
-                    <img src={getClass(source.name)} alt='Icono de archivo' className='preview-icon' />
-                )}
+                {fileType === 'other' && 
+                    <span title='Icono de archivo'>
+                        <i className={getFileIcon(source.name)}></i>
+                    </span>}
+
                 <p className='preview-title'>{source.name}</p>
             </div>
         </div>
-    );
-};
+    )
+}
 
-Previewer.propTypes = {
+FilePreviewer.propTypes = {
     source: PropTypes.instanceOf(File).isRequired
 }
 
-export default Previewer
+export default FilePreviewer

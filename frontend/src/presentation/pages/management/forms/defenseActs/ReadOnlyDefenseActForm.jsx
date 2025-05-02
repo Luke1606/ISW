@@ -1,4 +1,5 @@
-import PropTypes from "prop-types"
+import PropTypes from 'prop-types'
+import { FilePreviewer } from '@/presentation/'
 
 /**
  * @description Ventana para mostrar detalles de un acta de defensa.
@@ -51,13 +52,9 @@ const ReadOnlyDefenseActForm = ({modalId, closeModal, values}) => {
                 Documento adjunto:
             </label>
             
-            <input
-                className='form-input'
-                id='attachment'
-                type='file'
-                value={values?.attachment}
-                readOnly
-            />
+            <FilePreviewer 
+                source={values.attachment}
+                />
 
             <button
                 className='accept-button'

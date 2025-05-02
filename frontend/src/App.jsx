@@ -47,7 +47,7 @@ const App = () => {
         <ErrorBoundary>
             <ToastNotification />
 
-            <Suspense fallback={<span className="spin"/>}>
+            <Suspense fallback={<span className='spinner'/>}>
                 <AuthProvider>
                     <LoadingProvider>
                         <ModalProvider>

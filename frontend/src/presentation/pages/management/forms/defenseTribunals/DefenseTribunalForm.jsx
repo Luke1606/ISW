@@ -79,7 +79,7 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
             
             <span
                 className='error'
-                style={formik.errors.defenseDate && formik.touched.defenseDate ? {} : { visibility: 'hidden' }}
+                style={formik.errors.defenseDate && formik.touched.defenseDate? {} : { visibility: 'hidden' }}
                 >
                 {formik.errors.defenseDate}
             </span>
@@ -94,7 +94,7 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
             <SearchableSelect elements={professorOptions}/>
             
             <span
-                className="error"
+                className='error'
                 style={formik.errors.president && formik.touched.president ? {} : { visibility: 'hidden' }}
                 >
                 {formik.errors.president}
