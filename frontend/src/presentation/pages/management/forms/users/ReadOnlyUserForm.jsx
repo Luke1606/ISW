@@ -1,5 +1,5 @@
-import PropTypes from "prop-types"
-import datatypes from '../../../../../data/datatypes'
+import PropTypes from 'prop-types'
+import { datatypes } from '@/data'
 
 /**
  * @description Ventana para mostrar detalles de un usuario ya sea estudiante o profesor.

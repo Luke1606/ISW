@@ -1,7 +1,7 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import * as Yup from 'yup'
 import PropTypes from 'prop-types'
-import { useDebouncedFunction, useGenericForm } from '@/logic'
+import { useGenericForm } from '@/logic'
 import { SearchableSelect, FormButtons } from '@/presentation'
 import { datatypes } from '@/data'
 
@@ -17,9 +17,9 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
         :
         { state: prevValues.state || '' }
 
-    const getProfessors = useDebouncedFunction(() => {
+    const getProfessors = useCallback(() => {
         return []
-    })
+    }, [])
 
     const professors = getProfessors()
 

@@ -22,7 +22,7 @@ const Form = ({formParams}) => {
     const { loading, prevValues, handleSubmit } = useForm(datatype, idData, relatedUserId)
 
     const { closeManageForm, formModalId } = useFormParams(datatype)
-    
+        
     if (loading) return null
 
     let specificForm
@@ -102,7 +102,7 @@ const Form = ({formParams}) => {
                     />
                 :
                 <UserForm 
-                    usertype={datatype} 
+                    isStudent={datatype===datatypes.user.student} 
                     modalId={formModalId}
                     closeModal={closeManageForm} 
                     prevValues={prevValues} 

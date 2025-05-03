@@ -24,6 +24,11 @@ const router = createBrowserRouter(routes, {
     },
 })
 
+/**
+ * Componente sin estructura, su único propósito es vigilar la actividad del usuario en la aplicación
+ * en todo momento para que {@link useUserActivity} funcione.
+ * @returns `null`
+ */
 const UserActivityMonitor = () => {
     useUserActivity()
     return null // No necesita renderizar nada

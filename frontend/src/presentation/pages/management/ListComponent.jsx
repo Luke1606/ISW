@@ -1,8 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { Search, Plus, Edit, Trash2, FileText, Check, X } from 'lucide-react'
-import { listHooks, useFormParams, useModal } from '@/logic'
-import { Modal, PaginationButtons } from '../../'
-import { Form } from './'
+import { listHooks, useFormParams, useModal, useTranslateToSpanish } from '@/logic'
+import { Modal, PaginationButtons, Form } from '@/presentation'
 
 const List = () => {
     const { datatype, relatedUserId } = useParams()
@@ -13,7 +12,7 @@ const List = () => {
         handleSearch,
         handleDelete
     } = listHooks.useListDataStates(datatype, relatedUserId)
-
+    
     const permissions = listHooks.usePermisions(datatype)
 
     const {
@@ -27,10 +26,17 @@ const List = () => {
 
     const {isOpen, openModal, closeModal} = useModal()
     
-    const { manageFormParams, openManageForm, formModalId } = useFormParams(datatype)
+    const { manageFormParams, openManageForm, formModalId } = useFormParams()
+
+    const translate = useTranslateToSpanish()
+    const spanishDatatype = translate(datatype).toLowerCase()
 
     return (
         <div className='manage-container'>
+            <h2 className='list-title'>
+                Gestionar {spanishDatatype}s
+            </h2>
+            
             {/* Barra de busqueda */}
             <form 
                 role='search' 
@@ -158,7 +164,7 @@ const List = () => {
                     className='confirmation-modal'
                     >
                     <h2 className='modal-title'>
-                        Confirmar eliminación
+                        Confirmar eliminación de {spanishDatatype}
                     </h2>
 
                     <p className='modal-content'>

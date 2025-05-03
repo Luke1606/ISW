@@ -1,8 +1,8 @@
 import PropTypes from "prop-types"
 import * as Yup from 'yup'
 import { useMemo } from 'react'
+import { datatypes } from "@/data"
 import { useGenericForm } from '@/logic'
-import { datatypes } from '@/data'
 import { FormButtons, SearchableSelect } from '@/presentation'
 
 /**
@@ -14,10 +14,10 @@ import { FormButtons, SearchableSelect } from '@/presentation'
  * @param {function} `handleSubmit`- Función a ejecutar al envío del formulario.
  * @returns Estructura de los campos a mostrar con la información del usuario contenida en `prevValues`.
  */
-const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => {
+const UserForm = ({isStudent, modalId, closeModal, prevValues, handleSubmit}) => {
     let specificInitialValues 
 
-    if (usertype === datatypes.user.student)
+    if (isStudent)
         specificInitialValues = {
             faculty: prevValues?.faculty || '',
             group: prevValues?.group || ''
@@ -29,7 +29,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
 
     let specificSchema
 
-    if (usertype === datatypes.user.student)
+    if (isStudent)
         specificSchema = {
             faculty: Yup.string()
                 .when('role', (role, schema) => {
@@ -80,7 +80,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
             faculty: values?.faculty,
             group: values?.group,
         }
-        await handleSubmit(usertype, prevValues?.user?.id, newValues)
+        await handleSubmit(isStudent? datatypes.user.student : datatypes.user.professor, prevValues?.user?.id, newValues)
         closeModal(modalId)
     }
 
@@ -158,7 +158,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
                 {formik.errors.username}
             </span>
         
-            { usertype === datatypes.user.student? 
+            { isStudent? 
                 <>
                     <label 
                         className='form-label' 
@@ -234,7 +234,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
 }
 
 UserForm.propTypes = {
-    usertype: PropTypes.oneOf(Object.values(datatypes.user)),
+    isStudent: PropTypes.bool.isRequired,
     modalId: PropTypes.string.isRequired,
     closeModal: PropTypes.func.isRequired,
     prevValues: PropTypes.shape({
