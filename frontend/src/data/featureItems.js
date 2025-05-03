@@ -1,13 +1,15 @@
-import evidence from '../assets/evidence.jpeg'
-import request from '../assets/request.avif'
-import defense_act from '../assets/defense_act.jpg'
-import info_persistance from '../assets/info_persistance.jpg'
-import tribunal from '../assets/tribunal.jpg'
-import roles from '../assets/roles.jpeg'
-import notification from '../assets/notification.png'
-import administration from '../assets/administration.png'
-import security from '../assets/security.jpg'
-import akademos from '../assets/akademos.png'
+import {
+	roles,
+	request,
+	tribunal,
+	evidence,
+	security,
+	akademos,
+	defense_act,
+	notification,
+	administration,
+	info_persistance
+} from '@/assets'
 
 /**
  * @description Arreglo de elementos a mostrar en el `CardCarousel` del `HomeComponent`
@@ -19,7 +21,7 @@ const featureItems = [
 	  brief:
 		'Permite a los estudiantes una simple recopilación y organización todas las evidencias académicas y extensionistas necesarias para el ECE de manera eficiente y organizada.',
 	  description:
-		'La gestión de evidencias transforma la forma en que los estudiantes y administradores manejan la documentación necesaria para los procesos de culminación de estudios, desde reconocimientos hasta proyectos. Con una interfaz intuitiva, permite la carga, clasificación y seguimiento de evidencias de manera eficiente. Toda la información está siempre accesible y organizada, lo que reduce el tiempo de búsqueda y la mejora de la transparencia en el proceso educativo. Simplifica tu gestión académica y enfócate en lo que importa realmente',
+		'',
 	},
 	{
 	  icon: { alt: 'Celular con mensaje aproval en pantalla', src: request },
@@ -27,7 +29,7 @@ const featureItems = [
 	  brief:
 		'Facilita la evaluación de solicitudes de ejercicios de culminación de estudios con nuestro sistema, que agiliza el proceso y asegura una revisión justa y transparente para cada estudiante.',
 	  description:
-		'Nuestro sistema permite a los evaluadores revisar y aprobar o no las solicitudes de ejercicios de culminación de estudios de manera rápida y efectiva, asegurando que cada estudiante reciba la atención que merece, permitiendo optimizar el proceso educativo. La transparencia en la evaluación fomenta la confianza entre estudiantes y administradores, creando un ambiente académico más colaborativo.',
+		'',
 	},
 	{
 	  icon: {
@@ -38,7 +40,7 @@ const featureItems = [
 	  brief:
 		'Agiliza la asignación y aprobación de tribunales con nuestra plataforma, que garantiza un proceso eficiente y transparente para la defensa de proyectos.',
 	  description:
-		'La asignación y aprobación de tribunales es un paso crucial en el proceso de ejercicios de culminación de estudios. Con nuestra herramienta, puedes gestionar este proceso de forma fluida y sin complicaciones. La plataforma permite la creación de tribunales de forma rápida y la asignación de miembros de tribunal según su especialidad y disponibilidad. El sistema asegura que todas las aprobaciones se realizan de manera transparente, facilitando la comunicación entre estudiantes y evaluadores. Haz de cada defensa una experiencia enriquecedora.',
+		'',
 	},
 	{
 	  icon: { alt: 'Numerosas carpetas', src: defense_act },
@@ -57,7 +59,7 @@ const featureItems = [
 	  brief:
 		'Controla el acceso y los permisos de los usuarios con nuestra herramienta de gestión por funciones, una administración segura y eficiente.',
 	  description:
-		'La gestión de los permisos por roles es esencial para mantener la seguridad y la organización del sistema. Nuestra plataforma te permite definir y asignar roles específicos a cada usuario, permitiendo que tengan acceso solo a la información y funciones que necesitan. Mejoramos la seguridad de los datos y optimizamos la experiencia del usuario, con un sistema de permisos flexibles y fáciles de usar.',
+		'',
 	},
 	{
 	  icon: { alt: 'Celular al recibir una notificación', src: notification },
@@ -65,7 +67,7 @@ const featureItems = [
 	  brief:
 		'Mantén a los otros usuarios informados con nuestra funcionalidad de envío de notificaciones en tiempo real, que aseguran una comunicación fluida y oportuna entre estudiantes y administrativos.',
 	  description:
-		'La comunicación efectiva es clave en nuestro entorno educativo. Nuestro sistema de envío de notificaciones permite que tanto estudiantes como administradores se mantengan al tanto de eventos importantes, fechas y líneas regulares, asegurando que la información llegue de forma oportuna. No dejes que la falta de comunicación afecte el éxito de tus estudiantes.',
+		'',
 	},
 	{
 	  icon: {
@@ -76,7 +78,7 @@ const featureItems = [
 	  brief:
 		'Gestiona de manera eficiente a todos los usuarios de tu sistema con nuestro panel de administración, que ofrece un control total sobre roles y accesos.',
 	  description:
-		'El panel de administración de usuarios es la herramienta que necesitas para tener un control total sobre la comunidad educativa. Con una interfaz intuitiva, puedes agregar, editar y eliminar usuarios, así como asignar roles y permisos específicos según las necesidades de cada miembro. Esto te permite personalizar la experiencia de cada usuario, que tiene acceso a la información y herramientas que realmente necesitan para desempeñar sus funciones. Con esta herramienta no solo optimizas la gestión de tu comunidad educativa, sino que también se fomenta un ambiente de colaboración y eficacia. Toma el control y transforma la administración de tu sistema educativo con facilidad.',
+		'',
 	},
 	{
 	  icon: {
