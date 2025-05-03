@@ -1,19 +1,17 @@
 import { useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { File } from 'lucide-react'
+import { File, Send, Gavel } from 'lucide-react'
 import { datatypes } from '@/data'
-import { useAuth, useFormParams } from '../'
+import { useAuth, useFormParams } from '@/logic'
 
 /**
  * 
  * @returns 
  */
 const useSideMenuOptions = () => {
-    const { user } = useAuth()
-    const location = useLocation()
-    const currentPath = location.pathname
+    const currentPath = useLocation().pathname
     const [ isVisible, setIsVisible ] = useState(false)
-
+    
     useEffect(() => {
         const checkVisible = () => {
             if (currentPath.startsWith('/list')) {
@@ -24,25 +22,27 @@ const useSideMenuOptions = () => {
         }
         checkVisible()
     }, [currentPath])
-
-    const [datatype, setDatatype ] = useState(datatypes.default)
+    
+    const [ datatype, setDatatype ] = useState(datatypes.default)
     const { openManageForm } = useFormParams(datatype)
-
+    
     let options = [{
-        title: "Generar un reporte",
+        title: 'Generar un reporte',
         icon: File,
         action: () => {
             setDatatype(datatypes.report)
             openManageForm(datatypes.report)
         }
     }]
+    
+    const { user } = useAuth()
 
     if(user) {
         switch (user?.user_role) {
             case datatypes.user.student:
                 options.push({
                     title: 'Enviar solicitud de ECE',
-                    icon: File,
+                    icon: Send,
                     action: () => {
                         setDatatype(datatypes.request)
                         openManageForm(datatypes.request)
@@ -50,7 +50,7 @@ const useSideMenuOptions = () => {
                 },
                 {
                     title: 'Tribunal y defensa',
-                    icon: File,
+                    icon: Gavel,
                     action: () => {
                         setDatatype(datatypes.defense_tribunal)
                         openManageForm(
