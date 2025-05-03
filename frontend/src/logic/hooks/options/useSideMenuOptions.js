@@ -23,14 +23,12 @@ const useSideMenuOptions = () => {
         checkVisible()
     }, [currentPath])
     
-    const [ datatype, setDatatype ] = useState(datatypes.default)
-    const { openManageForm } = useFormParams(datatype)
+    const { openManageForm } = useFormParams()
     
     let options = [{
         title: 'Generar un reporte',
         icon: File,
         action: () => {
-            setDatatype(datatypes.report)
             openManageForm(datatypes.report)
         }
     }]
@@ -43,21 +41,14 @@ const useSideMenuOptions = () => {
                 options.push({
                     title: 'Enviar solicitud de ECE',
                     icon: Send,
-                    action: () => {
-                        setDatatype(datatypes.request)
+                    action: () =>
                         openManageForm(datatypes.request)
-                    }
                 },
                 {
                     title: 'Tribunal y defensa',
                     icon: Gavel,
-                    action: () => {
-                        setDatatype(datatypes.defense_tribunal)
-                        openManageForm(
-                            datatypes.defense_tribunal, 
-                            {relatedUserId: user.id, view: true}
-                        )
-                    }
+                    action: () =>
+                        openManageForm(datatypes.defense_tribunal, {relatedUserId: user.id, view: true})
                 })
                 break
             case datatypes.user.professor:

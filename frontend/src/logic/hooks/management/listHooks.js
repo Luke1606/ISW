@@ -1,40 +1,42 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useDebouncedFunction from '../common/useDebouncedFunction'
-import ManagementService from '../../services/ManagementService'
-import { AuthContext } from "../../contexts/AuthContext"
-import datatypes from '../../../data/datatypes'
-import { useLoading } from '../common/useContexts'
+import { ManagementService, useLoading, useAuth } from '@/logic'
+import { datatypes } from '@/data'
 
 const useListDataStates = (datatype, relatedUserId) => {
     const { setLoading } = useLoading()
     const [ data, setData ] = useState({})
     const [ currentPage, setCurrentPage ] = useState(0)
-    const [ totalPages, setTotalPages ] = useState(0)
     const [ currentData, setCurrentData ] = useState([])
+    const [ totalPages, setTotalPages ] = useState(0)
     
-    const getData = useDebouncedFunction(async (searchTerm="") => {
+    const getData = useCallback(async (searchTerm='') => {
         try {
             setLoading(true)
             const response = await ManagementService.getAllData(datatype, searchTerm, relatedUserId)
+
             setCurrentPage(0)
-            setData(response.data || {})
-            setTotalPages(response.totalPages || 0)
-            setCurrentData(data[0])
+            setData(response?.data || {})
+            setTotalPages(response?.totalPages || 0)
+
+            setCurrentData(response.data && Object.keys(response.data).length > 0? response.data[0] : [])
         } catch (error) {
             console.error(error)
         } finally {
             setLoading(false)
         }
-    })
+    }, [datatype, relatedUserId, setLoading])
 
     useEffect(() => {
         getData()
-    }, [getData])
+    }, [getData, datatype, relatedUserId])
 
     useEffect(() => {
-        if (Object.values(data).length > 0)
+        if (Object.keys(data).length > currentPage)
             setCurrentData(data[currentPage])
+        else {
+            setCurrentPage(0)
+        }
     }, [data, currentPage])
 
     const handleSearch = (e) => {
@@ -72,9 +74,9 @@ const useListDataStates = (datatype, relatedUserId) => {
 const useItemSelectionControl = (datatype) => {
     const [ selectedItemId, setSelectedItemId ] = useState(null)
     const [ itemOptions, setItemOptions ] = useState([])
-    const { user } = useContext(AuthContext)
+    const { user } = useAuth()
 
-    const getOptions = useDebouncedFunction(async () => {
+    const getOptions = useCallback(async () => {
         let options = []
 
         const hasPendingRequests = async (studentId) => {
@@ -115,7 +117,7 @@ const useItemSelectionControl = (datatype) => {
             if (selectedItemId) {
                 const pendingRequests = await hasPendingRequests(selectedItemId) || false
 
-                if (user?.role === datatypes.user.dptoInf /* && pendingRequests */)
+                if (user?.user_role === datatypes.user.dptoInf /* && pendingRequests */)
                     options.push({ 
                         value: `/form/${datatypes.request}/${selectedItemId}`, 
                         label: 'Aprobar solicitud' 
@@ -123,32 +125,32 @@ const useItemSelectionControl = (datatype) => {
         
                 const unconfiguredDefenseTribunal = await hasUnconfiguredDefenseTribunal(selectedItemId) || true
 
-                if (user?.role === datatypes.user.dptoInf /* && unconfiguredDefenseTribunal */)
+                if (user?.user_role === datatypes.user.dptoInf /* && unconfiguredDefenseTribunal */)
                     options.push({ 
                         value: `/form/${datatypes.defense_tribunal}/${selectedItemId}`, 
                         label: 'Configurar defensa y tribunal'
                     })
         
-                if (user?.role !== datatypes.user.dptoInf /* && !unconfiguredDefenseTribunal */)
+                if (user?.user_role !== datatypes.user.dptoInf /* && !unconfiguredDefenseTribunal */)
                     options.push({ 
                         value: `/form/${datatypes.defense_tribunal}/${selectedItemId}/${true}`, 
                         label: 'Ver datos de defensa y tribunal' 
                     })
         
                 const pendingTribunal = await hasPendingTribunal(selectedItemId) || false
-                if (user?.role === datatypes.user.decan /* && pendingTribunal */) 
+                if (user?.user_role === datatypes.user.decan /* && pendingTribunal */) 
                     options.push({ 
                         value: `/form/${datatypes.tribunal}/${selectedItemId}`, 
                         label: 'Aprobar tribunal'
                     })
         
-                if (user?.role !== datatypes.user.professor /* && !unconfiguredDefenseTribunal && !pendingTribunal */)
+                if (user?.user_role !== datatypes.user.professor /* && !unconfiguredDefenseTribunal && !pendingTribunal */)
                     options.push({ 
                         value: `/list/${datatypes.defense_act}`, 
                         label: 'Listar actas de defensa'
                     })
 
-                if (user?.role === datatypes.user.professor /* && !unconfiguredDefenseTribunal && !pendingTribunal */)
+                if (user?.user_role === datatypes.user.professor /* && !unconfiguredDefenseTribunal && !pendingTribunal */)
                     options.push({
                         value: `/list/${datatypes.defense_act}`, 
                         label: 'Gestionar actas de defensa'
@@ -156,7 +158,7 @@ const useItemSelectionControl = (datatype) => {
             }
         }
         setItemOptions(options)
-    }, 300)
+    }, [datatype, selectedItemId, user?.user_role])
 
 
     useEffect(() => {
@@ -184,8 +186,8 @@ const useItemSelectionControl = (datatype) => {
 }
 
 const usePermisions = (datatype) => {
-    const { user } = useContext(AuthContext)
-
+    const { user } = useAuth()
+    
     let permissions = {
         add: false,
         edit: false,

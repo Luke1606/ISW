@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react'
-import { useDebouncedFunction } from '../'
-import { NotificationService } from '../../'
+import { useCallback, useEffect, useState } from 'react'
+import { NotificationService } from '@/logic'
 
 const useNotifications = () => {
     const [notifications, setNotifications] = useState([])
     const [pendingOperations, setPendingOperations] = useState([])
 
-    const getNotifications = useDebouncedFunction( async () => {
+    const getNotifications = useCallback( async () => {
         const response = await NotificationService.get()
 
         if (response) {
@@ -16,7 +15,7 @@ const useNotifications = () => {
             
             setNotifications(sortedNotifications)
         }
-    })
+    }, [])
 
     useEffect(() => {
         const handleNewNotification = (notification) =>
@@ -32,7 +31,7 @@ const useNotifications = () => {
         }
     }, [getNotifications])
 
-    const syncPendingOperations = useDebouncedFunction( async () => {
+    const syncPendingOperations = useCallback( async () => {
         try {
             for (const operation of pendingOperations) {
                 if (operation.type === 'markAsRead') {
@@ -45,7 +44,7 @@ const useNotifications = () => {
         } catch (error) {
             console.error('Error al sincronizar las operaciones pendientes:', error)
         }
-    })
+    }, [pendingOperations])
 
     useEffect(() => {
         const interval = setInterval(() => {

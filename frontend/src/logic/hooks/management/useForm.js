@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react'
-import { useLoading, useDebouncedFunction } from '../'
+import { useCallback, useEffect, useState } from 'react'
+import { useLoading } from '../'
 import { ManagementService, NotificationService } from '../../'
 
 const useForm = (datatype, idData, relatedUserId) => {
     const { loading, setLoading } = useLoading()
     const [ prevValues, setPrevValues ] = useState(null)
     
-    const getPrevValues = useDebouncedFunction(async (datatype, id) => {
+    const getPrevValues = useCallback(async (datatype, id) => {
         if (!id) return
         setLoading(true)
         try {
@@ -21,7 +21,7 @@ const useForm = (datatype, idData, relatedUserId) => {
         } finally {
             setLoading(false)
         }
-    })
+    }, [setLoading])
 
     useEffect(() => {
         getPrevValues(datatype, idData, relatedUserId)
