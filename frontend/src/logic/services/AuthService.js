@@ -23,7 +23,7 @@ class AuthService {
         const response = await authApi.authenticate(userFormData)
         if (response.success) {
             this.setUserActive(true)
-            return response.user
+            return response.user.name
         } else {
             console.error('Ocurrio un error: ', response.message)
             await authApi.logout()

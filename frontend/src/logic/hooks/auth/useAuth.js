@@ -10,7 +10,7 @@ import { AuthContext, AuthService, useLoading } from '@/logic'
  */
 const useAuth = () => {
     const [ isAuthorized, setIsAuthorized ] = useState(null)
-    const { authStatusChanged, user, login, logout } = useContext(AuthContext)
+    const { user, login, logout, authStatusChanged } = useContext(AuthContext)
     
     const { setLoading } = useLoading()
 
@@ -28,7 +28,7 @@ const useAuth = () => {
             }
         }
         checkAuthorized()
-        
+
         const interval = setInterval(() => {
             checkAuthorized()
         }, 30 * 1000)//30 segundos
