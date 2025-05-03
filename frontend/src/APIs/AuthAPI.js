@@ -53,7 +53,7 @@ authApiInstance.interceptors.response.use(
  * - {string} `message`- Mensaje de respuesta de la solicitud
  * @example
  * // Ejemplo de uso:
- * const response = await authenticate({ username: "usuario@example.com", password: "123456" })
+ * const response = await authenticate({ username: 'usuario@example.com', password: '123456' })
  * if (response.success) {
  *     console.log(response.message)
  *     console.log(response.user)
@@ -96,40 +96,54 @@ const authenticate = async (userFormData) => {
 
 /**
  * @description Cierra la sesión actual usando el `REFRESH_TOKEN_KEY` almacenado en `localStorage`.
+ * @param {boolean} `isEmergency`- Indica la urgencia del cierre de sesión, si es `true` se manejará con
+ * {@link navigator.sendBeacon}, en caso contrario se usará `axios` normalmente.
  * @returns {Object} Un objeto con el estado de la operación. Contiene:
  * - {boolean} `success`- Indica el éxito o fallo de la solicitud.
  * - {string} `message`- Mensaje de respuesta de la solicitud
  * @example
- * // Ejemplo de uso:
- * const response = await logout()
+ * // Ejemplo de uso normal:
+ * const response = await close_session()
  * if (response.success)
  *     console.log('Todo bien')
  * else
  *     console.error(response.status)
+ * 
+ * * // Ejemplo de uso urgente:
+ * close_session(true)
  */
-const close_session = async () => {
+const close_session = async (isEmergency=false) => {
     const refreshToken = getToken(tokens.REFRESH_TOKEN_KEY)
+
+    deleteToken(tokens.USER_TOKEN_KEY)
+    deleteToken(tokens.ACCESS_TOKEN_KEY)
+    deleteToken(tokens.REFRESH_TOKEN_KEY)
 
     let message
     let success = false
 
     if (refreshToken) {
         try {
-            const response = await authApiInstance.post('blacklist/', { refresh: refreshToken })
-            
-            if (response.status === 200) {
-                deleteToken(tokens.USER_TOKEN_KEY)
-                deleteToken(tokens.ACCESS_TOKEN_KEY)
-                deleteToken(tokens.REFRESH_TOKEN_KEY)
-                message = 'Cierre de sesión exitoso'
+            if (isEmergency) {
+                const data = JSON.stringify({ refresh: refreshToken })
+                navigator.sendBeacon('http://localhost:8000/users/token/blacklist/', data)
+                console.log('Cierre de sesión enviado con sendBeacon.')
                 success = true
+                message = 'Cierre de sesión enviado antes de cerrar el navegador.'
+            } else {
+                const response = await authApiInstance.post('blacklist/', { refresh: refreshToken })
+                
+                if (response.status === 200) {
+                    message = 'Cierre de sesión exitoso'
+                    success = true
+                }
             }
         } catch (error) {
             message = error.message || 'Error desconocido'
         }
     } else {
         message = 'No hay un token de refresh válido'
-    } 
+    }
     return { success, message }
 } 
 
@@ -154,7 +168,7 @@ const getToken = (TOKEN_KEY) => {
     const item = localStorage.getItem(TOKEN_KEY)
 
     if (!item) {
-        console.warn(`Token con clave "${TOKEN_KEY}" no encontrado.`)
+        console.warn(`Token con clave '${TOKEN_KEY}' no encontrado.`)
         return null
     }
     try {
@@ -193,7 +207,7 @@ const isValid = (token) => {
 /** 
  * @description Verifica si un token está cerca de expirar.
  * @param {string} `token` - Token a evaluar.
- * @param {number} `threshold` - Tiempo en segundos antes de considerarlo "cercano a expirar".
+ * @param {number} `threshold` - Tiempo en segundos antes de considerarlo 'cercano a expirar'.
  * @default 60
  * @returns {boolean} `true` si el token expira pronto, `false` si aún es válido.
  * @throws {Error} Si el token no es válido.
@@ -209,7 +223,7 @@ const isAboutToExpire = (token, threshold = 60) => {
         const now = Date.now() / 1000
 
         if (tokenExpiration < now) {
-            console.warn("El token ya está caducado.")
+            console.warn('El token ya está caducado.')
             return true
         }
         return (tokenExpiration - now) < threshold

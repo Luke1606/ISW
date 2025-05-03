@@ -11,12 +11,18 @@ class AuthService {
         this.isUserActive = true
     }
 
-    setUserActive(state) {
+    async setUserActive(state) {
         this.isUserActive = state
+        if (!state) 
+            await authApi.close_session()
     }
 
     getUserActive () {
         return this.isUserActive
+    }
+
+    emergencyLogout () {
+        authApi.close_session(true)
     }
     
     async login (userFormData) {
@@ -26,8 +32,8 @@ class AuthService {
             return response.user.name
         } else {
             console.error('Ocurrio un error: ', response.message)
-            await authApi.logout()
-            throw new Error(response.status)
+            await authApi.close_session()
+            throw new Error(response.message)
         }
     }    
 
@@ -61,7 +67,6 @@ class AuthService {
     }
 
     async checkAuth() {
-        if (!this.getUserActive()) await authApi.close_session()
         const token = authApi.getToken(tokens.ACCESS_TOKEN_KEY)
 
         if(token) {
