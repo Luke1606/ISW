@@ -4,7 +4,7 @@ import Header from './Header'
 import Footer from './Footer'
 import SideMenu from './SideMenu'
 import Modal from '../Modal'
-import { useLoading } from "../../../logic/hooks/common/useContexts"
+import { useLoading } from '@/logic'
 
 /**
  * @description Marco general de la aplicación, envoltorio general para todas las páginas del sistema.
@@ -17,27 +17,26 @@ import { useLoading } from "../../../logic/hooks/common/useContexts"
  */
 const Layout = () => {
     const navigate = useNavigate()
-    const location = useLocation()
-    const currentPath = location.pathname
+    const currentPath = useLocation().pathname
 
     const { loading } = useLoading()
     return (
             <div
-                className="layout-container">
+                className='layout-container'>
                 <Modal isOpen={loading}>
                     <span className='spinner'/>
                 </Modal>    
                 
                 <Header />
-                    <main className="main-content"
+                    <main className='main-content'
                         >
                         { currentPath != '/' &&
                             <button
-                                className="back-button"
+                                className='back-button'
                                 onClick={() => navigate(-1)}
-                                title="Volver"
+                                title='Volver'
                                 >
-                                <ArrowUpLeftSquare size={40} color="white" />
+                                <ArrowUpLeftSquare size={40} color='white' />
                             </button>}
                         <Outlet/>
                     </main>

@@ -1,10 +1,13 @@
-import { NavLink } from "react-router-dom"
-import Modal from "../Modal"
-import useHeaderOptions from "../../../logic/hooks/options/useHeaderOptions"
-import useDropPopup from "../../../logic/hooks/common/useDropPopup"
-import { User } from "lucide-react"
-import useAuth from "../../../logic/hooks/Auth/useAuth"
-import { useModal } from "../../../logic/hooks/common/useContexts"
+import { NavLink } from 'react-router-dom'
+import { User } from 'lucide-react'
+import { Modal } from '../'
+import { 
+    useAuth, 
+    useModal, 
+    useDropPopup,
+    useHeaderOptions,
+    useTranslateToSpanish 
+} from '@/logic'
 
 /**
  * @description Header de la aplicación que contiene opciones obtenidas de {@link useHeaderOptions}, perfil y botón de `login/logout` cuyas funciones obtiene de {@link useAuth}.
@@ -28,56 +31,58 @@ const Header = () => {
         toggleVisible
     } = useDropPopup()
 
+    const translate = useTranslateToSpanish()
+    const spanishRole = user? translate(user?.user_role) : ''
     return (
         <header 
-            className="header"
+            className='header'
             >
             <nav 
-                className="header-nav"
+                className='header-nav'
                 >
                 { user? 
                     <>
                         <button 
-                            className="profile-button" 
+                            className='profile-button' 
                             onClick={toggleVisible} 
                             ref={triggerRef} 
-                            title="Mostrar perfil y opciones"
+                            title='Mostrar perfil y opciones'
                             >
-                            <User size={40} color="white" />
+                            <User size={40} color='white' />
                         </button>
                             
                         <Modal
                             isOpen={isVisible}
-                            position="top-right"
+                            position='top-right'
                             >
                             <div 
-                                className="profile-container"
+                                className='profile-container'
                                 ref={dropPopupRef}
                                 >
                                 <ul 
-                                    className="header-ul"
+                                    className='header-ul'
                                     >
                                     {options && options.map((option, index) => (
                                         <li 
                                             key={index} 
-                                            className="header-li"
+                                            className='header-li'
                                             >
                                             <NavLink 
                                                 to={option.action}
                                                 >
-                                                <option.icon size={40} color="white"/>
+                                                <option.icon size={40} color='white'/>
                                             </NavLink>
                                             <span>{option.title}</span>
                                         </li>
                                     ))}
                                 </ul>
 
-                                <figure className="profile-figure">
+                                <figure className='profile-figure'>
                                     {user?.pic?
-                                        <img className="profile-picture" src={user?.pic} alt="profile-picture" />
+                                        <img className='profile-picture' src={user?.pic} alt='profile-picture' />
                                         :
-                                        <div className="profile-picture">
-                                            <User size={150} color="rgb(166, 105, 0)" />
+                                        <div className='profile-picture'>
+                                            <User size={150} color='rgb(166, 105, 0)' />
                                         </div>
                                     }
                                     <h2>
@@ -85,13 +90,13 @@ const Header = () => {
                                     </h2>
 
                                     <h2>
-                                        {user?.user_role}
+                                        {spanishRole}
                                     </h2>
                                 </figure>
 
                                 <button 
-                                    className="profile-button"
-                                    title="Cerrar sesión"
+                                    className='profile-button'
+                                    title='Cerrar sesión'
                                     onClick={logout}
                                     >
                                     Cerrar Sesión
@@ -101,8 +106,8 @@ const Header = () => {
                     </>
                     :
                     <button 
-                        className="profile-button"
-                        title="Autenticar"
+                        className='profile-button'
+                        title='Autenticar'
                         onClick={() => openModal(loginModalId)}
                         > 
                         Autenticar

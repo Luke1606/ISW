@@ -37,8 +37,9 @@ const LoginForm = ({modalId, closeModal}) => {
         [])
 
     const submitFunction = async (values) => {
-        await login(values)
+        const response = await login(values)
         closeModal(modalId)
+        return response
     }
 
     const formik = useGenericForm(submitFunction, initialValues, validationSchema)
