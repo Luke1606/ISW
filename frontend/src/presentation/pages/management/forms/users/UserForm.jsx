@@ -67,7 +67,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
         username: Yup.string()
             .min(3, 'El nombre de usuario debe tener al menos 4 caracteres')
             .required('El nombre de usuario es obligatorio')
-            .matches(/^[a-zA-Z0-9]*$/, 'El nombre no puede contener caracteres especiales ni espacios'),
+            .matches(/^[a-zA-Z0-9]*$/, 'El nombre no puede contener caracteres especiales'),
         ...specificSchema   
     }), [specificSchema])
 
@@ -171,7 +171,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
                         id='faculty-select' 
                         title='Facultad del estudiante'
                         elements={facultyOptions}
-                        defaultValue={facultyOptions.find(faculty => faculty.value === prevValues?.faculty) || ''}
+                        defaultValue={facultyOptions.find(faculty => faculty.value === prevValues?.faculty) || {}}
                         />
 
                     <span
@@ -199,7 +199,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
 
                     <span
                         className='error'
-                        style={formik.errors.group && formik.touched.group ? {} : { visibility: "hidden" }}
+                        style={formik.errors.group && formik.touched.group ? {} : { visibility: 'hidden' }}
                         >
                         {formik.errors.group}
                     </span>
@@ -217,7 +217,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
                         id='role-select' 
                         title='Cargo de docente'
                         elements={docentRoleOptions}
-                        defaultValue={docentRoleOptions.find(role => role.value === prevValues?.user?.user_role) || ''}
+                        defaultValue={docentRoleOptions.find(role => role.value === prevValues?.user?.user_role) || {}}
                         />
 
                     <span

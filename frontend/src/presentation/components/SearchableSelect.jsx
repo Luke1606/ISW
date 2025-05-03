@@ -35,8 +35,8 @@ SearchableSelect.propTypes = {
         label: PropTypes.string.isRequired,
     })),
     defaultValue: PropTypes.shape({
-        value: PropTypes.string.isRequired,
-        label: PropTypes.string.isRequired,
+        value: PropTypes.string,
+        label: PropTypes.string,
     })
 }
 
