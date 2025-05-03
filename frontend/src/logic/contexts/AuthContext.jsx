@@ -1,5 +1,5 @@
-import PropTypes from "prop-types"
-import { createContext, useState, useEffect } from "react"
+import PropTypes from 'prop-types'
+import { createContext, useState, useEffect } from 'react'
 import { AuthService } from '@/logic'
 
 /**
@@ -38,14 +38,12 @@ const AuthProvider = ({ children }) => {
      */
     const login = async (userFormData) => {
         try {
-            const userData = await AuthService.login(userFormData)
-
-            setUser(userData)
+            const userFullName = await AuthService.login(userFormData)
             setAuthStatusChanged(true)
 
             return {
                 success: true,
-                message: `El usuario ${userData.name} se ha autenticado correctamente.`,
+                message: `El usuario ${userFullName} se ha autenticado correctamente.`,
             }
         } catch (error) {
             return {
@@ -58,9 +56,10 @@ const AuthProvider = ({ children }) => {
     /**
      * @description Intenta cerrar la sesión activa a través de {@link AuthService.logout}
      */
-    const logout = () => {
-        AuthService.logout()
+    const logout = async () => {
+        await AuthService.logout()
         setUser(null)
+        setAuthStatusChanged(true)
     }
 
     return (
