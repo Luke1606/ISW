@@ -1,9 +1,9 @@
 import PropTypes from "prop-types"
 import * as Yup from 'yup'
 import { useMemo } from 'react'
-import useGenericForm from '../../../../../logic/hooks/common/useGenericForm'
-import datatypes from '../../../../../data/datatypes'
-import FormButtons from "../../../../components/FormButtons"
+import { useGenericForm } from '@/logic'
+import { datatypes } from '@/data'
+import { FormButtons, SearchableSelect } from '@/presentation'
 
 /**
  * @description Ventana para agregar o editar un usuario ya sea profesor o estudiante.
@@ -32,19 +32,20 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
     if (usertype === datatypes.user.student)
         specificSchema = {
             faculty: Yup.string()
-                .when('role', (role, schema) => 
-                    role === datatypes.user.student ? 
+                .when('role', (role, schema) => {
+                    return role === datatypes.user.student? 
                         schema.required('La facultad es requerida')
                         :
                         schema.notRequired()
-                ),
+                }),
             group: Yup.number()
-                .when('role', (role, schema) => 
-                    role === datatypes.user.student ? 
+                .when('role', (role, schema) => {
+
+                    return role === datatypes.user.student? 
                         schema.required('El grupo es requerido')
                         : 
                         schema.notRequired()
-                )
+                })
         }
     else
         specificSchema = {
@@ -59,7 +60,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
 
     const validationSchema = useMemo(() => Yup.object().shape({
         name: Yup.string()
-            .min(10, 'El nombre de usuario debe tener al menos 4 caracteres')
+            .min(3, 'El nombre de usuario debe tener al menos 3 caracteres')
             .required('El nombre de usuario es obligatorio')
             .matches(/^[a-zA-Z\s]*$/, 'El nombre no puede contener números ni caracteres especiales'),
 
@@ -86,7 +87,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
     const formik = useGenericForm(submitFunction, initialValues, validationSchema)
 
     /**
-     * Distintas opciones a mostrar en el elemento `select` con id de valor `faculty-select`
+     * @description Distintas opciones a mostrar en el elemento `select` con id de valor `faculty-select`
      */
     const facultyOptions = [
         { value: 'FTI', label: 'Facultad de Tecnologías Interactivas' },
@@ -98,23 +99,13 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
     ]
 
     /**
-     * Distintas opciones a mostrar en el elemento `select` con id de valor `faculty-select`
+     * @description Distintas opciones a mostrar en el elemento `select` con id de valor `faculty-select`
      */
     const docentRoleOptions = [
         { value: datatypes.user.professor, label: 'Profesor' },
         { value: datatypes.user.dptoInf, label: 'Profesor miembro del Departamento de Informática' },
         { value: datatypes.user.decan, label: 'Miembro del Decanato ' },
     ]
-
-    const printOptions = (option) => (
-        <option 
-            key={option.value} 
-            value={option.value}
-            className='option-element'
-            >
-            {option.label}
-        </option>
-    )
 
     return (
         <form
@@ -156,7 +147,7 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
                 id='username' 
                 type='text'  
                 title='Nombre de usuario a usar en la autenticación'
-                placeholder='Introduzca el nombre de usuario por el que se autenticará'
+                placeholder='Introduzca el nombre de usuario'
                 {...formik.getFieldProps('username')}
                 />
 
@@ -175,22 +166,13 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
                         > 
                         Facultad: 
                     </label>
-
-                    <select 
-                        className='form-select'
-                        id='faculty-select'
+                        
+                    <SearchableSelect 
+                        id='faculty-select' 
                         title='Facultad del estudiante'
-                        defaultValue={prevValues?.faculty || ''}
-                        >
-                        <option 
-                            className='option-element'
-                            value=''
-                            disabled
-                            >
-                            -- Seleccione una facultad -- 
-                        </option>
-                        {facultyOptions.map(printOptions)}
-                    </select>
+                        elements={facultyOptions}
+                        defaultValue={facultyOptions.find(faculty => faculty.value === prevValues?.faculty) || ''}
+                        />
 
                     <span
                         className='error'
@@ -231,21 +213,12 @@ const UserForm = ({usertype, modalId, closeModal, prevValues, handleSubmit}) => 
                         Seleccione el cargo: 
                     </label>
 
-                    <select 
-                        className='form-select'
-                        id='role-select'
+                    <SearchableSelect 
+                        id='role-select' 
                         title='Cargo de docente'
-                        defaultValue={prevValues?.user?.user_role || ''}
-                        >
-                        <option 
-                            className='option-element'
-                            value=''
-                            disabled
-                            >
-                            -- Seleccione un cargo -- 
-                        </option>
-                        {docentRoleOptions.map(printOptions)}
-                    </select>
+                        elements={docentRoleOptions}
+                        defaultValue={docentRoleOptions.find(role => role.value === prevValues?.user?.user_role) || ''}
+                        />
 
                     <span
                         className='error'

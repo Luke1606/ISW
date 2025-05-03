@@ -9,7 +9,7 @@ const fileIcons = {
     xlsx: 'fas fa-file-excel',
     zip: 'fas fa-file-archive',
     default: 'fas fa-file'
-  };
+}
   
 const getFileIcon = (name) => {
     const ext = name.split('.').pop().toLowerCase()
@@ -41,18 +41,14 @@ const FilePreviewer = ({ source }) => {
 
     return (
         <div className='preview-container'>
-            {fileType === 'image' && <img src={fileURL} alt='Vista previa' className='preview-image' />}
-            {fileType === 'pdf' && (
-                <iframe src={fileURL} width='500px' height='250px' style={{ border: 'none' }}/>
-            )}
-            <div className='preview-info'>
-                {fileType === 'other' && 
-                    <span title='Icono de archivo'>
-                        <i className={getFileIcon(source.name)}></i>
-                    </span>}
+            {fileType === 'image' && 
+                <img src={fileURL} alt='Vista previa' className='preview-image' />}
+            {fileType === 'pdf' &&
+                <iframe src={fileURL} width='500px' height='250px' style={{ border: 'none' }}/>}
+            {fileType === 'other' &&
+                <i title='Icono de archivo' className={`${getFileIcon(source.name)} preview-icon`}/>}
 
-                <p className='preview-title'>{source.name}</p>
-            </div>
+            <p className='preview-title'>{source.name}</p>
         </div>
     )
 }

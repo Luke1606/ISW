@@ -609,7 +609,7 @@ button:hover, .button:hover {
     transform: scale(1.1);
 }
 
-.fab:hover {
+.face:hover {
     background-color: #00acee; /* Facebook */
 }
 
@@ -922,8 +922,8 @@ button:hover, .button:hover {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    align-items: center; 
-    justify-content: center; 
+    align-items: center;
+    justify-content: center;
     padding: 20px; 
     font-family: Arial, sans-serif; 
     font-size: 1.3rem;
@@ -932,7 +932,8 @@ button:hover, .button:hover {
 }
 
 .form-label {
-    font-size: 24px;
+    font-size: 2rem;
+    font-weight: 600;
     margin-bottom: 5px;
     display: block;
 }
@@ -942,7 +943,7 @@ button:hover, .button:hover {
 }
 
 .form-input {
-    width: 80%;
+    width: 90%;
     padding: 10px;
     font-size: larger;
     margin: 10px 0;
@@ -995,18 +996,67 @@ button:hover, .button:hover {
 
 .error {
     color:rgb(200, 0, 0);
-    height: 3rem;
+    height: 1.5rem;
 }
 
 .manage-form {
     margin: 0;
+    width: 40rem;
+    display: flex;
+    gap: 10px;
     height: fit-content;
 }
 
-.file-preview {
-    max-width: 100px;
-    max-height: 100px;
+.preview-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.preview-image {
+    max-width: 500px;
+    max-height: 250px;
     object-fit: cover;
     border-radius: 5px;
     margin-top: 5px;
+}
+
+.preview-icon {
+    font-size: 100px;
+}
+
+.preview-title {
+    font-size: larger;
+}
+
+.form-radio-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 80%;
+}
+
+.form-radio-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.6rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.form-radio-option input {
+    width: 2rem;
+    height: 2rem;
+    accent-color: #007bff;
+}
+
+.form-radio-option:hover {
+    background-color: rgba(0, 123, 255, 0.1);
 }

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import * as Yup from 'yup'
 import { datatypes } from '@/data'
 import { useGenericForm } from '@/logic'
@@ -38,33 +38,32 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
             .oneOf(['url', 'file']),
         
         url: Yup.string()
-            .when('attachmentType', (attachmentType, schema) => {
-                return attachmentType === 'url'? 
-                    schema.required('La URL es obligatoria')
+            .when('attachmentType', {
+                is: 'url',
+                then: (schema) => {
+                    return schema.required('La URL es obligatoria')
                         .test(
                             'is-valid-url',
                             'Debe ser una URL válida',
-                            (value) => validateUrl(value)
+                            (value) => !!value && validateUrl(value)
                         )
-                    : 
-                    schema.notRequired()
-            }),
-    
-        file: Yup.mixed()
-            .when('attachmentType', (attachmentType, schema) => {
-                return attachmentType === 'file'? 
-                    schema.required('El archivo es obligatorio')
-                    : 
-                    schema.notRequired()
-            }),
-    
+                },
+                otherwise: (schema) => schema.notRequired()
+        }),
+
+        file: Yup.lazy((value, context) => {
+            return context.parent.attachmentType === 'file'? 
+                Yup.mixed().required('El archivo es obligatorio')
+                :
+                Yup.mixed().notRequired()
+        })
     }), [])
 
     const submitFunction = async (values) => {
         const newValues = {
             name: values?.name,
             description: values?.description,
-            attachmentType: values.attachmentType,
+            attachmentType: values?.attachmentType,
             url: values?.url,
             file: values?.file
         }
@@ -73,6 +72,8 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
     }
 
     const formik = useGenericForm(submitFunction, initialValues, validationSchema)
+
+    const fileInputRef = useRef(null)
 
     const handleAttachmentTypeChange = (e) => {
         const attachmentType = e.target.value
@@ -84,6 +85,8 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                 url: '',
                 file: null,
             })
+            if (fileInputRef.current) 
+                fileInputRef.current.value = ''
         }
     }
 
@@ -134,27 +137,33 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                 Tipo de adjunto:
             </label>
 
-            <div className='radio-group'>
-                <label className='radio-label'>
+            <div className='form-radio-group'>
+                <label 
+                    className='form-radio-option'
+                    >
                     <input
+                        className='form-input'
                         type='radio'
                         name='attachmentType'
                         value='url'
                         checked={formik.values.attachmentType === 'url'}
                         onChange={handleAttachmentTypeChange}
-                    />
-                    <span>URL Externa</span>
+                        />
+                    URL Externa
                 </label>
                 
-                <label className="radio-label">
+                <label 
+                    className='form-radio-option'
+                    >
                     <input
+                        className='form-input'
                         type='radio'
                         name='attachmentType'
                         value='file'
                         checked={formik.values.attachmentType === 'file'}
                         onChange={handleAttachmentTypeChange}
-                    />
-                    <span>Archivo Local</span>
+                        />
+                    Archivo Local
                 </label>
             </div>
 
@@ -175,17 +184,10 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                             id='url'
                             type='url'
                             placeholder='https://ejemplo.com'
-                            value={formik.values.url}
-                            onChange={formik.handleChange}
+                            {...formik.getFieldProps('url')}
                             />
-                        
-                        <span
-                            className='error'
-                            style={formik.errors.url && formik.touched.url ? {} : { visibility: 'hidden' }}
-                            >
-                            {formik.errors.url}
-                        </span>
                     </div>
+
                     <div
                         style={formik.values.attachmentType === 'file'? {} : { display: 'none' }}
                         >
@@ -200,17 +202,26 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                             className='form-input'
                             id='file'
                             type='file'
-                            onChange={(e) => formik.setFieldValue('file', e.target.files[0])}
+                            ref={fileInputRef}
+                            onChange={(event) => formik.setFieldValue('file', event.currentTarget.files[0])}
+                            onBlur={formik.handleBlur}
                             />
-                        
-                        <span
-                            className='error'
-                            style={formik.errors.file && formik.touched.file ? {} : { visibility: 'hidden' }}
-                            >
-                            {formik.errors.file}
-                        </span>
                     </div>
                 </>)}
+            
+            <span
+                className='error'
+                style={formik.values.attachmentType === 'url'?
+                    formik.errors.url && formik.touched.url? {} : { visibility: 'hidden' }
+                    :
+                    formik.errors.file && formik.touched.file? {} : { visibility: 'hidden' }
+                }
+                >
+                {formik.values.attachmentType === 'url'?
+                    formik.errors.url
+                    :
+                    formik.errors.file}
+            </span>
 
             {(formik.values.url || formik.values.file) &&
                 <>
@@ -219,7 +230,11 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                     </label>
                     
                     {formik.values.attachmentType === 'url'?
-                        <a href={formik.values.url} target='_blank' rel='noopener noreferrer'>
+                        <a 
+                            className='form-label'
+                            href={formik.values.url} 
+                            target='_blank' 
+                            rel='noopener noreferrer'>
                             {formik.values.url}
                         </a>
                         :
