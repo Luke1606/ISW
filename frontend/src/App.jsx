@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import routes from './presentation'
 import { ErrorBoundary, ToastNotification } from './presentation'
-import { AuthProvider, useUserActivity, ModalProvider, LoadingProvider } from './logic'
+import { AuthProvider, useUserActivity, ModalProvider, LoadingProvider, FormProvider } from './logic'
 
 /**
  * @description Crea un enrutador basado en las rutas del sitio.
@@ -56,8 +56,10 @@ const App = () => {
                 <AuthProvider>
                     <LoadingProvider>
                         <ModalProvider>
-                            <UserActivityMonitor />
-                            <RouterProvider router={router} />
+                            <FormProvider>
+                                <UserActivityMonitor />
+                                <RouterProvider router={router} />
+                            </FormProvider>
                         </ModalProvider>
                     </LoadingProvider>
                 </AuthProvider>

@@ -2,28 +2,28 @@ import PropTypes from 'prop-types'
 import { datatypes } from '@/data'
 import { useForm, useFormParams } from '@/logic'
 import { 
-    EvidenceForm, 
-    ReadOnlyEvidenceForm,
-    RequestForm,
-    DefenseTribunalForm, 
-    ReadOnlyDefenseTribunalForm,
-    DefenseActForm,
-    ReadOnlyDefenseActForm,
     UserForm,
-    ReadOnlyUserForm
+    RequestForm,
+    EvidenceForm, 
+    DefenseActForm,
+    ReadOnlyUserForm,
+    DefenseTribunalForm, 
+    ReadOnlyEvidenceForm,
+    ReadOnlyDefenseActForm,
+    ReadOnlyDefenseTribunalForm
 } from '.'
 
-const Form = ({formParams}) => {
-    const datatype = formParams?.datatype
-    const idData = formParams?.idData
-    const relatedUserId = formParams?.relatedUserId
-    const view = formParams?.view
+const Form = () => {
+    const { manageFormParams, closeManageForm, formModalId } = useFormParams()
+
+    const datatype = manageFormParams?.datatype
+    const idData = manageFormParams?.idData
+    const relatedUserId = manageFormParams?.relatedUserId
+    const view = manageFormParams?.view
 
     const { loading, prevValues, handleSubmit } = useForm(datatype, idData, relatedUserId)
 
-    const { closeManageForm, formModalId } = useFormParams(datatype)
-        
-    if (loading) return null
+    if (loading || !manageFormParams) return null
 
     let specificForm
 
@@ -110,9 +110,10 @@ const Form = ({formParams}) => {
                     />
             break
         default:
-            console.warn(`El tipo de dato ${datatype} no coincide con ningun formulario configurado.`);
+            console.warn(`El tipo de dato ${datatype} no coincide con ningun formulario configurado.`)
             break
     }
+
     return specificForm
 }
 
@@ -120,12 +121,12 @@ Form.propTypes = {
     formParams: PropTypes.shape({
         datatype: PropTypes.oneOf([
             ...Object.values(datatypes.user),
-            datatypes.evidence,
+            datatypes.report,
             datatypes.request,
-            datatypes.defense_tribunal,
             datatypes.tribunal,
+            datatypes.evidence,
             datatypes.defense_act,
-            datatypes.report
+            datatypes.defense_tribunal
         ]).isRequired,
         idData: PropTypes.string,
         relatedUserId: PropTypes.string,

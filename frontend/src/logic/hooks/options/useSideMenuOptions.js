@@ -24,7 +24,7 @@ const useSideMenuOptions = () => {
     }, [currentPath])
     
     const { openManageForm } = useFormParams()
-    
+
     let options = [{
         title: 'Generar un reporte',
         icon: File,
