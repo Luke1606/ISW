@@ -1,6 +1,5 @@
 import { useContext } from 'react'
-import { ModalContext } from '../../'
-import { LoadingContext } from '../../'
+import { ModalContext, LoadingContext, FormContext } from '@/logic'
 
 /**
  * Hooks personalizados que permiten consumir instancias de ModalContext y LoadingContext de manera sencilla.
@@ -40,3 +39,5 @@ export const useModal = () => useContext(ModalContext)
  * setLoading(false)
  */
 export const useLoading = () => useContext(LoadingContext)
+
+export const useFormParams = () => useContext(FormContext)
