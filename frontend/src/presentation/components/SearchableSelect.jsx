@@ -3,14 +3,14 @@ import PropTypes from 'prop-types'
 import Select from 'react-select'
 
 const SearchableSelect = ({ id, title, elements, defaultValue = { value: '', label: 'Seleccione una opción '} }) => {
-    const [ selectedOption, setSelectedOption ] = useState('')
+    const [ selectedOption, setSelectedOption ] = useState(defaultValue)
     const [ remainingElements, setRemainingElements ] = useState(elements)
 
     const handleElementChange = (selected) => {
         setSelectedOption(selected)
         setRemainingElements(elements.filter((element) => element.value !== selected.value))
     }
-
+    
     return (
         <Select
             className='form-input'
