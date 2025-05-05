@@ -8,32 +8,36 @@ const List = () => {
 
     const {
         currentData,
-        paginationParams,
         handleSearch,
-        handleDelete
+        handleDelete,
+        paginationParams
     } = listHooks.useListDataStates(datatype, relatedUserId)
-    
+
     const permissions = listHooks.usePermisions(datatype)
 
     const {
         itemOptions,
-        handleOptions,
         selectedItemId,
-        setSelectedItemId
+        setSelectedItemId,
+        handleOptionChange
     } = listHooks.useItemSelectionControl(datatype)
 
     const deleteModalId = 'delete-modal'
 
-    const {isOpen, openModal, closeModal} = useModal()
+    const { isOpen, openModal, closeModal } = useModal()
     
-    const { manageFormParams, openManageForm, formModalId } = useFormParams()
-
+    const { openManageForm, formModalId } = useFormParams()
+    
     const translate = useTranslateToSpanish()
     const spanishDatatype = translate(datatype).toLowerCase()
 
     return (
-        <div className='manage-container'>
-            <h2 className='list-title'>
+        <div 
+            className='manage-container'
+            >
+            <h2 
+                className='list-title'
+                >
                 Gestionar {spanishDatatype}s
             </h2>
             
@@ -62,7 +66,7 @@ const List = () => {
             <div
                 className='button-container manage-buttons'
                 >
-                { permissions.add &&
+                { permissions?.add &&
                     <button 
                         title='Agregar'
                         className='add-button'
@@ -71,7 +75,7 @@ const List = () => {
                         <Plus size={40}/>
                     </button>}
 
-                    { permissions.del && 
+                    { permissions?.del && 
                         <button 
                             title='Eliminar varios'
                             className='delete-button'
@@ -101,7 +105,7 @@ const List = () => {
                                     <FileText size={50}/>
                                 </button>
 
-                                { permissions.edit && 
+                                { permissions?.edit && 
                                     <button 
                                         title='Editar'
                                         className='edit-button list-button'
@@ -110,14 +114,15 @@ const List = () => {
                                         <Edit size={50}/>
                                     </button>}
 
-                                { permissions.del && 
+                                { permissions?.del && 
                                     <button 
                                         title='Eliminar'
                                         className='delete-button list-button'
                                         onClick={() => {
                                             setSelectedItemId(item.id)
                                             openModal(deleteModalId)
-                                            }}>
+                                        }}
+                                        >
                                         <Trash2 size={50}/>
                                     </button>}
                             
@@ -125,8 +130,8 @@ const List = () => {
                                     className='button options-button list-button' 
                                     title='Más opciones'
                                     defaultValue={'default'}
-                                    onChange={handleOptions}
-                                    onClick={()=>setSelectedItemId(item.id)}
+                                    onChange={handleOptionChange}
+                                    onClick={() => setSelectedItemId(item.id)}
                                     >
                                     <option 
                                         className='option-element' 
@@ -150,13 +155,12 @@ const List = () => {
                         </div>
                     ))
                 : 
-                    <h3 className='list-item-title'>
-                        No hay elementos que mostrar.
-                    </h3>}
+                <h3 className='list-item-title'>
+                    No hay elementos que mostrar.
+                </h3>}
             </div>
 
-            <PaginationButtons 
-                paginationParams={paginationParams}/>
+            <PaginationButtons paginationParams={paginationParams} />
             
             {/* modal de confirmacion de eliminado */}
             <Modal isOpen={isOpen(deleteModalId)}>
@@ -191,7 +195,7 @@ const List = () => {
             </Modal>
 
             <Modal isOpen={isOpen(formModalId)}>
-                <Form formParams={manageFormParams}/>
+                <Form />
             </Modal>
         </div>
     )

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 
 const FormButtons = ({modalId, closeModal, isValid}) => {
     return (
-        <div className="button-container">
+        <div className='button-container'>
             <button
                 type='submit'
                 className='accept-button'
