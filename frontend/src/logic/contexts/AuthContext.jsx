@@ -9,20 +9,23 @@ const AuthContext = createContext()
 
 /**
  * @description Provider diseñado para manejo del {@link AuthContext}
- * @param {React.ReactNode} children 
+ * @param {React.ReactNode} children
  * @returns Provider que permite a los componentes hijos acceder a los estados {@link user} con {@link setUser} y a {@link authStatusChanged} con {@link setAuthStatusChanged}, así como a las funciones {@link login} y {@link logout}.
  */
 const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null)
-    const [authStatusChanged, setAuthStatusChanged] = useState(true)
+    const [ user, setUser ] = useState(null)
+    const [ authStatusChanged, setAuthStatusChanged ] = useState(true)
 
     useEffect(() => {
         /**
          * @description Obtiene la información del usuario siempre que su estatus cambia ({@link authStatusChanged} es `true`).
          */
-        const fetchUser = () => {
-            const userInfo = AuthService.getSessionInfo()
-            setUser(userInfo)
+        const fetchUser = async () => {
+            const userInfo = await AuthService.getSessionInfo()
+
+            if (userInfo){
+                setUser(userInfo)
+            }
             setAuthStatusChanged(false)
         }
         if (authStatusChanged)
@@ -37,19 +40,12 @@ const AuthProvider = ({ children }) => {
      * - {string} `message` - Dependiendo de la propiedad `success` será su valor. Puede ser un mensaje de que el usuario se autenticó correctamente (`success`===`true`) o una pista de cual fue la causa del error (`success`===`false`).
      */
     const login = async (userFormData) => {
-        try {
-            const userFullName = await AuthService.login(userFormData)
-            setAuthStatusChanged(true)
-
-            return {
-                success: true,
-                message: `El usuario ${userFullName} se ha autenticado correctamente.`,
-            }
-        } catch (error) {
-            return {
-                success: false,
-                message: error.message
-            }
+        const message = await AuthService.login(userFormData)
+        setAuthStatusChanged(true)
+        
+        return {
+            success: true,
+            message: message,
         }
     }
 

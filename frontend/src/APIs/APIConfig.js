@@ -1,19 +1,16 @@
 /**
- * @fileoverview Este archivo contiene funciones relacionadas con la configuración de APIs, utilizando la lógica definida en {@link authApi}.
+ * @fileoverview Este archivo contiene funciones relacionadas con la configuración de APIs
  * @module apiConfig
  * @description Configuración de interceptors para todas las APIs del sistema.
  */
 import axios from 'axios'
-import { authApi } from './'
-import { tokens } from '@/data'
+import { authApi, accessToken } from './'
 
 const setupInterceptors = (instance) => {
     instance.interceptors.request.use(
         (config) => {
-            const token = authApi.getToken(tokens.ACCESS_TOKEN_KEY)
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`
-            }
+            if (accessToken)
+                config.headers.Authorization = `Bearer ${accessToken}`
             return config
         },
         (error) => Promise.reject(error)
@@ -30,36 +27,33 @@ const setupInterceptors = (instance) => {
                         if(!originalRequest._retry){
                             originalRequest._retry = true
 
-                            const refreshToken = authApi.getToken(tokens.REFRESH_TOKEN_KEY)
-                            if (!refreshToken) {
-                                authApi.deleteToken(tokens.ACCESS_TOKEN_KEY)
-                                authApi.deleteToken(tokens.REFRESH_TOKEN_KEY)
-                                return Promise.reject("No estás autenticado")
+                            if (!accessToken) {
+                                return Promise.reject('No estás autenticado')
                             }
 
                             try {
-                                const response = await authApi.getNewAccessToken(refreshToken)
-                                const newAccessToken = response.data.access
-                                authApi.setToken(tokens.ACCESS_TOKEN_KEY, newAccessToken)
+                                const response = await authApi.setNewAccessToken()
 
-                                // Actualiza el encabezado y reintenta la solicitud original
-                                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
-                                return instance(originalRequest)
+                                if (response.success) { // Reintenta la solicitud original con el token actualizado
+                                    originalRequest.headers.Authorization = `Bearer ${accessToken}`
+                                    return instance(originalRequest)
+                                } else {
+                                    authApi.closeSession() // Cerrar sesión si el refresco del token falla
+                                    throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.')
+                                }
                             } catch (error) {
-                                authApi.deleteToken(tokens.ACCESS_TOKEN_KEY)
-                                authApi.deleteToken(tokens.REFRESH_TOKEN_KEY)
                                 console.log(error)
-                                throw new Error("Sesión expirada. Por favor, inicia sesión nuevamente.")
+                                throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.')
                             } 
                         } 
                     }
                     break
                 case 403:
-                    throw new Error("No tiene acceso a este recurso")
+                    throw new Error('No tiene acceso a este recurso')
                 case 404:
-                    throw new Error("Recurso no encontrado")
+                    throw new Error('Recurso no encontrado')
                 case 500:
-                    throw new Error("Problemas del servidor")
+                    throw new Error('Problemas del servidor')
                 default:
                     return Promise.reject(error)
             }
@@ -67,8 +61,8 @@ const setupInterceptors = (instance) => {
     )
 }
 
-const createApiInstance = (baseURL) => {
-    const instance = axios.create({ baseURL })
+const createApiInstance = (baseURL, otherParams = {}) => {
+    const instance = axios.create({ baseURL, ...otherParams })
     setupInterceptors(instance)
     return instance
 }

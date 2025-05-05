@@ -1,44 +1,18 @@
-import {authApi} from '@/APIs'
-import {tokens} from '@/data'
-import {NotificationService} from './'
+import { authApi } from '@/APIs'
+import { NotificationService } from './'
 
 class AuthService {
-    constructor () {
-        /**
-         * @description Indica si el usuario sigue activo o se considera inactivo. 
-         * En el 2do caso la sesión debe cerrarse automáticamente.
-         */
-        this.isUserActive = true
-    }
-
-    async setUserActive(state) {
-        this.isUserActive = state
-        if (!state) 
-            await authApi.close_session()
-    }
-
-    getUserActive () {
-        return this.isUserActive
-    }
-
-    emergencyLogout () {
-        authApi.close_session(true)
-    }
-    
     async login (userFormData) {
         const response = await authApi.authenticate(userFormData)
-        if (response.success) {
-            this.setUserActive(true)
-            return response.user.name
-        } else {
+        if (!response.success) {
             console.error('Ocurrio un error: ', response.message)
-            await authApi.close_session()
-            throw new Error(response.message)
+            await this.closeSession()
         }
+        return response.message
     }    
 
     async logout () {
-        const response = await authApi.close_session()
+        const response = await this.closeSession()
 
         let notification
 
@@ -61,38 +35,28 @@ class AuthService {
         }
     }
 
-    getSessionInfo () {
-        const user = authApi.getToken(tokens.USER_TOKEN_KEY)
-        return user
+    async closeSession () {
+        return await authApi.closeSession()
+    }
+
+    async getSessionInfo () {
+        return await authApi.getSessionInfo()
     }
 
     async checkAuth() {
-        const token = authApi.getToken(tokens.ACCESS_TOKEN_KEY)
-
-        if(token) {
-            try {
-                if (authApi.isAboutToExpire(token))
-                    return await this.refreshToken()
-                else
-                    return true    
-            } catch (error) {
-                console.error(error.message)
-                return false
-            }
-        }else
+        try {
+            if (authApi.isAboutToExpire())
+                return await this.refreshToken()
+            else
+                return true    
+        } catch (error) {
+            console.error(error.message)
             return false
+        }
     }
 
     async refreshToken () {
-        const refreshToken = authApi.getToken(tokens.REFRESH_TOKEN_KEY)
-
-        if (!refreshToken) return false
-
-        const response = await authApi.getNewAccessToken(refreshToken)
-        
-        if (response.success)
-            authApi.setToken(tokens.ACCESS_TOKEN_KEY, response.accessToken)
-        
+        const response = await authApi.setNewAccessToken()
         console.log(response.message)
         return response.success
     }

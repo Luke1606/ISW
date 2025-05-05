@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
+from rest_framework.serializers import Serializer
 from django.core.paginator import Paginator
 from django.core.cache import cache
 
@@ -15,7 +16,7 @@ class BaseModelViewSet(ModelViewSet):
     """
     _page_size = 5  # Tamaño de página por defecto
     _cache_timeout = 300  # Tiempo de vencimiento de cache
-    list_serializer_class = None  # Opción para un serializer de lista
+    list_serializer_class: type[Serializer] | None = None  # Opción para un serializer de lista
 
     def get_queryset(self):
         """

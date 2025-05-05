@@ -28,11 +28,6 @@ const useAuth = () => {
             }
         }
         checkAuthorized()
-
-        const interval = setInterval(() => {
-            checkAuthorized()
-        }, 30 * 1000)//30 segundos
-        return () => clearInterval(interval)
     }, [authStatusChanged, setLoading])
 
     return { isAuthorized, user, login, logout }

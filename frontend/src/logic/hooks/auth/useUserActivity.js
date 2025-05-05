@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
-import { AuthService } from '@/logic'
+import { AuthService, useAuth } from '@/logic'
 
 /**
  * @description Vigila la actividad del usuario para que al cumplirse {@link timeoutDuration} si el usuario no ha ejecutado ninguno de los eventos en {@link events} se cambie con {@link AuthService.setUserActive} a false y se trate al usuario como inactivo según la configuracion de {@link AuthService}.
@@ -13,40 +13,30 @@ const useUserActivity = (timeoutDuration = 10 * 60 * 1000, events = ['mousemove'
     if (!events || events.length === 0) events = ['mousemove', 'keydown', 'scroll']
     
     const timeoutRef = useRef(null)
+    const { isAuthorized } = useAuth()
 
     const resetActivityTimeout = useCallback(() => {
-        AuthService.setUserActive(true)
-        
         clearTimeout(timeoutRef.current) // Limpia el timeout anterior
 
-        timeoutRef.current = setTimeout(
-            () => AuthService.setUserActive(false)
-            , timeoutDuration)
-    }, [timeoutDuration])
+        timeoutRef.current = setTimeout(() =>  {
+                if (isAuthorized)
+                    AuthService.closeSession()
+            }, timeoutDuration)
+    }, [isAuthorized, timeoutDuration])
 
     useEffect(() => {
-        AuthService.setUserActive(true)
-
-        events.forEach(event => {
-            window.addEventListener(event, resetActivityTimeout, { passive: true })
-        })
-
-        const handleBeforeUnload = () => {
-            AuthService.emergencyLogout()
+        if (isAuthorized) {
+            events.forEach(event => {
+                window.addEventListener(event, resetActivityTimeout, { passive: true })
+            })
         }
-        window.addEventListener('beforeunload', handleBeforeUnload)
-
         return () => {
             clearTimeout(timeoutRef.current)
-            AuthService.setUserActive(false)
-
             events.forEach(event => {
                 window.removeEventListener(event, resetActivityTimeout)
             })
-       
-            window.removeEventListener('beforeunload', handleBeforeUnload)
         }
-    }, [timeoutDuration, events, resetActivityTimeout])
+    }, [timeoutDuration, events, resetActivityTimeout, isAuthorized])
 }
 
 export default useUserActivity
