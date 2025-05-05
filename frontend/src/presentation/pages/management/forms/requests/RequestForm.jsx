@@ -15,7 +15,7 @@ import { FormButtons } from '@/presentation'
  */
 const RequestForm = ({ modalId, closeModal, prevValues, handleSubmit }) => {
     const initialValues = {
-        selectedECE: prevValues.selected_ece || '',
+        selectedECE: prevValues?.selected_ece || '',
     }
 
     const validationSchema = useMemo(() => Yup.object().shape({
@@ -53,7 +53,7 @@ const RequestForm = ({ modalId, closeModal, prevValues, handleSubmit }) => {
 
     return (
         <form
-            className='form-container manage-form'
+            className='form-container manage-section'
             onSubmit={formik.handleSubmit}
         >
             <label 

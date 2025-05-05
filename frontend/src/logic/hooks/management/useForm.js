@@ -7,14 +7,14 @@ const useForm = (datatype, idData, relatedUserId) => {
     const [ prevValues, setPrevValues ] = useState(null)
     
     const getPrevValues = useCallback(async (datatype, id) => {
-        if (!id) return
+        if (!id) return null
         setLoading(true)
         try {
             const response = await ManagementService.getData(datatype, id)
             setPrevValues(response)
         } catch (error) {
             const notification = {
-                title: "Error",
+                title: 'Error',
                 message: error.message
             }
             NotificationService.showToast(notification, 'error')
@@ -25,8 +25,7 @@ const useForm = (datatype, idData, relatedUserId) => {
 
     useEffect(() => {
         getPrevValues(datatype, idData, relatedUserId)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [datatype, idData])
+    }, [datatype, idData, relatedUserId, getPrevValues])
     
     const handleSubmit = idData? 
                             ManagementService.updateData

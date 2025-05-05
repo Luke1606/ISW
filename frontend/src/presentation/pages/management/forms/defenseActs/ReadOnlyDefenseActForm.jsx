@@ -13,7 +13,7 @@ const ReadOnlyDefenseActForm = ({modalId, closeModal, values}) => {
     
     return (
         <section
-            className='form-container manage-form' 
+            className='form-container manage-section' 
             >
             <label 
                 className='form-label' 

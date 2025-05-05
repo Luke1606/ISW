@@ -1,13 +1,13 @@
 import { createApiInstance } from './'
 
-const managementApiInstance = createApiInstance("http://localhost:8000/management/")
+const managementApiInstance = createApiInstance('http://localhost:8000/management/')
 
 const handleRequest = async (method, url, options = {}) => {
     try {
         const response = await managementApiInstance[method](url, options)
         return response.data
     } catch (error) {
-        throw new Error(error.message || "Error desconocido. Se está trabajando en la causa")
+        throw new Error(error.message || 'Error desconocido. Se está trabajando en la causa')
     }
 }
 

@@ -48,7 +48,7 @@ const featureItems = [
 	  brief:
 		'Simplifica la gestión de las actas de defensa con nuestra solución, que permite un registro despejado, seguro y accesible de cada defensa realizada.',
 	  description:
-		'La gestión de las actas de defensa es fundamental para documentar el proceso de ejercicios de culminación de estudios. Nuestra herramienta te permite registrar, almacenar y acceder a las actas de manera sencilla y organizada. Con las funciones que facilitan la edición y el seguimiento de cada documento, podrás asegurarte de tener una visión clara del desempeño académico de los estudiantes.',
+		'',
 	},
 	{
 	  icon: {

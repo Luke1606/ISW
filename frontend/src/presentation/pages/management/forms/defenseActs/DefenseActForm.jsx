@@ -51,7 +51,7 @@ const DefenseActForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
 
     return (
         <form
-            className='form-container manage-form'
+            className='form-container manage-section'
             onSubmit={formik.handleSubmit}
         >
             <label 

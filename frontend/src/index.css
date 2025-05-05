@@ -94,7 +94,7 @@ button:hover, .button:hover {
 }
 
 .modal-button-container {
-    margin: 0 auto !important;
+    margin: 0 auto;
 }
 
 /* error */
@@ -146,7 +146,7 @@ button:hover, .button:hover {
     width: 80%;
     display: flex; 
     margin-top: 3rem;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
     gap: 3rem;
     padding: 0;
@@ -341,6 +341,7 @@ button:hover, .button:hover {
     max-width: 80%;
     position: relative;
     line-height: 50px;
+    cursor: default;
 }
 
 .flip-icon {
@@ -774,11 +775,17 @@ button:hover, .button:hover {
 
 .home-hero-title {
     font-size: 3.5rem;
-    margin-bottom: 1rem;
     padding: 30px;
-    filter: drop-shadow(0 0 10px black);
-    transition: all 0.2s ease-in-out;
+}
+
+.home-hero-title, .form-title, .form-subtitle {
+    margin-bottom: 1rem;
     cursor: default;
+    transition: all 0.2s ease-in-out;
+
+}
+.home-hero-title:hover, .form-title:hover, .form-subtitle:hover {
+    filter: drop-shadow(0 0 10px black);
 }
 
 .home-hero-title:hover {
@@ -1033,7 +1040,8 @@ button:hover, .button:hover {
 .form-container {
     background-color: rgba(230, 230, 230, .9);
     height: 45rem;
-    width: 35rem;
+    min-height: fit-content;
+    min-width: 35rem;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1098,10 +1106,17 @@ button:hover, .button:hover {
     height: 1.5rem;
 }
 
-.manage-form {
-    margin: 0;
-    width: 40rem;
+.multi-layered-form {
     display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
+
+.manage-section {
+    margin: 0;
+    max-width: 35rem;
+    display: flex;
+    flex-direction: column;
     gap: 10px;
     height: fit-content;
 }
@@ -1126,6 +1141,7 @@ button:hover, .button:hover {
 }
 
 .preview-title {
+    width: 90%;
     font-size: larger;
 }
 
@@ -1158,4 +1174,15 @@ button:hover, .button:hover {
 
 .form-radio-option:hover {
     background-color: rgba(0, 123, 255, 0.1);
+}
+
+.form-title {
+    margin: 0;
+    font-size: 2.5rem;
+    border-bottom: solid 3px var(--primary-dark-tone);
+    border-radius: 10px;
+}
+
+.form-subtitle {
+    font-size: 2.2rem;
 }

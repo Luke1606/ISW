@@ -92,156 +92,183 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
 
     return (
         <form
-            className='form-container manage-form'
+            className='form-container'
             onSubmit={formik.handleSubmit}
             >
-            <label className='form-label' htmlFor='name'>
-                Nombre de la evidencia:
-            </label>
-
-            <input
-                className='form-input'
-                id='name'
-                type='text'
-                placeholder='Ej: Informe final 2023'
-                {...formik.getFieldProps('name')}
-                />
-            
-            <span
-                className='error'
-                style={formik.errors.name && formik.touched.name ? {} : { visibility: 'hidden' }}
+            <h1 
+                className='form-title'
                 >
-                {formik.errors.name}
-            </span>
-
-            <label className='form-label' htmlFor='description'>
-                Descripción:
-            </label>
-            
-            <textarea
-                className='form-input'
-                id='description'
-                rows='4'
-                placeholder='Describa la evidencia...'
-                {...formik.getFieldProps('description')}
-                />
-
-            <span
-                className='error'
-                style={formik.errors.description && formik.touched.description ? {} : { visibility: 'hidden' }}
+                {prevValues? 'Modificar' : 'Registrar'} Evidencia
+            </h1>
+            <section 
+                className='multi-layered-form'
                 >
-                {formik.errors.description}
-            </span>
-
-            <label className='form-label'>
-                Tipo de adjunto:
-            </label>
-
-            <div className='form-radio-group'>
-                <label 
-                    className='form-radio-option'
+                <section 
+                    className='manage-section'
                     >
+                    <h2 
+                        className='form-subtitle'
+                        >
+                        Datos de la evidencia
+                    </h2>
+
+                    <label className='form-label' htmlFor='name'>
+                        Nombre de la evidencia:
+                    </label>
+
                     <input
                         className='form-input'
-                        type='radio'
-                        name='attachmentType'
-                        value='url'
-                        checked={formik.values.attachmentType === 'url'}
-                        onChange={handleAttachmentTypeChange}
+                        id='name'
+                        type='text'
+                        placeholder='Ej: Informe final 2023'
+                        {...formik.getFieldProps('name')}
                         />
-                    URL Externa
-                </label>
-                
-                <label 
-                    className='form-radio-option'
-                    >
-                    <input
-                        className='form-input'
-                        type='radio'
-                        name='attachmentType'
-                        value='file'
-                        checked={formik.values.attachmentType === 'file'}
-                        onChange={handleAttachmentTypeChange}
-                        />
-                    Archivo Local
-                </label>
-            </div>
-
-            {formik.values.attachmentType && (
-                <>
-                    <div  
-                        style={formik.values.attachmentType === 'url'? {} : { display: 'none' }}
+                    
+                    <span
+                        className='error'
+                        style={formik.errors.name && formik.touched.name ? {} : { visibility: 'hidden' }}
                         >
-                        <label 
-                            className='form-label' 
-                            htmlFor='url'
-                            >
-                            URL:
-                        </label>
-                        
-                        <input
-                            className='form-input'
-                            id='url'
-                            type='url'
-                            placeholder='https://ejemplo.com'
-                            {...formik.getFieldProps('url')}
-                            />
-                    </div>
+                        {formik.errors.name}
+                    </span>
 
-                    <div
-                        style={formik.values.attachmentType === 'file'? {} : { display: 'none' }}
-                        >
-                        <label 
-                            className='form-label' 
-                            htmlFor='file'
-                            >
-                            Archivo:
-                        </label>
-                        
-                        <input
-                            className='form-input'
-                            id='file'
-                            type='file'
-                            ref={fileInputRef}
-                            onChange={(event) => formik.setFieldValue('file', event.currentTarget.files[0])}
-                            onBlur={formik.handleBlur}
-                            />
-                    </div>
-                </>)}
-            
-            <span
-                className='error'
-                style={formik.values.attachmentType === 'url'?
-                    formik.errors.url && formik.touched.url? {} : { visibility: 'hidden' }
-                    :
-                    formik.errors.file && formik.touched.file? {} : { visibility: 'hidden' }
-                }
-                >
-                {formik.values.attachmentType === 'url'?
-                    formik.errors.url
-                    :
-                    formik.errors.file}
-            </span>
-
-            {(formik.values.url || formik.values.file) &&
-                <>
-                    <label className='form-label'>
-                        Adjunto actual:
+                    <label className='form-label' htmlFor='description'>
+                        Descripción:
                     </label>
                     
-                    {formik.values.attachmentType === 'url'?
-                        <a 
-                            className='form-label'
-                            href={formik.values.url} 
-                            target='_blank' 
-                            rel='noopener noreferrer'>
-                            {formik.values.url}
-                        </a>
-                        :
-                        <FilePreviewer 
-                            source={formik.values.file}
-                            />}
-                </>}
+                    <textarea
+                        className='form-input'
+                        id='description'
+                        rows='4'
+                        placeholder='Describa la evidencia...'
+                        {...formik.getFieldProps('description')}
+                        />
+                
+                    <span
+                        className='error'
+                        style={formik.errors.description && formik.touched.description ? {} : { visibility: 'hidden' }}
+                        >
+                        {formik.errors.description}
+                    </span>
+
+                    <label className='form-label'>
+                        Tipo de adjunto:
+                    </label>
+
+                    <div className='form-radio-group'>
+                        <label 
+                            className='form-radio-option'
+                            >
+                            <input
+                                className='form-input'
+                                type='radio'
+                                name='attachmentType'
+                                value='url'
+                                checked={formik.values.attachmentType === 'url'}
+                                onChange={handleAttachmentTypeChange}
+                                />
+                            URL Externa
+                        </label>
+                        
+                        <label 
+                            className='form-radio-option'
+                            >
+                            <input
+                                className='form-input'
+                                type='radio'
+                                name='attachmentType'
+                                value='file'
+                                checked={formik.values.attachmentType === 'file'}
+                                onChange={handleAttachmentTypeChange}
+                                />
+                            Archivo Local
+                        </label>
+                    </div>
+                </section>
+
+                {formik.values.attachmentType &&
+                    <section
+                        className='manage-section'
+                        >
+                        <h2 
+                            className='form-subtitle'
+                            >
+                            Adjunto
+                        </h2>
+
+                        <div  
+                            style={formik.values.attachmentType === 'url'? {} : { display: 'none' }}
+                            >
+                            <label 
+                                className='form-label' 
+                                htmlFor='url'
+                                >
+                                URL:
+                            </label>
+                            
+                            <input
+                                className='form-input'
+                                id='url'
+                                type='url'
+                                placeholder='https://ejemplo.com'
+                                {...formik.getFieldProps('url')}
+                                />
+                        </div>
+
+                        <div
+                            style={formik.values.attachmentType === 'file'? {} : { display: 'none' }}
+                            >
+                            <label 
+                                className='form-label' 
+                                htmlFor='file'
+                                >
+                                Archivo:
+                            </label>
+                            
+                            <input
+                                className='form-input'
+                                id='file'
+                                type='file'
+                                ref={fileInputRef}
+                                onChange={(event) => formik.setFieldValue('file', event.currentTarget.files[0])}
+                                onBlur={formik.handleBlur}
+                                />
+                        </div>
+                    
+                        <span
+                            className='error'
+                            style={formik.values.attachmentType === 'url'?
+                                formik.errors.url && formik.touched.url? {} : { visibility: 'hidden' }
+                                :
+                                formik.errors.file && formik.touched.file? {} : { visibility: 'hidden' }
+                            }
+                            >
+                            {formik.values.attachmentType === 'url'?
+                                formik.errors.url
+                                :
+                                formik.errors.file}
+                        </span>
+
+                        {(formik.values.url || formik.values.file) &&
+                            <>
+                                <label className='form-label'>
+                                    Adjunto actual:
+                                </label>
+                                
+                                {formik.values.attachmentType === 'url'?
+                                    <a 
+                                        className='form-label'
+                                        href={formik.values.url} 
+                                        target='_blank' 
+                                        rel='noopener noreferrer'>
+                                        {formik.values.url}
+                                    </a>
+                                    :
+                                    <FilePreviewer 
+                                        source={formik.values.file}
+                                        />}
+                            </>}
+                    </section>}
+            </section>
 
             <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>        
         </form>

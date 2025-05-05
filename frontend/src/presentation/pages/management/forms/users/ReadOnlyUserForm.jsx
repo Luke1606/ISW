@@ -11,10 +11,17 @@ import { datatypes } from '@/data'
 const ReadOnlyUserForm = ({modalId, closeModal, values}) => {
     if (!values) return null
 
+    const isStudent = values.user.user_role === datatypes.user.student
     return (
         <section
-            className='form-container manage-form' 
+            className='form-container manage-section' 
             >
+            <h1
+                className='form-title'
+                >
+                Ver detalles de {isStudent? 'estudiante' : 'profesor'}
+            </h1>
+
             <label 
                 className='form-label' 
                 htmlFor='name'
@@ -45,7 +52,7 @@ const ReadOnlyUserForm = ({modalId, closeModal, values}) => {
                 readOnly
                 />
             
-            { values.user.user_role === datatypes.user.student?
+            { isStudent?
                 <>
                     <label 
                         className='form-label' 

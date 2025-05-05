@@ -106,12 +106,18 @@ const UserForm = ({isStudent, modalId, closeModal, prevValues, handleSubmit}) =>
         { value: datatypes.user.dptoInf, label: 'Profesor miembro del Departamento de Informática' },
         { value: datatypes.user.decan, label: 'Miembro del Decanato ' },
     ]
-
+    
     return (
         <form
-            className='form-container manage-form' 
+            className='form-container manage-section' 
             onSubmit={formik.handleSubmit}
             >
+            <h1
+                className='form-title'
+                >
+                {prevValues? 'Modificar' : 'Registrar'} {isStudent? 'estudiante' : 'profesor'}
+            </h1>
+            
             <label 
                 className='form-label' 
                 htmlFor='name'

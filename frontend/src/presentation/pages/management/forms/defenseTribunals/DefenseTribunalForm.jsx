@@ -6,16 +6,18 @@ import { SearchableSelect, FormButtons } from '@/presentation'
 import { datatypes } from '@/data'
 
 const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handleSubmit }) => {
-    let initialValues = datatype === datatypes.defense_tribunal?
+    const isDefenseTribunal = datatype === datatypes.defense_tribunal
+    let initialValues = isDefenseTribunal?
         {
-            defenseDate: prevValues.date || '',
-            president: prevValues.president || '',
-            secretary: prevValues.secretary || '',
-            vocal: prevValues.vocal || '',
-            tutors: prevValues.tutors || []
+            defenseDate: prevValues?.date || '',
+            president: prevValues?.president || '',
+            secretary: prevValues?.secretary || '',
+            vocal: prevValues?.vocal || '',
+            tutorCant: prevValues?.tutors?.length || 1,
+            tutors: prevValues?.tutors || Array(prevValues?.tutors?.length || 1).fill('')
         }
         :
-        { state: prevValues.state || '' }
+        { state: prevValues?.state || '' }
 
     const getProfessors = useCallback(() => {
         return []
@@ -39,9 +41,16 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
                 
                 vocal: Yup.string()
                 .required('El vocal es requerido'),
+
+                tutorCant: Yup.number()
+                    .required('La cantidad de tutor(es) es obligatoria')
+                    .min(1, 'El estudiante debe tener como mínimo un(1) tutor')
+                    .max(4, 'El estudiante debe tener como máximo cuatro(4) tutores'),
                 
-                tutors: Yup.array().of(Yup.string())
-                .required('El campo tutor(es) es obligatorio')
+                tutors: Yup.array()
+                .of(Yup.string().required('Debe seleccionar un tutor'))
+                .min(Yup.ref('tutorCant'), 'Debe seleccionar todos los tutores')
+                .max(Yup.ref('tutorCant'), 'No debe seleccionar más tutores de los especificados')
             })
             :
             Yup.object().shape({
@@ -60,93 +69,157 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
 
     return (
         <form
-            className='form-container manage-form'
+            className='form-container'
             onSubmit={formik.handleSubmit}
             >
-            <label 
-                className='form-label' 
-                htmlFor='defense-date'
+            <h1 
+                className='form-title'
                 >
-                Fecha de defensa:
-            </label>
-            
-            <input
-                className='form-input'
-                id='defense-date'
-                type='date'
-                {...formik.getFieldProps('defenseDate')}
-                />
-            
-            <span
-                className='error'
-                style={formik.errors.defenseDate && formik.touched.defenseDate? {} : { visibility: 'hidden' }}
+                {isDefenseTribunal? 'Configurar defensa y' : 'Aprobar'} tribunal
+            </h1>
+            <section 
+                className='multi-layered-form'
                 >
-                {formik.errors.defenseDate}
-            </span>
+                <section 
+                    className='manage-section'
+                    >
+                    <h2 
+                        className='form-subtitle'
+                        >
+                        Miembros del tribunal y fecha de la defensa:
+                    </h2>
 
-            <label 
-                className='form-label' 
-                htmlFor='president'
-                >
-                Presidente del tribunal:
-            </label>
-            
-            <SearchableSelect elements={professorOptions}/>
-            
-            <span
-                className='error'
-                style={formik.errors.president && formik.touched.president ? {} : { visibility: 'hidden' }}
-                >
-                {formik.errors.president}
-            </span>
+                    <label 
+                        className='form-label' 
+                        htmlFor='president'
+                        >
+                        Presidente del tribunal:
+                    </label>
+                    
+                    <SearchableSelect 
+                        id='president'
+                        elements={professorOptions}/>
+                    
+                    <span
+                        className='error'
+                        style={formik.errors.president && formik.touched.president ? {} : { visibility: 'hidden' }}
+                        >
+                        {formik.errors.president}
+                    </span>
 
-            <label 
-                className='form-label' 
-                htmlFor='secretary'
-                >
-                Secretario del tribunal:
-            </label>
-            
-            <SearchableSelect elements={professorOptions}/>
+                    <label 
+                        className='form-label' 
+                        htmlFor='secretary'
+                        >
+                        Secretario del tribunal:
+                    </label>
+                    
+                    <SearchableSelect 
+                        id='secretary'
+                        elements={professorOptions}/>
 
-            <span
-                className='error'
-                style={formik.errors.secretary && formik.touched.secretary ? {} : { visibility: 'hidden' }}
-                >
-                {formik.errors.secretary}
-            </span>
+                    <span
+                        className='error'
+                        style={formik.errors.secretary && formik.touched.secretary ? {} : { visibility: 'hidden' }}
+                        >
+                        {formik.errors.secretary}
+                    </span>
 
-            <label 
-                className='form-label' 
-                htmlFor='vocal'
-                >
-                Vocal del tribunal:
-            </label>
-            
-            <SearchableSelect elements={professorOptions}/>
-            
-            <span
-                className='error'
-                style={formik.errors.vocal && formik.touched.vocal ? {} : { visibility: 'hidden' }}
-                >
-                {formik.errors.vocal}
-            </span>
+                    <label 
+                        className='form-label' 
+                        htmlFor='vocal'
+                        >
+                        Vocal del tribunal:
+                    </label>
+                    
+                    <SearchableSelect 
+                        id='vocal'
+                        elements={professorOptions}/>
+                    
+                    <span
+                        className='error'
+                        style={formik.errors.vocal && formik.touched.vocal ? {} : { visibility: 'hidden' }}
+                        >
+                        {formik.errors.vocal}
+                    </span>
 
-            <label 
-                className='form-label' 
-                htmlFor='substitute'
-                >
-                Suplente del tribunal:
-            </label>
-            
-            <SearchableSelect elements={professorOptions}/>
-            
-            <span
-                className='error'
-                style={formik.errors.substitute && formik.touched.substitute ? {} : { visibility: 'hidden' }}
-                >
-                {formik.errors.substitute}
-            </span>
+                    <label 
+                        className='form-label' 
+                        htmlFor='defense-date'
+                        >
+                        Fecha de defensa:
+                    </label>
+                    
+                    <input
+                        className='form-input'
+                        id='defense-date'
+                        type='date'
+                        {...formik.getFieldProps('defenseDate')}
+                        />
+                    
+                    <span
+                        className='error'
+                        style={formik.errors.defenseDate && formik.touched.defenseDate? {} : { visibility: 'hidden' }}
+                        >
+                        {formik.errors.defenseDate}
+                    </span>
+                </section>
+
+                { !isDefenseTribunal &&
+                    <section 
+                        className='manage-section'
+                        >
+                        <h2 
+                            className='form-subtitle'
+                            >
+                            Tutores:
+                        </h2>
+                        <label 
+                            className='form-label' 
+                            htmlFor='tutor-cant'
+                            >
+                            Cantidad de tutor(es) del estudiante (máximo 4):
+                        </label>
+
+                        <input
+                            className='form-input'
+                            id='tutor-cant'
+                            type='number'
+                            defaultValue={1}
+                            min='1' 
+                            max='4'
+                            {...formik.getFieldProps('tutorCant')}
+                            />
+
+                        <span
+                            className='error'
+                            style={formik.errors.tutorCant && formik.touched.tutorCant? {} : { visibility: 'hidden' }}
+                            >
+                            {formik.errors.tutorCant}
+                        </span>
+
+                        {Array.from({ length: formik.values.tutorCant || 1 }, (_, index) => (
+                            <div key={index}>
+                                <label 
+                                    className='form-label' 
+                                    htmlFor={`tutor${index}`}
+                                    >
+                                    Tutor {index + 1}:
+                                </label>
+
+                                <SearchableSelect
+                                    id={`tutor${index}`}
+                                    elements={professorOptions}/>
+                            </div>))}
+
+                        <span
+                            className='error'
+                            style={formik.errors.tutors && formik.touched.tutors ? {} : { visibility: 'hidden' }}
+                            >
+                            {formik.errors.tutors}
+                        </span>
+                    </section>}
+                </section>
 
             <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>
         </form>
