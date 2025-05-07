@@ -1,6 +1,6 @@
 import { createApiInstance } from './'
 
-const notificationsApiInstance = createApiInstance("http://localhost:8000/notifications/")
+const notificationsApiInstance = createApiInstance('http://localhost:8000/notifications/')
 
 const handleRequest = async (method, url='', options = {}) => {
     try {

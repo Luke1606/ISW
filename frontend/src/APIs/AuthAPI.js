@@ -24,21 +24,22 @@ const authApiInstance = createApiInstance('http://localhost:8000/users/token/', 
  *     console.error(response.message) 
  */
 const authenticate = async (userFormData) => {
+    let message
+    let success = false
     try {
         const response = await authApiInstance.post('', userFormData)
-        const token = response.data.access
-        if (response.status === 200 && token) {
-            setAccessToken(token)
-            return { 
-                success: true, 
-                message: 'Inicio de sesión exitoso' 
-            }
+        
+        if (response.status === 200) {
+            setAccessToken(response.data.access)
+            message = 'Inicio de sesión exitoso'
+            success = true
         }
     } catch (error) {
-        return { 
-            success: false, 
-            message: error.message || 'Error desconocido' 
-        }
+        message = error.response?.data?.message || error?.message
+    }
+    return { 
+        success, 
+        message: message || 'Error desconocido' 
     }
 }
 
@@ -68,9 +69,12 @@ const closeSession = async () => {
             success = true
         }
     } catch (error) {
-        message = error.message || 'Error desconocido'
+        message = error.response?.data?.message || error.message
     }
-    return { success, message }
+    return { 
+        success, 
+        message: message || 'Error desconocido' 
+    }
 } 
 
 /**
@@ -176,6 +180,6 @@ const authApi = {
     closeSession, 
     getSessionInfo,
     isAboutToExpire,
-    setNewAccessToken: setNewAccessToken
+    setNewAccessToken
 }
 export default authApi

@@ -16,6 +16,8 @@ const setupInterceptors = (instance) => {
         (error) => Promise.reject(error)
     )
 
+    let retry = false
+
     instance.interceptors.response.use(
         (response) => response,
         async (error) => {
@@ -23,37 +25,37 @@ const setupInterceptors = (instance) => {
 
             switch (error.response?.status) {
                 case 401: 
-                    { 
-                        if(!originalRequest._retry){
-                            originalRequest._retry = true
-
+                    {
+                        if(!retry){
+                            retry = true
+                            const errorMessage = 'Sesión expirada. Por favor, inicia sesión nuevamente.'
+            
                             if (!accessToken) {
-                                return Promise.reject('No estás autenticado')
-                            }
+                                try {
+                                    const response = await authApi.setNewAccessToken()
 
-                            try {
-                                const response = await authApi.setNewAccessToken()
-
-                                if (response.success) { // Reintenta la solicitud original con el token actualizado
-                                    originalRequest.headers.Authorization = `Bearer ${accessToken}`
-                                    return instance(originalRequest)
-                                } else {
-                                    authApi.closeSession() // Cerrar sesión si el refresco del token falla
-                                    throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.')
-                                }
-                            } catch (error) {
-                                console.log(error)
-                                throw new Error('Sesión expirada. Por favor, inicia sesión nuevamente.')
+                                    if (response.success) { // Reintenta la solicitud original con el token actualizado
+                                        originalRequest.headers.Authorization = `Bearer ${accessToken}`
+                                        return instance(originalRequest)
+                                    } else {
+                                        authApi.closeSession() // Cerrar sesión si el refresco del token falla
+                                        return Promise.reject(new Error(errorMessage))
+                                    }
+                                } catch (error) {
+                                    console.log(error)
+                                    return Promise.reject(new Error(error.message))
+                                } 
                             } 
-                        } 
+                        } else 
+                            return Promise.reject(new Error('No se ha podido autenticar. Verifique sus credenciales'))
                     }
                     break
                 case 403:
-                    throw new Error('No tiene acceso a este recurso')
+                    return Promise.reject(new Error('No tiene acceso a este recurso'))
                 case 404:
-                    throw new Error('Recurso no encontrado')
+                    return Promise.reject(new Error('Recurso no encontrado'))
                 case 500:
-                    throw new Error('Problemas del servidor')
+                    return Promise.reject(new Error('Problemas del servidor'))
                 default:
                     return Promise.reject(error)
             }

@@ -6,9 +6,8 @@ class AuthService {
         const response = await authApi.authenticate(userFormData)
         if (!response.success) {
             console.error('Ocurrio un error: ', response.message)
-            await this.closeSession()
         }
-        return response.message
+        return response
     }    
 
     async logout () {

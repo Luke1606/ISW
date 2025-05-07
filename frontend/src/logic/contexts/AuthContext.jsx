@@ -40,13 +40,9 @@ const AuthProvider = ({ children }) => {
      * - {string} `message` - Dependiendo de la propiedad `success` será su valor. Puede ser un mensaje de que el usuario se autenticó correctamente (`success`===`true`) o una pista de cual fue la causa del error (`success`===`false`).
      */
     const login = async (userFormData) => {
-        const message = await AuthService.login(userFormData)
+        const response = await AuthService.login(userFormData)
         setAuthStatusChanged(true)
-        
-        return {
-            success: true,
-            message: message,
-        }
+        return response
     }
 
     /**
