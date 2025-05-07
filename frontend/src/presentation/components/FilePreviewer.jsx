@@ -4,10 +4,16 @@ import PropTypes from 'prop-types'
 
 
 const fileIcons = {
-    video: 'fas fa-file-video',
+    mp4: 'fas fa-file-video',
+    mkv: 'fas fa-file-video',
+    avi: 'fas fa-file-video',
+    mpg: 'fas fa-file-video',
+    flv: 'fas fa-file-video',
     docx: 'fas fa-file-word',
+    doc: 'fas fa-file-word',
     xlsx: 'fas fa-file-excel',
     zip: 'fas fa-file-archive',
+    rar: 'fas fa-file-archive',
     default: 'fas fa-file'
 }
   

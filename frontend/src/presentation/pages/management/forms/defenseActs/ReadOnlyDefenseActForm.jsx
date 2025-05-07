@@ -15,46 +15,75 @@ const ReadOnlyDefenseActForm = ({modalId, closeModal, values}) => {
         <section
             className='form-container manage-section' 
             >
-            <label 
-                className='form-label' 
-                htmlFor='name'
+            <h1 
+                className='form-title'
                 >
-                Nombre del acta:
-            </label>
+                Ver detalles de acta de defensa
+            </h1>
             
-            <input
-                className='form-input'
-                id='name'
-                type='text'
-                value={values?.name || ''}
-                readOnly
-            />
+            <section 
+                className='multi-layered-form'
+                >
+                <section 
+                    className='manage-section'
+                    >
+                    <h2 
+                        className='form-subtitle'
+                        >
+                        Datos de la evidencia
+                    </h2>
+                    <label 
+                        className='form-label' 
+                        htmlFor='name'
+                        >
+                        Nombre del acta:
+                    </label>
+                    
+                    <input
+                        className='form-input'
+                        id='name'
+                        type='text'
+                        value={values?.name || ''}
+                        readOnly
+                        />
 
-            <label 
-                className='form-label' 
-                htmlFor='descripcion'
-                >
-                Descripción:
-            </label>
-            
-            <textarea
-                className='form-input'
-                id='descripcion'
-                rows='4'
-                value={values?.description || ''}
-                readOnly
-            />
+                    <label 
+                        className='form-label' 
+                        htmlFor='description'
+                        >
+                        Descripción:
+                    </label>
+                    
+                    <textarea
+                        className='form-input'
+                        id='description'
+                        rows='4'
+                        value={values?.description || ''}
+                        readOnly
+                        />
+                </section>
 
-            <label 
-                className='form-label'
-                htmlFor='attachment'
-                >
-                Documento adjunto:
-            </label>
-            
-            <FilePreviewer 
-                source={values.attachment}
-                />
+                <section 
+                    className='manage-section'
+                    >
+                    <h2 
+                        className='form-subtitle'
+                        >
+                        Visualización del adjunto
+                    </h2>
+                
+                    <label 
+                        className='form-label'
+                        htmlFor='attachment'
+                        >
+                        Documento adjunto:
+                    </label>
+                    
+                    <FilePreviewer 
+                        source={values.attachment}
+                        />
+                </section>
+            </section>
 
             <button
                 className='accept-button'

@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from 'react'
 import * as Yup from 'yup'
 import PropTypes from 'prop-types'
+import { datatypes } from '@/data'
 import { useGenericForm } from '@/logic'
 import { SearchableSelect, FormButtons } from '@/presentation'
-import { datatypes } from '@/data'
 
 const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handleSubmit }) => {
     const isDefenseTribunal = datatype === datatypes.defense_tribunal

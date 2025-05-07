@@ -1,4 +1,4 @@
-import useSideMenuOptions from '../../../logic/hooks/options/useSideMenuOptions'
+import { useSideMenuOptions } from '@/logic'
 
 /**
  * @description `SideMenu` de la aplicación que contiene opciones obtenidas de {@link useSideMenuOptions}.

@@ -1,5 +1,5 @@
-import useNotifications from '../../../logic/hooks/notifications/useNotifications'
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from 'react-router-dom'
+import { useNotifications } from '@/logic'
 
 const NotificationComponent = () => {
     const { notifications, markAsRead, removeNotification } = useNotifications()

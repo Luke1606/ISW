@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react"
-import PropTypes from "prop-types"
-import FlipCard from "./FlipCard"
-import PaginationButtons from "../PaginationButtons"
+import PropTypes from 'prop-types'
+import FlipCard from './FlipCard'
+import { PaginationButtons } from '../'
 
 /**
  * @description Componente carousel con: 

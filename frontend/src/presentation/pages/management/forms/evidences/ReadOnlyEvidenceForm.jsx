@@ -1,57 +1,89 @@
 import PropTypes from 'prop-types'
+import { FilePreviewer } from '@/presentation'
 
 const ReadOnlyEvidenceForm = ({modalId, closeModal, values}) => {
     if (!values) return null
 
     return (
         <section
-        className='form-container manage-section' 
+            className='form-container' 
             >
-            <label 
-                className='form-label' 
-                htmlFor='name'
+            <h1 
+                className='form-title'
                 >
-                Nombre de la evidencia:
-            </label>
-            
-            <input
-                className='form-input'
-                id='name'
-                type='text'
-                value={values?.name || ''}
-                readOnly
-            />
+                Ver detalles de evidencia
+            </h1>
 
-            <label 
-                className='form-label' 
-                htmlFor='description'
+            <section 
+                className='multi-layered-form'
                 >
-                Descripción:
-            </label>
-            
-            <textarea
-                className='form-input'
-                id='description'
-                rows='4'
-                value={values?.description || ''}
-                readOnly
-            />
+                <section 
+                    className='manage-section'
+                    >
+                    <h2 
+                        className='form-subtitle'
+                        >
+                        Datos de la evidencia
+                    </h2>
 
-            <label className='form-label'>
-                Adjunto:
-            </label>
+                    <label 
+                        className='form-label' 
+                        htmlFor='name'
+                        >
+                        Nombre de la evidencia:
+                    </label>
+                    
+                    <input
+                        className='form-input'
+                        id='name'
+                        type='text'
+                        value={values?.name || ''}
+                        readOnly
+                        />
+
+                    <label 
+                        className='form-label' 
+                        htmlFor='description'
+                        >
+                        Descripción:
+                    </label>
+                    
+                    <textarea
+                        className='form-input'
+                        id='description'
+                        rows='4'
+                        value={values?.description || ''}
+                        readOnly
+                        />
+                </section>
+
+                <section 
+                    className='manage-section'
+                    >
+                    <h2 
+                        className='form-subtitle'
+                        >
+                        Visualización del adjunto
+                    </h2>
+
+                    <label className='form-label'>
+                        Adjunto:
+                    </label>
             
-            <div className='current-attachment'>
-                {values.attachment_type === 'url'?
-                    <a href={values.attachment_url} target='_blank' rel='noopener noreferrer' />
-                :
-                    <img
-                        src={URL.createObjectURL(values.attachment_file)}
-                        alt='Vista previa'
-                        title='Vista previa'
-                        className='file-preview'
-                        />}
-            </div>
+                    {values.attachment_type === 'url'?
+                        <a 
+                            className='form-label'
+                            href={values.attachment_url} 
+                            target='_blank' 
+                            rel='noopener noreferrer'>
+                            {values.attachment_url}
+                        </a>
+                        :
+                        <FilePreviewer 
+                            source={values.attachment_file}
+                            />}
+                </section>
+            </section>
 
             <button
                 className='accept-button'

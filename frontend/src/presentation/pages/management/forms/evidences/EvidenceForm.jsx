@@ -25,6 +25,8 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
         }        
     }
 
+    const MAX_FILE_SIZE = 100 * 1024 * 1024
+
     const validationSchema = useMemo(() => Yup.object().shape({
         name: Yup.string()
             .min(4, 'El nombre debe tener al menos 4 caracteres')
@@ -52,12 +54,34 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
         }),
 
         file: Yup.lazy((value, context) => {
-            return context.parent.attachmentType === 'file'? 
+            return context.parent.attachmentType === 'file'?
                 Yup.mixed().required('El archivo es obligatorio')
+                    .test(
+                        'is-file',
+                        'El adjunto debe ser un archivo',
+                        (value) => value instanceof File
+                    )
+                    .test(
+                        'fileSize',
+                        'El archivo debe ser menor a 100MB',
+                        (file) => file && file.size <= MAX_FILE_SIZE
+                    )
+                    .test(
+                        'fileType',
+                        'Formato no permitido',
+                        (file) => file && [
+                            'image/jpg', 'image/jpeg', 'image/png', 'image/gif', 
+                            'application/pdf', 'application/msword', 
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                            'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                            'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                            'video/mp4', 'video/x-matroska', 'video/x-msvideo', 'video/x-flv'
+                        ].includes(file.type)
+                    )
                 :
                 Yup.mixed().notRequired()
         })
-    }), [])
+    }), [MAX_FILE_SIZE])
 
     const submitFunction = async (values) => {
         const newValues = {
@@ -98,8 +122,9 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
             <h1 
                 className='form-title'
                 >
-                {prevValues? 'Modificar' : 'Registrar'} Evidencia
+                {prevValues? 'Modificar' : 'Registrar'} evidencia
             </h1>
+            
             <section 
                 className='multi-layered-form'
                 >
@@ -112,7 +137,10 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                         Datos de la evidencia
                     </h2>
 
-                    <label className='form-label' htmlFor='name'>
+                    <label 
+                        className='form-label' 
+                        htmlFor='name'
+                        >
                         Nombre de la evidencia:
                     </label>
 
@@ -131,7 +159,10 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                         {formik.errors.name}
                     </span>
 
-                    <label className='form-label' htmlFor='description'>
+                    <label 
+                        className='form-label' 
+                        htmlFor='description'
+                        >
                         Descripción:
                     </label>
                     
@@ -150,11 +181,17 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                         {formik.errors.description}
                     </span>
 
-                    <label className='form-label'>
+                    <label 
+                        className='form-label'
+                        htmlFor='attachment-type'
+                        >
                         Tipo de adjunto:
                     </label>
 
-                    <div className='form-radio-group'>
+                    <div 
+                        className='form-radio-group'
+                        id='attachment-type'
+                        >
                         <label 
                             className='form-radio-option'
                             >
@@ -228,6 +265,19 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                                 className='form-input'
                                 id='file'
                                 type='file'
+                                accept='
+                                    image/jpg, image/jpeg, image/png, image/gif, 
+                                    application/pdf,application/msword,
+                                    application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                                    application/vnd.ms-excel, application/vnd.ms-powerpoint, 
+                                    application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+                                    application/vnd.openxmlformats-officedocument.presentationml.presentation,
+                                    video/mp4, video/x-matroska, video/x-msvideo, video/x-flv
+                                '
+                                    // .jpg, .jpeg, .png, .gif,
+                                    // .mp4, .mkv, .avi, .flv, .mpg
+                                    // .pdf, .docs, .doc, .xlsx, .ppt,
+                                    // .zip, .rar,
                                 ref={fileInputRef}
                                 onChange={(event) => formik.setFieldValue('file', event.currentTarget.files[0])}
                                 onBlur={formik.handleBlur}
