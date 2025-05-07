@@ -9,7 +9,7 @@ import {
 
 const routes = [
     {
-        path: "/",
+        path: '/',
         element: <Layout />,
         children: [
             {
@@ -17,28 +17,28 @@ const routes = [
                 element: <Home />,
             },
             {
-                path: "*",
-                element: (
-                    <Error
-                        errorTitle="Dirección no encontrada"
-                        errorDescription="La ruta especificada no corresponde a ninguna dirección. Verifique la ruta."
-                    />
-            )},
-            {
                 element: <ProtectedRoutes />,
                 children: [
                     {
-                        path: "notifications",
-                        element: <NotificationCenter />,
+                        path: 'list/:datatype/:relatedUserId?',
+                        element: <List />,
                     },
                     {
-                        path: "list/:datatype/:relatedUserId?",
-                        element: <List />,
+                        path: 'notifications',
+                        element: <NotificationCenter />,
                     },
                 ],
             },
         ],
     },
+    {
+        path: '*',
+        element: (
+            <Error
+                errorTitle='Dirección no encontrada'
+                errorDescription='La ruta especificada no corresponde a ninguna dirección. Verifique la ruta.'
+            />
+    )},
 ]
 
 export default routes

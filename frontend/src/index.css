@@ -103,9 +103,8 @@ button:hover, .button:hover {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 80%;
-    height: 70vh;
-    border-radius: 20px;
+    width: 100%;
+    height: 100vh;
     background: var(--primary-transparent-gradient);
     color: white;
 }
@@ -778,13 +777,13 @@ button:hover, .button:hover {
     padding: 30px;
 }
 
-.home-hero-title, .form-title, .form-subtitle {
+.home-hero-title, .form-title, .form-subtitle, .error-title {
     margin-bottom: 1rem;
     cursor: default;
     transition: all 0.2s ease-in-out;
 
 }
-.home-hero-title:hover, .form-title:hover, .form-subtitle:hover {
+.home-hero-title:hover, .form-title:hover, .form-subtitle:hover, .error-title:hover {
     filter: drop-shadow(0 0 10px black);
 }
 

@@ -1,9 +1,7 @@
 import PropTypes from 'prop-types'
-import { useNavigate } from 'react-router-dom'
 import error from '/error.png'
 
-const Error = ({errorTitle, errorDescription=''}) => {
-    const navigate = useNavigate()
+const Error = ({ errorTitle, errorDescription='' }) => {
     return (
         <div className='error-container'>
             <h1 
@@ -26,7 +24,7 @@ const Error = ({errorTitle, errorDescription=''}) => {
             
             <button 
                 className='accept-button'
-                onClick={() => navigate('/')}
+                onClick={() => window.location.href = '/'}
                 >
                 Volver
             </button>
