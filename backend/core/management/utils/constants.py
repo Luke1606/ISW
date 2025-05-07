@@ -3,7 +3,7 @@ Este modulo contiene los valores constantes utiles en la aplicacion.
 '''
 
 
-class DataTypes:
+class Datatypes:
     '''
     Esta clase dicta los distintos valores y roles para evitar duplicacion.
     '''

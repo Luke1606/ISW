@@ -5,7 +5,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from core.models import BaseModel
 from core.models import BaseModelManager
-from core.management.utils.constants import DataTypes
+from core.management.utils.constants import Datatypes
 
 
 class CustomUserManager(BaseUserManager, BaseModelManager):
@@ -22,7 +22,7 @@ class CustomUserManager(BaseUserManager, BaseModelManager):
             raise ValueError("El campo 'password' es obligatorio")
         if not name:
             raise ValueError("El campo 'name' es obligatorio")
-        if role not in DataTypes.User.roles:
+        if role not in Datatypes.User.roles:
             raise ValueError("El rol no es válido")
 
         # Crear el usuario base
@@ -30,12 +30,12 @@ class CustomUserManager(BaseUserManager, BaseModelManager):
             username=username,
             name=name,
             pic=pic,
-            is_staff=(role != DataTypes.User.student),
-            is_superuser=role == DataTypes.User.decan,
+            is_staff=(role != Datatypes.User.student),
+            is_superuser=role == Datatypes.User.decan,
         )
         user.set_password(password)
 
-        if role == DataTypes.User.student:
+        if role == Datatypes.User.student:
             if not extra_fields.get('group'):
                 raise ValueError("El campo 'grupo' es obligatorio para estudiantes.")
             if not extra_fields.get('faculty'):
@@ -50,7 +50,7 @@ class CustomUserManager(BaseUserManager, BaseModelManager):
         Crear un superusuario que utiliza la lógica de create_user_by_role.
         """
         return self.create_user_by_role(
-            role=DataTypes.User.decan,
+            role=Datatypes.User.decan,
             username=username,
             password=password,
             name=name,
@@ -145,9 +145,9 @@ class Professor(BaseModel):
         Clase para definir los roles de un profesor.
         """
         NONE = 'None', 'Ninguno'
-        PROFESSOR = DataTypes.User.professor, 'Profesor'
-        DPTO_INF = DataTypes.User.dptoInf, 'Departamento de Informática'
-        DECANO = DataTypes.User.decan, 'Decano'
+        PROFESSOR = Datatypes.User.professor, 'Profesor'
+        DPTO_INF = Datatypes.User.dptoInf, 'Departamento de Informática'
+        DECANO = Datatypes.User.decan, 'Decano'
 
     role = models.CharField(max_length=20, choices=Roles.choices, default=Roles.NONE)
     SEARCHABLE_FIELDS = {

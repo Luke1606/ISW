@@ -8,7 +8,7 @@ from evidences.views import EvidenceViewSet
 from requests.views import RequestViewSet
 from defenses_tribunals.views import DefenseTribunalViewSet
 from defense_acts.views import DefenseActViewSet
-from .management.utils.constants import DataTypes
+from .management.utils.constants import Datatypes
 
 
 class ManagementGatewayView(ModelViewSet):
@@ -19,12 +19,12 @@ class ManagementGatewayView(ModelViewSet):
     """
 
     _VIEWSET_MAPPING = {
-        DataTypes.User.student: StudentViewSet,
-        DataTypes.User.professor: ProfessorViewSet,
-        DataTypes.evidence: EvidenceViewSet,
-        DataTypes.request: RequestViewSet,
-        DataTypes.defense_tribunal: DefenseTribunalViewSet,
-        DataTypes.defense_act: DefenseActViewSet,
+        Datatypes.User.student: StudentViewSet,
+        Datatypes.User.professor: ProfessorViewSet,
+        Datatypes.evidence: EvidenceViewSet,
+        Datatypes.request: RequestViewSet,
+        Datatypes.defense_tribunal: DefenseTribunalViewSet,
+        Datatypes.defense_act: DefenseActViewSet,
     }
 
     def _initialize_attrs(self, request, **kwargs):

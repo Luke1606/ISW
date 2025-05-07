@@ -75,7 +75,7 @@ class CookieTokenBlacklistView(TokenBlacklistView):
         return Response({'message': 'Logged out successfully'}, status=200)
 
 
-class UserInfoView(APIView):
+class SessionInfoView(APIView):
     '''
     Vista para obtener la información del usuario autenticado.
     '''

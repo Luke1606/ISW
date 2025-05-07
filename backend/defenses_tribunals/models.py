@@ -4,7 +4,7 @@ Modelos de la aplicacion defenses_tribunals.
 from django.db import models
 from django.core.exceptions import ValidationError
 from core.models import BaseModel
-from core.management.utils.constants import DataTypes
+from core.management.utils.constants import Datatypes
 from users.models import Student, Professor
 from notifications.views import send_notification
 
@@ -101,20 +101,20 @@ class DefenseTribunal(BaseModel):
             super().save(*args, **kwargs)
 
             # Enviar notificación a decanos
-            decans = Professor.objects.search(role=DataTypes.User.decan)
+            decans = Professor.objects.search(role=Datatypes.User.decan)
             # pylint: disable=no-member
             notification_message = f"""El tribunal del estudiante {self.student.user.first_name}
                 ya está listo para ser revisado."""
-            notification_url = f"form/{DataTypes.tribunal}/{self.id}"
+            notification_url = f"form/{Datatypes.tribunal}/{self.id}"
             send_notification(notification_message, notification_url, decans)
 
         # Si el decano cambia el estado (APROBADO o DESAPROBADO), notificar al Dpto Inf
         if previous_state != self.state and self.state in [self.State.APPROVED, self.State.DISAPPROVED]:
-            dpto_inf_professors = Professor.objects.search(role=DataTypes.User.dptoInf)
+            dpto_inf_professors = Professor.objects.search(role=Datatypes.User.dptoInf)
             # pylint: disable=no-member
             notification_message = f"""El tribunal del estudiante {self.student.user.first_name}
                 cambió su estado a {self.state}."""
-            notification_url = f"form/{DataTypes.tribunal}/{self.id}"
+            notification_url = f"form/{Datatypes.tribunal}/{self.id}"
             send_notification(notification_message, notification_url, dpto_inf_professors)
 
         super().save(*args, **kwargs)
