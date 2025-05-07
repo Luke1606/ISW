@@ -1,7 +1,6 @@
 import Push from 'push.js'
 import { toast } from 'react-toastify'
 import { notificationsApi } from '@/APIs'
-import { AuthService } from './'
 
 class NotificationService {
     constructor (url, maxReconnectAttempts) {
@@ -66,10 +65,9 @@ class NotificationService {
             const newNotification = JSON.parse(event.data)
 
             this.notifyListeners(newNotification) // actualiza el centro de notificaciones
+            this.showToast(newNotification)
 
-            if (AuthService.getUserActive()) { // Si el usuario está activo, muestra un toast
-                this.showToast(newNotification)
-            } else if (newNotification.important && Push.Permission.has()) { // Si es importante y el usuario no está activo, muestra una notificación Push
+            if (newNotification.important && Push.Permission.has()) { // Si es importante y el usuario no está activo, muestra una notificación Push
                 const pushNotification = {
                     body: `${newNotification.message}`,
                     icon: '/icon.png',

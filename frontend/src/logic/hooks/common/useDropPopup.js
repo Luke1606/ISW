@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect } from 'react'
 
 /**
  * @description Hook para utilizar `drop popups`, osea `modals` que se cierran al hacer click fuera de la ventana (`popup`) o por algun otro detonador, ya sean `dropdown menus` o `tooltips`.

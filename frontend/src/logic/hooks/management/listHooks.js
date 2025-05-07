@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ManagementService, useLoading, useAuth, useFormParams } from '@/logic'
 import { datatypes } from '@/data'
+import { ManagementService, useLoading, useAuth, useFormParams } from '@/logic'
 
 const useListDataStates = (datatype, relatedUserId) => {
     const { setLoading } = useLoading()
