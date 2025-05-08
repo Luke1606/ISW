@@ -53,7 +53,7 @@ const Form = () => {
 
             specificForm = <RequestForm
                                 modalId={formModalId}
-                                closeModal={closeManageForm} 
+                                closeModal={closeManageForm}
                                 prevValues={prevValues}
                                 handleSubmit={handleSubmit} 
                                 />

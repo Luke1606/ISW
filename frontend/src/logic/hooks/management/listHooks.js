@@ -9,17 +9,21 @@ const useListDataStates = (datatype, relatedUserId) => {
     const [ currentPage, setCurrentPage ] = useState(0)
     const [ currentData, setCurrentData ] = useState([])
     const [ totalPages, setTotalPages ] = useState(0)
+    const [ errorMessage, setErrorMessage ] = useState('')
     
     const getData = useCallback(async (searchTerm='') => {
         try {
             setLoading(true)
             const response = await ManagementService.getAllData(datatype, searchTerm, relatedUserId)
-
-            setCurrentPage(0)
-            setData(response?.data || {})
-            setTotalPages(response?.totalPages || 0)
-
-            setCurrentData(response.data && Object.keys(response.data).length > 0? response.data[0] : [])
+            
+            if (response?.success) {
+                setCurrentPage(0)
+                setData(response?.data || {})
+                setTotalPages(response?.totalPages || 0)
+                setCurrentData(response.data && Object.keys(response.data).length > 0? response.data[0] : [])
+            } else {
+                setErrorMessage(response?.message)
+            }
         } catch (error) {
             console.error(error)
         } finally {
@@ -62,12 +66,13 @@ const useListDataStates = (datatype, relatedUserId) => {
         pageControl: true,
         loop: false,
     }
-
+console.log(data);
     return {
         currentData,
         paginationParams,
         handleSearch,
-        handleDelete
+        handleDelete,
+        errorMessage
     }
 }
 

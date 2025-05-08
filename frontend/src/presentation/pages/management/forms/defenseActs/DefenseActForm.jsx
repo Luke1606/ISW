@@ -58,8 +58,9 @@ const DefenseActForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
 
     const submitFunction = async (values) => {
         const newValues = {
+            
             name: values?.name,
-            faculty: values?.faculty,
+            description: values?.description,
             attachment: values?.attachment,
         }
         await handleSubmit(datatypes.defense_act, prevValues?.id, newValues)

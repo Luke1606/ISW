@@ -10,6 +10,7 @@ const List = () => {
         currentData,
         handleSearch,
         handleDelete,
+        errorMessage,
         paginationParams
     } = listHooks.useListDataStates(datatype, relatedUserId)
 
@@ -89,6 +90,13 @@ const List = () => {
             <div
                 className='manage-list'
                 >
+                { errorMessage && 
+                    <span 
+                        className='error'
+                        >
+                        {errorMessage}
+                    </span> }
+
                 { currentData?.length > 0?
                     currentData?.map((item, index) => (
                         <div key={`${item.id}-${index}`} className='list-item'>

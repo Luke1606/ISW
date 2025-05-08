@@ -1,7 +1,9 @@
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from rest_framework import permissions
+from rest_framework import permissions, status
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from .models import Notification
 from .serializers import NotificationSerializer
 
@@ -40,7 +42,16 @@ def send_notification(notification_title, notification_message, notification_url
 class NotificationViewSet(ModelViewSet):
     serializer_class = NotificationSerializer
     permission_classes = [permissions.IsAuthenticated]
+    queryset = Notification.objects.all()
 
     def get_queryset(self):
         # Filtrar notificaciones solo para el usuario autenticado
         return Notification.objects.filter(users=self.request.user)
+
+    @action(detail=True, methods=['put'])
+    def mark_as_read(self, request, pk=None):
+        """Marcar una notificación como leída"""
+        notification = self.get_object()
+        notification.is_read = True
+        notification.save()
+        return Response(status=status.HTTP_200_OK)

@@ -2,19 +2,25 @@
 URL configuration for backend project.
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from users.views import CookieTokenObtainPairView, CookieTokenRefreshView, CookieTokenBlacklistView, SessionInfoView
 from core.gateway_view import ManagementGatewayView
+from rest_framework.routers import DefaultRouter
 from notifications.views import NotificationViewSet
+
+router = DefaultRouter()
+router.register(r'notifications', NotificationViewSet, basename='notifications')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    # Autenticación de usuarios
     path('users/token/', CookieTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('users/token/refresh/', CookieTokenRefreshView.as_view(), name='token_obtain_refresh'),
     path('users/token/blacklist/', CookieTokenBlacklistView.as_view(), name='token_blacklist'),
     path('users/token/session-info/', SessionInfoView.as_view(), name='session_info'),
 
+    # Gateway de gestión de datos
     path('management/<str:datatype>/', ManagementGatewayView.as_view({
         'get': 'list', 'post': 'create'
     }), name='gateway'),
@@ -22,5 +28,6 @@ urlpatterns = [
         'get': 'retrieve', 'patch': 'update', 'delete': 'destroy'
     }), name='gateway-specific'),
 
-    path('notifications/', NotificationViewSet.as_view(), name='notifications')
+    # Notificaciones
+    path('', include(router.urls))
 ]

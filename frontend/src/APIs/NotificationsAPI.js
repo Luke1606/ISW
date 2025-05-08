@@ -18,7 +18,7 @@ const getNotifications = () =>
     handleRequest('get')
 
 const markNotificationAsRead = (id) =>
-    handleRequest('put', `${id}/`)
+    handleRequest('put', `${id}/mark_as_read/`)
 
 const deleteNotification = (id) =>
     handleRequest('delete', `${id}/`)
