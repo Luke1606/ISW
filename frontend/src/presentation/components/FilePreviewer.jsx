@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import PropTypes from 'prop-types'
 
@@ -25,6 +25,8 @@ const FilePreviewer = ({ source }) => {
     const [fileType, setFileType] = useState(null)
     const [fileURL, setFileURL] = useState(null)
     const [mimeType, setMimeType] = useState('')
+    const downloadRef = useRef(null)
+
 
     useEffect(() => {
         if (source instanceof File) {
@@ -44,16 +46,71 @@ const FilePreviewer = ({ source }) => {
 
     if (!fileType) return null
 
-    return (
-        <div className='preview-container'>
-            {fileType === 'image' && 
-                <img src={fileURL} alt='Vista previa' className='preview-image' />}
-            {fileType === 'pdf' &&
-                <iframe src={fileURL} width='500px' height='250px' style={{ border: 'none' }}/>}
-            {fileType === 'other' &&
-                <i title='Icono de archivo' className={`${getFileIcon(mimeType)} preview-icon`}/>}
+    const openFullscreen = () => {
+        if (fileType === 'image' || fileType === 'pdf') {
+            window.open(fileURL, '_blank');
+        }
+    }
 
-            <p className='preview-title'>{source.name}</p>
+    return (
+        <div 
+            className='preview-container'
+            >
+            {fileType === 'image' && 
+                <img 
+                    src={fileURL} 
+                    alt='Vista previa' 
+                    className='preview-image' 
+                    />}
+
+            {fileType === 'pdf' &&
+                <iframe 
+                    src={fileURL} 
+                    width='450px' 
+                    height='250px' 
+                    style={{ border: 'none' }}
+                    />}
+
+            {fileType === 'other' &&
+                <i 
+                    title='Icono de archivo' 
+                    className={`${getFileIcon(mimeType)} preview-icon`}
+                    />}
+
+            <p 
+                className='preview-title'
+                >
+                {source.name}
+            </p>
+
+            <div 
+                className='button-container preview-button-container'
+                >
+                {(fileType === 'image' || fileType === 'pdf') && (
+                    <button 
+                        title='Abrir en pantalla completa en otra pestaña'
+                        className='accept-button fullscreen-button' 
+                        onClick={openFullscreen}
+                        >
+                        <i className='fas fa-expand'/> 
+                    </button>)}
+
+                <button 
+                    title='Descargar'
+                    className='accept-button download-button' 
+                    onClick={() => downloadRef.current.click()} // Activa el enlace oculto
+                    >
+                    <i className='fas fa-download'/> 
+                </button>
+
+                {/* Enlace oculto solo para activar la descarga */}
+                <a 
+                    href={fileURL} 
+                    download={source.name} 
+                    ref={downloadRef} 
+                    style={{ display: 'none' }}
+                    />
+            </div>
         </div>
     )
 }
