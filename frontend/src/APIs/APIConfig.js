@@ -24,8 +24,14 @@ const setupInterceptors = (instance) => {
             const originalRequest = error.config
 
             switch (error.response?.status) {
+                case 400:
+                    {
+                        console.error(error?.response?.data)
+                        return Promise.reject(new Error(`La petición no es válida. ${error?.response?.message || ''}`))
+                    }
                 case 401: 
                     {
+                        console.error(error?.response?.data)
                         if(!retry){
                             retry = true
                             const errorMessage = 'Sesión expirada. Por favor, inicia sesión nuevamente.'
@@ -51,11 +57,20 @@ const setupInterceptors = (instance) => {
                     }
                     break
                 case 403:
+                    {
+                    console.error(error?.response?.data)
                     return Promise.reject(new Error('No tiene acceso a este recurso'))
+                    }
                 case 404:
+                    {
+                    console.error(error?.response?.data)
                     return Promise.reject(new Error('Recurso no encontrado'))
+                    }
                 case 500:
+                    {
+                    console.error(error?.response?.data)
                     return Promise.reject(new Error('Problemas del servidor'))
+                    }
                 default:
                     return Promise.reject(error)
             }

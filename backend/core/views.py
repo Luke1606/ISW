@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.serializers import Serializer
 from django.core.paginator import Paginator
 from django.core.cache import cache
+from core.management.utils.constants import Datatypes
 
 
 class BaseModelViewSet(ModelViewSet):
@@ -27,6 +28,11 @@ class BaseModelViewSet(ModelViewSet):
 
         # Usar el método auxiliar para obtener el 'search_term' y filtrar el queryset a partir de este
         queryset = queryset.model.objects.search(self._get_search_term())
+
+        related_user_id = self.request.query_params.get('related_user_id', None)
+        print(queryset)
+        if related_user_id and not (self.request.user.user_role == Datatypes.User.professor):
+            queryset = queryset.filter(student=related_user_id)
 
         return queryset
 
@@ -52,6 +58,18 @@ class BaseModelViewSet(ModelViewSet):
             self._get_or_set_cached_response(cache_key, lambda: self._generate_response()),
             status=status.HTTP_200_OK
         )
+
+    def create(self, request, *args, **kwargs):
+        self.invalidate_cache()
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        self.invalidate_cache()
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        self.invalidate_cache()
+        return super().destroy(request, *args, **kwargs)
 
     def _get_or_set_cached_response(self, cache_key, data_function):
         cached_data = self._get_cached_response(cache_key)
@@ -83,9 +101,9 @@ class BaseModelViewSet(ModelViewSet):
         total_pages = paginator.num_pages
         all_data = {}
 
-        for page_number in range(0, total_pages):
+        for page_number in range(1, total_pages + 1):
             page = paginator.get_page(page_number)
-            all_data[page_number] = page.object_list
+            all_data[page_number - 1] = page.object_list
 
         return {
             "data": all_data,
@@ -113,3 +131,9 @@ class BaseModelViewSet(ModelViewSet):
         Recupera datos del caché.
         """
         return cache.get(cache_key)
+
+    def invalidate_cache(self):
+        """ Elimina la caché basada en los parámetros de búsqueda. """
+        search_term = self._get_search_term()
+        cache_key = f"{self.__class__.__name__}_list_{search_term or ''}"
+        cache.delete(cache_key)  # Limpia la caché antes de actualizar datos

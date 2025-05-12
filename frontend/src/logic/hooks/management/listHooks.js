@@ -1,39 +1,52 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { datatypes } from '@/data'
-import { ManagementService, useLoading, useAuth, useFormParams } from '@/logic'
+import { ManagementService, useLoading, useAuth, useFormParams, NotificationService } from '@/logic'
 
 const useListDataStates = (datatype, relatedUserId) => {
     const { setLoading } = useLoading()
+    const [ changed, setChanged ] = useState(true)
     const [ data, setData ] = useState({})
     const [ currentPage, setCurrentPage ] = useState(0)
     const [ currentData, setCurrentData ] = useState([])
     const [ totalPages, setTotalPages ] = useState(0)
-    const [ errorMessage, setErrorMessage ] = useState('')
     
     const getData = useCallback(async (searchTerm='') => {
+        setLoading(true)
+        let message = ''
+        let success = false
+
         try {
-            setLoading(true)
             const response = await ManagementService.getAllData(datatype, searchTerm, relatedUserId)
-            
+            console.log(response);
             if (response?.success) {
+                const data = response?.data || {}
                 setCurrentPage(0)
-                setData(response?.data || {})
-                setTotalPages(response?.totalPages || 0)
-                setCurrentData(response.data && Object.keys(response.data).length > 0? response.data[0] : [])
+                setData(data?.data)
+                setTotalPages(data?.total_pages || 0)
+                setCurrentData(data?.data && Object.keys(data?.data).length > 0? data?.data[0] : [])
+                success = true
             } else {
-                setErrorMessage(response?.message)
+                message = response.message
             }
         } catch (error) {
-            console.error(error)
+            message = error.message
         } finally {
+            if (!success) {
+                const notification = {
+                    title: 'Error',
+                    message: message
+                }
+                NotificationService.showToast(notification, 'error')
+            }
             setLoading(false)
         }
     }, [datatype, relatedUserId, setLoading])
 
     useEffect(() => {
-        getData()
-    }, [getData, datatype, relatedUserId])
+        if (changed)
+            getData()
+    }, [getData, datatype, relatedUserId, changed])
 
     useEffect(() => {
         if (Object.keys(data).length > currentPage)
@@ -50,10 +63,14 @@ const useListDataStates = (datatype, relatedUserId) => {
     }
 
     // logica de eliminacion
-    const handleDelete = async (datatype, id, relatedUserId) => {
+    const handleDelete = async (datatype, ids=[], relatedUserId) => {
         try {
-            await ManagementService.deleteData(datatype, id, relatedUserId)
-            getData()
+            if (ids) {
+                await ManagementService.deleteData(datatype, ids, relatedUserId)
+                getData()
+            } else {
+                console.warn('Se intento eliminar sin proporcionar elementos')
+            }
         } catch (error) {
             console.error(error)
         }
@@ -66,17 +83,17 @@ const useListDataStates = (datatype, relatedUserId) => {
         pageControl: true,
         loop: false,
     }
-console.log(data);
+
     return {
+        setChanged,
         currentData,
-        paginationParams,
         handleSearch,
         handleDelete,
-        errorMessage
+        paginationParams,
     }
 }
 
-const useItemSelectionControl = (datatype) => {
+const useItemTouchControl = (datatype) => {
     const [ selectedItemId, setSelectedItemId ] = useState('')
     const [ itemOptions, setItemOptions ] = useState([])
     const { user } = useAuth()
@@ -157,14 +174,14 @@ const useItemSelectionControl = (datatype) => {
         
                 if (user?.user_role !== datatypes.user.professor /* && !unconfiguredDefenseTribunal && !pendingTribunal */)
                     options.push({ 
-                        action: () => navigate(`/list/${datatypes.defense_act}`), 
+                        action: () => navigate(`/list/${datatypes.defense_act}/${selectedItemId}`), 
                         label: 'Listar actas de defensa',
                         value: 'list-defense_act'
                     })
 
                 if (user?.user_role === datatypes.user.professor /* && !unconfiguredDefenseTribunal && !pendingTribunal */)
                     options.push({
-                        action: () => navigate(`/list/${datatypes.defense_act}`), 
+                        action: () => navigate(`/list/${datatypes.defense_act}/${selectedItemId}`), 
                         label: 'Gestionar actas de defensa',
                         value: 'gest-defense_act'
                     })
@@ -172,7 +189,6 @@ const useItemSelectionControl = (datatype) => {
         }
         setItemOptions(options)
     }, [datatype, selectedItemId, user?.user_role, openManageForm, navigate])
-
 
     useEffect(() => {
         if (datatype===datatypes.user.student)
@@ -241,5 +257,5 @@ const usePermisions = (datatype) => {
     return permissions
 }
 
-const listHooks = { usePermisions, useItemSelectionControl, useListDataStates }
+const listHooks = { usePermisions, useItemTouchControl, useListDataStates }
 export default listHooks

@@ -20,7 +20,7 @@ class Request(BaseModel):
         null=False,
         related_name='requests',
         on_delete=models.CASCADE,
-        verbose_name="Student"
+        verbose_name="Student",
     )
 
     class ECE(models.TextChoices):

@@ -1,12 +1,12 @@
-import PropTypes from "prop-types"
-import { ArrowLeftSquare, ArrowRightSquare } from "lucide-react"
+import PropTypes from 'prop-types'
+import { ArrowLeftSquare, ArrowRightSquare } from 'lucide-react'
 
-const PaginationButtons = ({paginationParams, optionalButtonClassName = ""}) => {
+const PaginationButtons = ({paginationParams, optionalButtonClassName = ''}) => {
     const totalPages = paginationParams.totalPages
     const currentPage = paginationParams.currentPage || 0
     const pageControl = paginationParams.pageControl || false
     const loop = paginationParams.loop || false
-
+    
     const handlePageChange = (newPage) => {
         if (newPage < 0 || newPage > totalPages-1) {
             if (loop){
@@ -18,15 +18,12 @@ const PaginationButtons = ({paginationParams, optionalButtonClassName = ""}) => 
     }
 
     return (
-        <div className="button-group pagination-button-group">
+        <div className='button-group pagination-button-group'>
             <button 
-                title="Anterior"
-                className={optionalButtonClassName}
+                title='Anterior'
+                className={`${optionalButtonClassName} ${!loop && currentPage===0 && 'hidden'}`}
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={!loop && currentPage===0}
-                style={
-                    !loop && currentPage===0? 
-                        { visibility: 'hidden' }:{}}
                 >
                 <ArrowLeftSquare size={40}/>
             </button>
@@ -37,12 +34,9 @@ const PaginationButtons = ({paginationParams, optionalButtonClassName = ""}) => 
                     onChange={(e) => handlePageChange(Number(e.target.value))}
                     value={currentPage}
                     disabled={totalPages<=1}
-                    className={`button ${optionalButtonClassName}`}
-                    style={
-                        totalPages<=1?
-                            { visibility: 'hidden' }:{}}
+                    className={`button ${optionalButtonClassName} ${totalPages<=1 && 'hidden'}`}
                     >
-                    <option value="" disabled>Ir a página...</option>
+                    <option value='' disabled>Ir a página...</option>
 
                     {Array.from({ length: totalPages }, (_, index) => (
                         <option key={index} value={index}>
@@ -52,13 +46,10 @@ const PaginationButtons = ({paginationParams, optionalButtonClassName = ""}) => 
                 </select>}
 
             <button 
-                title="Siguiente"
-                className={optionalButtonClassName}
+                title='Siguiente'
+                className={`${optionalButtonClassName} ${!loop && currentPage >= totalPages - 1 && 'hidden'}`}
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={!loop && currentPage >= totalPages - 1}
-                style={
-                    !loop && currentPage >= totalPages - 1?
-                        { visibility: 'hidden' }:{}}
                 >
                 <ArrowRightSquare size={40}/>
             </button>

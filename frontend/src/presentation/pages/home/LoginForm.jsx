@@ -7,11 +7,10 @@ import { useGenericForm, useAuth } from '@/logic/'
 
 /**
  * @description Componente formulario para iniciar sesión, utiliza el hook {@link useGenericForm} para la gestión del formulario y obtiene la función {@link login} a ejecutar al envio del formulario se obtiene del hook {@link useAuth}.
- * @param {string} `modalId`- id del modal asociado a la función {@link closeModal}.
- * @param {function} `closeModal`- Función para cerrar el modal donde se renderiza el componente a través del `modalId`. 
- * @returns Estructura del componente formulario.
+ * @param {function} `closeFunc`- Función para cerrar formulario. 
+ * @returns Estructura del componente formulario de autenticación.
  */
-const LoginForm = ({modalId, closeModal}) => {
+const LoginForm = ({ closeFunc }) => {
     const { login } = useAuth()
 
     const initialValues = {
@@ -38,7 +37,7 @@ const LoginForm = ({modalId, closeModal}) => {
 
     const submitFunction = async (values) => {
         const response = await login(values)
-        closeModal(modalId)
+        closeFunc()
         return response
     }
 
@@ -73,8 +72,7 @@ const LoginForm = ({modalId, closeModal}) => {
                 />
 
                 <span
-                    className='error'
-                    style={formik.errors.username && formik.touched.username ? {} : { visibility: 'hidden' }}
+                    className={`error ${formik.errors.username && formik.touched.username && 'hidden'}`}
                     >
                     {formik.errors.username}
                 </span>
@@ -98,21 +96,19 @@ const LoginForm = ({modalId, closeModal}) => {
                 />
 
                 <span
-                    className='error'
-                    style={formik.errors.password && formik.touched.password ? {} : { visibility: 'hidden' }}
+                    className={`error ${formik.errors.password && formik.touched.password && 'hidden'}`}
                     >
                     {formik.errors.password}
                 </span>
                 
-                <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>
+                <FormButtons closeFunc={closeFunc} isValid={formik.isValid}/>
             </form>
         </>
     )
 }
 
 LoginForm.propTypes = {
-    modalId: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    closeFunc: PropTypes.func.isRequired,
 }
 
 export default LoginForm

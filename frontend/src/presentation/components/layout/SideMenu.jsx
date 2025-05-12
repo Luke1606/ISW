@@ -10,14 +10,14 @@ const SideMenu = () => {
 
     return (
         <aside className={`sidemenu sidemenu-${isVisible ?'visible':'hidden'}`}>
-            <ul className="sidemenu-ul">
+            <ul className='sidemenu-ul'>
                 {options && options.map((option, index) => (
                     <li 
                         key={index}
-                        className="sidemenu-li" 
+                        className='sidemenu-li' 
                         onClick={option.action} 
                         >
-                        <option.icon size={50} color="white"/>
+                        <option.icon size={50} color='white'/>
                         <span>{option.title}</span>
                     </li>
                 ))}

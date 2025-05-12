@@ -1,12 +1,15 @@
+import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Search, Plus, Edit, Trash2, FileText, Check, X } from 'lucide-react'
 import { listHooks, useFormParams, useModal, useTranslateToSpanish } from '@/logic'
-import { Modal, PaginationButtons, Form } from '@/presentation'
+import { Modal, PaginationButtons, Form, CheckeableListItem } from '@/presentation'
+import { datatypes } from '@/data'
 
 const List = () => {
     const { datatype, relatedUserId } = useParams()
 
     const {
+        setChanged,
         currentData,
         handleSearch,
         handleDelete,
@@ -18,16 +21,17 @@ const List = () => {
 
     const {
         itemOptions,
-        selectedItemId,
         setSelectedItemId,
         handleOptionChange
-    } = listHooks.useItemSelectionControl(datatype)
+    } = listHooks.useItemTouchControl(datatype)
+
+    const [ selectedItems, setSelectedItems ] = useState([])
 
     const deleteModalId = 'delete-modal'
 
     const { isOpen, openModal, closeModal } = useModal()
     
-    const { openManageForm, formModalId } = useFormParams()
+    const { openManageForm, isManageFormOpen } = useFormParams()
     
     const translate = useTranslateToSpanish()
     const spanishDatatype = translate(datatype).toLowerCase()
@@ -39,7 +43,11 @@ const List = () => {
             <h2 
                 className='list-title'
                 >
-                Gestionar {spanishDatatype}s
+                {(permissions.add && permissions.del && permissions.edit)?
+                    'Gestionar'
+                    :
+                    'Listar'    
+                } {spanishDatatype}s
             </h2>
             
             {/* Barra de busqueda */}
@@ -67,19 +75,19 @@ const List = () => {
             <div
                 className='button-container manage-buttons'
                 >
-                { permissions?.add &&
+                { permissions?.add && 
                     <button 
-                        title='Agregar'
-                        className='add-button'
-                        onClick={() => openManageForm(datatype)}
+                        title='Agregar' 
+                        className={`add-button ${selectedItems.length > 1 && 'hidden'}`}
+                        onClick={() => openManageForm(datatype, { relatedUserId })}
                         >
                         <Plus size={40}/>
                     </button>}
 
-                    { permissions?.del && 
+                    { permissions?.del &&
                         <button 
                             title='Eliminar varios'
-                            className='delete-button'
+                            className={`delete-button ${selectedItems.length <= 1 && 'hidden'}`}
                             onClick={() => openModal(deleteModalId)}
                             >
                             <Trash2 size={40}/>
@@ -99,11 +107,12 @@ const List = () => {
 
                 { currentData?.length > 0?
                     currentData?.map((item, index) => (
-                        <div key={`${item.id}-${index}`} className='list-item'>
-                            <h3 className='list-item-title'>
-                                {item.name}
-                            </h3>
-
+                        <CheckeableListItem 
+                            key={`${item.id}-${index}`} 
+                            item={item}
+                            checked={selectedItems.includes(item.id)}
+                            setSelectedItems={setSelectedItems}
+                            >
                             <div className='list-button-container button-container'>
                                 <button
                                     title='Ver detalles'
@@ -113,54 +122,55 @@ const List = () => {
                                     <FileText size={50}/>
                                 </button>
 
-                                { permissions?.edit && 
+                                { permissions?.edit &&
                                     <button 
                                         title='Editar'
-                                        className='edit-button list-button'
+                                        className={`edit-button list-button ${selectedItems.length > 1 && 'hidden'}`}
                                         onClick={() => openManageForm(datatype, { idData: item.id })}
                                         >
                                         <Edit size={50}/>
                                     </button>}
 
-                                { permissions?.del && 
+                                { permissions?.del &&
                                     <button 
                                         title='Eliminar'
-                                        className='delete-button list-button'
+                                        className={`delete-button list-button ${selectedItems.length > 1 && 'hidden'}`}
                                         onClick={() => {
-                                            setSelectedItemId(item.id)
+                                            setSelectedItems([item.id])
                                             openModal(deleteModalId)
                                         }}
                                         >
                                         <Trash2 size={50}/>
                                     </button>}
                             
-                                <select 
-                                    className='button options-button list-button' 
-                                    title='Más opciones'
-                                    defaultValue={'default'}
-                                    onChange={handleOptionChange}
-                                    onClick={() => setSelectedItemId(item.id)}
-                                    >
-                                    <option 
-                                        className='option-element' 
-                                        value='default' 
-                                        disabled
+                                { datatype === datatypes.user.student &&
+                                    <select 
+                                        className={`button options-button list-button ${selectedItems.length > 1 && 'hidden'}`}
+                                        title='Más opciones'
+                                        defaultValue={'default'}
+                                        onChange={handleOptionChange}
+                                        onClick={() => setSelectedItemId(item.id)}
                                         >
-                                        -- Seleccione una opción --
-                                    </option>
-
-                                    {itemOptions.map((option, index) => (
-                                        <option
-                                            key={index}
-                                            className='option-element'
-                                            value={option.value}
+                                        <option 
+                                            className='option-element' 
+                                            value='default' 
+                                            disabled
                                             >
-                                            {option.label}
+                                            -- Seleccione una opción --
                                         </option>
-                                    ))}
-                                </select>
+
+                                        {itemOptions.map((option, index) => (
+                                            <option
+                                                key={index}
+                                                className='option-element'
+                                                value={option.value}
+                                                >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>}
                             </div>
-                        </div>
+                        </CheckeableListItem>
                     ))
                 : 
                 <h3 className='list-item-title'>
@@ -180,14 +190,21 @@ const List = () => {
                     </h2>
 
                     <p className='modal-content'>
-                        ¿Está seguro de que desea continuar?
+                        ¿Está seguro de que desea eliminar 
+                        {selectedItems.length > 1?
+                            ' los elementos seleccionados' 
+                            : 
+                            ' el elemento seleccionado'}?
                     </p>
 
                     <div className='button-container modal-button-container'>
                         <button 
                             className='accept-button modal-button'
                             title='Aceptar'
-                            onClick={() => handleDelete(datatype, selectedItemId, relatedUserId)}>
+                            onClick={() => {
+                                handleDelete(datatype, selectedItems, relatedUserId)
+                                closeModal(deleteModalId)   
+                            }}>
                             <Check size={30}/>
                         </button>
                         
@@ -202,8 +219,8 @@ const List = () => {
                 </div>
             </Modal>
 
-            <Modal isOpen={isOpen(formModalId)}>
-                <Form />
+            <Modal isOpen={isManageFormOpen()}>
+                <Form reloadFunction={setChanged}/>
             </Modal>
         </div>
     )

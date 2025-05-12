@@ -20,7 +20,7 @@ class DefenseTribunal(BaseModel):
         blank=False,
         null=False,
         related_name='defense_tribunal',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     defense_date = models.DateField(blank=True, null=True)
 

@@ -23,18 +23,17 @@ const useGenericForm = (submitFunction, initialValues, validationSchema = {}) =>
 
             const response = await submitFunction(values)
             
-            if (response) {
-                const notification = {
-                    title: response.success?
-                        'Operación exitosa'
-                        :
-                        'Error',
-                    message: response.message
-                }
-        
-                const type = response.success? 'success' : 'error'
-                NotificationService.showToast(notification, type)
+            const notification = {
+                title: response?.success?
+                    'Operación exitosa'
+                    :
+                    'Error',
+                message: response?.message || 'Error desconocido'
             }
+        
+            const type = response.success? 'success' : 'error'
+            NotificationService.showToast(notification, type)
+
             setLoading(false)
         }, [setLoading, submitFunction])
     })

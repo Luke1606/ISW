@@ -11,18 +11,23 @@ import {
     ReadOnlyEvidenceForm,
     ReadOnlyDefenseActForm,
     ReadOnlyDefenseTribunalForm
-} from '.'
+} from './'
 
-const Form = () => {
-    const { manageFormParams, closeManageForm, formModalId } = useFormParams()
+const Form = ({ reloadFunction }) => {
+    const { manageFormParams, closeManageForm } = useFormParams()
+
+    const closeForm = () => {
+        closeManageForm()
+        reloadFunction(true)
+    }
 
     const datatype = manageFormParams?.datatype
     const idData = manageFormParams?.idData
     const relatedUserId = manageFormParams?.relatedUserId
     const view = manageFormParams?.view
-
-    const { loading, prevValues, handleSubmit } = useForm(datatype, idData, relatedUserId)
-
+    
+    const { loading, prevValues, isEdition } = useForm(datatype, idData, relatedUserId)
+    
     if (loading || !manageFormParams) return null
 
     let specificForm
@@ -36,26 +41,25 @@ const Form = () => {
         case datatypes.evidence:
             specificForm = view?
                 <ReadOnlyEvidenceForm 
-                    modalId={formModalId}
-                    closeModal={closeManageForm} 
+                    closeFunc={closeForm} 
                     values={prevValues}
                     /> 
                 : 
                 <EvidenceForm 
-                    modalId={formModalId}
-                    closeModal={closeManageForm} 
+                    idEdition={isEdition} 
+                    closeFunc={closeForm}
+                    studentId={relatedUserId}
                     prevValues={prevValues} 
-                    handleSubmit={handleSubmit} 
                     />
             break 
         case datatypes.request:
             if (view) printError()
 
             specificForm = <RequestForm
-                                modalId={formModalId}
-                                closeModal={closeManageForm}
+                                closeFunc={closeForm}
+                                studentId={relatedUserId}
                                 prevValues={prevValues}
-                                handleSubmit={handleSubmit} 
+                                isEdition={isEdition}
                                 />
             break
         case datatypes.tribunal:
@@ -64,49 +68,44 @@ const Form = () => {
             else {
                 specificForm = view?
                     <ReadOnlyDefenseTribunalForm 
-                        modalId={formModalId}
-                        closeModal={closeManageForm} 
+                        closeFunc={closeForm} 
                         values={prevValues}/>
                     :
                     <DefenseTribunalForm 
                         datatype={datatype}
-                        modalId={formModalId}
-                        closeModal={closeManageForm}
-                        prevValues={prevValues} 
-                        handleSubmit={handleSubmit} 
+                        closeFunc={closeForm}
+                        prevValues={prevValues}
+                        isEdition={isEdition}
                         />
             }
             break
         case datatypes.defense_act:    
             specificForm = view?
                 <ReadOnlyDefenseActForm 
-                    modalId={formModalId}
-                    closeModal={closeManageForm} 
+                    closeFunc={closeForm} 
                     values={prevValues}
                     />
                 :
                 <DefenseActForm 
-                    modalId={formModalId}
-                    closeModal={closeManageForm} 
+                    closeFunc={closeForm} 
+                    studentId={relatedUserId}
                     prevValues={prevValues} 
-                    handleSubmit={handleSubmit} 
+                    isEdition={isEdition} 
                     />
             break
         case datatypes.user.professor:
         case datatypes.user.student:
             specificForm = view?
                 <ReadOnlyUserForm 
-                    modalId={formModalId}
-                    closeModal={closeManageForm} 
+                    closeFunc={closeForm} 
                     values={prevValues}
                     />
                 :
                 <UserForm 
                     isStudent={datatype===datatypes.user.student} 
-                    modalId={formModalId}
-                    closeModal={closeManageForm} 
+                    closeFunc={closeForm} 
                     prevValues={prevValues} 
-                    handleSubmit={handleSubmit} 
+                    isEdition={isEdition} 
                     />
             break
         default:
@@ -118,20 +117,7 @@ const Form = () => {
 }
 
 Form.propTypes = {
-    formParams: PropTypes.shape({
-        datatype: PropTypes.oneOf([
-            ...Object.values(datatypes.user),
-            datatypes.report,
-            datatypes.request,
-            datatypes.tribunal,
-            datatypes.evidence,
-            datatypes.defense_act,
-            datatypes.defense_tribunal
-        ]).isRequired,
-        idData: PropTypes.string,
-        relatedUserId: PropTypes.string,
-        view: PropTypes.bool,
-    }),
+    reloadFunction: PropTypes.func.isRequired,
 }
 
 export default Form

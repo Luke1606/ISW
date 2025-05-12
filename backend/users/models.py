@@ -34,16 +34,16 @@ class CustomUserManager(BaseUserManager, BaseModelManager):
             is_superuser=role == Datatypes.User.decan,
         )
         user.set_password(password)
+        user.save(using=self._db)
 
         if role == Datatypes.User.student:
             if not extra_fields.get('group'):
                 raise ValueError("El campo 'grupo' es obligatorio para estudiantes.")
             if not extra_fields.get('faculty'):
                 raise ValueError("El campo 'facultad' es obligatorio para estudiantes.")
-            Student.objects.create(user=user, **extra_fields)
+            Student.objects.create(id=user, **extra_fields)
         else:
-            Professor.objects.create(user=user, role=role)
-        user.save(using=self._db)
+            Professor.objects.create(id=user, role=role)
 
     def create_superuser(self, username, password, name, pic, **extra_fields):
         """
@@ -82,14 +82,14 @@ class CustomUser(BaseModel, AbstractUser):
         """
         Retorna True si el usuario es estudiante.
         """
-        return hasattr(self, 'student')
+        return hasattr(self, 'student_user')
 
     @property
     def is_professor(self):
         """
         Retorna True si el usuario es profesor
         """
-        return hasattr(self, 'professor')
+        return hasattr(self, 'professor_user')
 
     @property
     def user_role(self):
@@ -99,7 +99,7 @@ class CustomUser(BaseModel, AbstractUser):
         if self.is_student:
             return 'student'
         if self.is_professor:
-            return self.professor.role
+            return self.professor_user.role
         return 'unknown'
 
 
@@ -107,7 +107,12 @@ class Student(BaseModel):
     """
     Modelo para estudiantes.
     """
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='student')
+    id = models.OneToOneField(
+                        CustomUser,
+                        on_delete=models.CASCADE,
+                        related_name='student_user',
+                        primary_key=True
+        )
 
     class Faculties(models.TextChoices):
         """
@@ -138,7 +143,12 @@ class Professor(BaseModel):
     """
     Modelo para profesores.
     """
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='professor')
+    id = models.OneToOneField(
+                        CustomUser,
+                        on_delete=models.CASCADE,
+                        related_name='professor_user',
+                        primary_key=True
+        )
 
     class Roles(models.TextChoices):
         """

@@ -17,6 +17,10 @@ const Home = () => {
 	const modalId = 'loginForm-modal'
 	const { isOpen, openModal, closeModal } = useModal()
 
+    const closeFunc = () => {
+        closeModal(modalId)
+    }
+
     /**
      * Función a ejecutar cuando se toque en el botón `acceder/comenzar` dependiendo del rol del usuario autenticado, si hay uno, ya sea navegar a la página de gestión o abrir el modal de login. 
      */
@@ -64,7 +68,7 @@ const Home = () => {
             </button>
 
 			<Modal isOpen={isOpen(modalId)}>
-				<LoginForm modalId={modalId} closeModal={closeModal} />
+				<LoginForm closeFunc={closeFunc} />
 			</Modal>
         </>
     )

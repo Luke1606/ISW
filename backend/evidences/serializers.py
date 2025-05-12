@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from core.serializers import BaseListSerializer
+from users.models import Student
 from .models import Evidence
 
 
@@ -8,6 +9,9 @@ class EvidenceListSerializer(BaseListSerializer):
         model = Evidence
         fields = BaseListSerializer.Meta.fields
 
+    def get_id(self, obj):
+        return f"{obj.id}"
+
     def get_name(self, obj):
         """
         Combina first_name y last_name del usuario.
@@ -15,7 +19,9 @@ class EvidenceListSerializer(BaseListSerializer):
         return f"{obj.name}"
 
 
-class EvidenceSerializer(serializers.ModelSerializer):
+class EvidenceFullSerializer(serializers.ModelSerializer):
+    student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
+
     class Meta:
         model = Evidence
         fields = "__all__"

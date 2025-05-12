@@ -12,11 +12,14 @@ class UserListSerializer(BaseListSerializer):
         model = CustomUser
         fields = BaseListSerializer.Meta.fields
 
+    def get_id(self, obj):
+        return f"{obj.id.id}"
+
     def get_name(self, obj):
         """
         Devuelve el nombre del usuario.
         """
-        return f"{obj.user.name}"
+        return f"{obj.id.name}"
 
 
 class CustomUserSerializer(serializers.ModelSerializer):

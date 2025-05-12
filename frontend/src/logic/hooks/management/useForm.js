@@ -1,24 +1,35 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useLoading } from '../'
-import { ManagementService, NotificationService } from '../../'
+import { ManagementService, NotificationService, useLoading } from '@/logic'
 
 const useForm = (datatype, idData, relatedUserId) => {
     const { loading, setLoading } = useLoading()
     const [ prevValues, setPrevValues ] = useState(null)
     
-    const getPrevValues = useCallback(async (datatype, id) => {
+    const getPrevValues = useCallback(async (datatype, id, relatedUserId) => {
         if (!id) return null
         setLoading(true)
+        let message = ''
+        let success = false
+
         try {
-            const response = await ManagementService.getData(datatype, id)
-            setPrevValues(response)
-        } catch (error) {
-            const notification = {
-                title: 'Error',
-                message: error.message
+            const response = await ManagementService.getData(datatype, id, relatedUserId)
+            
+            if (response.success) {
+                success = true
+                setPrevValues(response.data)
+            } else {
+                message = response.message                
             }
-            NotificationService.showToast(notification, 'error')
+        } catch (error) {
+            message = error.message
         } finally {
+            if (!success) {
+                const notification = {
+                    title: 'Error',
+                    message: message
+                }
+                NotificationService.showToast(notification, 'error')
+            }
             setLoading(false)
         }
     }, [setLoading])
@@ -27,12 +38,12 @@ const useForm = (datatype, idData, relatedUserId) => {
         getPrevValues(datatype, idData, relatedUserId)
     }, [datatype, idData, relatedUserId, getPrevValues])
     
-    const handleSubmit = idData? 
-                            ManagementService.updateData
-                            : 
-                            ManagementService.createData
-
-    return { loading, prevValues, handleSubmit }
+    const isEdition = idData? 
+                        true
+                        : 
+                        false
+    
+    return { loading, prevValues, isEdition }
 }
 
 export default useForm 
