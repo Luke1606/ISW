@@ -957,7 +957,7 @@ button:hover, .button:hover {
 }
 
 .list-item {
-    padding: 15px;
+    padding: 0 1rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -967,11 +967,28 @@ button:hover, .button:hover {
 }
 
 .list-item:hover {
-    background-color: rgb(255, 255, 255);
+    background-color: #f0f0f0;
+}
+
+.list-item-header {
+    padding: .2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.list-checkbox {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 1rem;
+    cursor: pointer;
+    accent-color: var(--primary-dark-tone);
 }
 
 .list-item-title {
     cursor: default;
+    font-size: 1.7rem;
 }
 
 .list-button-container {
@@ -1184,4 +1201,8 @@ button:hover, .button:hover {
 
 .form-subtitle {
     font-size: 2.2rem;
+}
+
+.hidden {
+    visibility: hidden;
 }
