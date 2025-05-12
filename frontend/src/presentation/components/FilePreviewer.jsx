@@ -4,41 +4,40 @@ import PropTypes from 'prop-types'
 
 
 const fileIcons = {
-    mp4: 'fas fa-file-video',
-    mkv: 'fas fa-file-video',
-    avi: 'fas fa-file-video',
-    mpg: 'fas fa-file-video',
-    flv: 'fas fa-file-video',
-    docx: 'fas fa-file-word',
-    doc: 'fas fa-file-word',
-    xlsx: 'fas fa-file-excel',
-    zip: 'fas fa-file-archive',
-    rar: 'fas fa-file-archive',
-    default: 'fas fa-file'
+    'video/mp4': 'fas fa-file-video',
+    'video/x-matroska': 'fas fa-file-video',
+    'video/x-msvideo': 'fas fa-file-video',
+    'video/mpeg': 'fas fa-file-video',
+    'video/x-flv': 'fas fa-file-video',
+    'application/msword': 'fas fa-file-word',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'fas fa-file-word',
+    'application/vnd.ms-excel': 'fas fa-file-excel',
+    'application/zip': 'fas fa-file-archive',
+    'application/x-rar-compressed': 'fas fa-file-archive',
+    'default': 'fas fa-file'
 }
   
-const getFileIcon = (name) => {
-    const ext = name.split('.').pop().toLowerCase()
-    return fileIcons[ext] || fileIcons.default
+const getFileIcon = (mimeType) => {
+    return fileIcons[mimeType] || fileIcons.default
 }
 
 const FilePreviewer = ({ source }) => {
     const [fileType, setFileType] = useState(null)
     const [fileURL, setFileURL] = useState(null)
+    const [mimeType, setMimeType] = useState('')
 
     useEffect(() => {
         if (source instanceof File) {
-            const fileName = source.name.toLowerCase()
-            const ext = fileName.split('.').pop()
             const url = URL.createObjectURL(source)
             setFileURL(url)
+            setMimeType(source.type)
 
-            if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
+            if (source.type.startsWith('image/')) {
                 setFileType('image')
-            } else if (ext === 'pdf') {
+            } else if (source.type === 'application/pdf') {
                 setFileType('pdf')
             } else {
-                setFileType('other') // Para archivos que no tienen previsualización directa
+                setFileType('other') // Para archivos sin previsualización
             }
         }
     }, [source])
@@ -52,7 +51,7 @@ const FilePreviewer = ({ source }) => {
             {fileType === 'pdf' &&
                 <iframe src={fileURL} width='500px' height='250px' style={{ border: 'none' }}/>}
             {fileType === 'other' &&
-                <i title='Icono de archivo' className={`${getFileIcon(source.name)} preview-icon`}/>}
+                <i title='Icono de archivo' className={`${getFileIcon(mimeType)} preview-icon`}/>}
 
             <p className='preview-title'>{source.name}</p>
         </div>

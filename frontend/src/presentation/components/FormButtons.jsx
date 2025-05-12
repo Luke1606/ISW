@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 
-const FormButtons = ({modalId, closeModal, isValid}) => {
+const FormButtons = ({ closeFunc, isValid }) => {
     return (
         <div className='button-container'>
             <button
@@ -22,7 +22,7 @@ const FormButtons = ({modalId, closeModal, isValid}) => {
 
             <button 
                 className='cancel-button'
-                onClick={() => closeModal(modalId)}
+                onClick={closeFunc}
                 >
                 Cancelar
             </button>
@@ -31,8 +31,7 @@ const FormButtons = ({modalId, closeModal, isValid}) => {
 }
 
 FormButtons.propTypes = {
-    modalId: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    closeFunc: PropTypes.func.isRequired,
     isValid: PropTypes.bool,
 }
 
