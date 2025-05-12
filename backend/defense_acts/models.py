@@ -22,8 +22,11 @@ class DefenseAct(BaseModel):
 
     SEARCHABLE_FIELDS = {
         **BaseModel.SEARCHABLE_FIELDS,
+        'student__id__username': 'icontains',
+        'student__id__name': 'icontains',
+        'student__group': 'int_exact',
+        'student__faculty': 'icontains',
         "name": "icontains",
-        "student__user__username": "icontains",
         "description": "icontains",
     }
 

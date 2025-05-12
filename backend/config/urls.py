@@ -24,10 +24,10 @@ urlpatterns = [
 
     # Gateway de gestión de datos
     path('management/<str:datatype>/', ManagementGatewayView.as_view({
-        'get': 'list', 'post': 'create'
+        'get': 'list', 'post': 'create', 'delete': 'destroy'
     }), name='gateway'),
     path('management/<str:datatype>/<uuid:pk>/', ManagementGatewayView.as_view({
-        'get': 'retrieve', 'put': 'update', 'delete': 'destroy'
+        'get': 'retrieve', 'put': 'update'
     }), name='gateway-specific'),
 
     # Notificaciones

@@ -26,22 +26,21 @@ class Evidence(BaseModel):
         """
         Tipos de adjunto.
         """
-        URL = 'URL', 'url'
-        FILE = 'Archivo', 'file',
+        URL = 'url'
+        FILE = 'file',
 
-    attachment_type = models.CharField(max_length=20, choices=Type.choices, default=Type.URL)
-    attachment_file = models.FileField(upload_to='attachments/', blank=True, null=True)
+    attachment_type = models.CharField(max_length=20, choices=Type.choices, null=False, blank=False)
+    attachment_file = models.FileField(upload_to='evidences/attachments/', blank=True, null=True)
     attachment_url = models.URLField(blank=True, null=True)
 
     SEARCHABLE_FIELDS = {
         **BaseModel.SEARCHABLE_FIELDS,
-        'student__username': 'icontains',
-        'student__name': 'icontains',
+        'student__id__username': 'icontains',
+        'student__id__name': 'icontains',
         'student__group': 'int_exact',
         'student__faculty': 'icontains',
         'name': 'icontains',
         'description': 'icontains',
-        'student__username': 'icontains',
     }
 
     DB_INDEX = 3
@@ -50,6 +49,7 @@ class Evidence(BaseModel):
         """
         Validación personalizada para asegurar que los campos de adjunto sean consistentes.
         """
+        print(self.attachment_type, self.attachment_file, self.attachment_url)
         if self.attachment_type == self.Type.URL and not self.attachment_url:
             raise ValidationError('URL field must be provided when attachment type is URL.')
         if self.attachment_type == self.Type.FILE and not self.attachment_file:
@@ -58,6 +58,15 @@ class Evidence(BaseModel):
             raise ValidationError('File field must be empty when attachment type is URL.')
         if self.attachment_type == self.Type.FILE and self.attachment_url:
             raise ValidationError('URL field must be empty when attachment type is FILE.')
+
+
+
+
+
+
+
+
+
 
 
 # class Roles(models.Model):

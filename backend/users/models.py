@@ -130,8 +130,8 @@ class Student(BaseModel):
     group = models.PositiveIntegerField()
     SEARCHABLE_FIELDS = {
         **BaseModel.SEARCHABLE_FIELDS,
-        'user__username': 'icontains',
-        'user__name': 'icontains',
+        'id__username': 'icontains',
+        'id__name': 'icontains',
         'faculty': 'icontains',
         'group': 'int_exact',
     }

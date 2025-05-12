@@ -73,15 +73,16 @@ const updateData = async (datatype, id, data) => {
             data)
     return await handleRequest({
         method: 'put', 
-        url: `${datatype}/${id}`,
+        url: `${datatype}/${id}/`,
         data: formattedData
     })
 }
 
-const deleteData = (datatype, id) =>
+const deleteData = (datatype, ids) =>
     handleRequest({
         method: 'delete',
-        url: `${datatype}/${id}/`
+        url: `${datatype}/`,
+        data: { data: { ids } }
     })
 
 const managementApi = { getAllData, getData, createData, updateData, deleteData }

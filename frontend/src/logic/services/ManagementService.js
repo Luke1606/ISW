@@ -17,8 +17,8 @@ class ManagementService {
         return await managementApi.updateData(datatype, id, data)
     }
     
-    async deleteData(datatype, id) {
-        return await managementApi.deleteData(datatype, id)
+    async deleteData(datatype, ids) {
+        return await managementApi.deleteData(datatype, ids)
     }
 }
 

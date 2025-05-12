@@ -30,7 +30,7 @@ class BaseModelViewSet(ModelViewSet):
         queryset = queryset.model.objects.search(self._get_search_term())
 
         related_user_id = self.request.query_params.get('related_user_id', None)
-        print(queryset)
+
         if related_user_id and not (self.request.user.user_role == Datatypes.User.professor):
             queryset = queryset.filter(student=related_user_id)
 
@@ -69,7 +69,16 @@ class BaseModelViewSet(ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         self.invalidate_cache()
-        return super().destroy(request, *args, **kwargs)
+
+        ids = request.data.get("ids", [])
+
+        if not ids or not isinstance(ids, list):
+            return Response({"error": "Debe proporcionar una lista de IDs"}, status=status.HTTP_400_BAD_REQUEST)
+
+        queryset = self.get_queryset()
+        deleted_count, _ = queryset.filter(id__in=ids).delete()
+
+        return Response({"message": f"{deleted_count} elementos eliminados"}, status=status.HTTP_200_OK)
 
     def _get_or_set_cached_response(self, cache_key, data_function):
         cached_data = self._get_cached_response(cache_key)
