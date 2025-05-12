@@ -2,10 +2,18 @@ import PropTypes from 'prop-types'
 import { useMemo, useRef } from 'react'
 import * as Yup from 'yup'
 import { datatypes } from '@/data'
-import { useGenericForm } from '@/logic'
+import { useGenericForm, ManagementService } from '@/logic'
 import { FilePreviewer, FormButtons } from '@/presentation'
 
-const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
+/**
+ * @description Ventana para agregar o editar un acta de defensa.
+ * @param {bool} `isEdition`- Binario que expresa si es un formulario de edición o no.
+ * @param {function} `closeFunc`- Función para cerrar el formulario.
+ * @param {string} `studentId` - Id del estudiante al cual está asociada el acta de defensa.
+ * @param {Object} `prevValues`- Contiene toda la información del acta de defensa a mostrar.
+ * @returns Estructura de los campos a mostrar con la información del acta de defensa contenida en prevValues.
+ */
+const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
     const initialValues = {
         name: prevValues?.name || '',
         description: prevValues?.description || '',
@@ -85,14 +93,33 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
 
     const submitFunction = async (values) => {
         const newValues = {
+            student: prevValues?.student || studentId,
             name: values?.name,
             description: values?.description,
             attachmentType: values?.attachmentType,
             url: values?.url,
             file: values?.file
         }
-        await handleSubmit(datatypes.evidence, prevValues?.id, newValues)
-        closeModal(modalId)
+
+        let success = false
+        let message = ''
+
+        if (isEdition) {
+            const response = await ManagementService.updateData(datatypes.evidence, prevValues.id, newValues)
+            success = response?.success
+            message = response?.message
+        } else {
+            const response = await ManagementService.createData(datatypes.evidence, newValues)
+            success = response?.success
+            message = response?.message
+        }
+
+        closeFunc()
+
+        return {
+            success,
+            message,
+        }
     }
 
     const formik = useGenericForm(submitFunction, initialValues, validationSchema)
@@ -274,10 +301,6 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                                     application/vnd.openxmlformats-officedocument.presentationml.presentation,
                                     video/mp4, video/x-matroska, video/x-msvideo, video/x-flv
                                 '
-                                    // .jpg, .jpeg, .png, .gif,
-                                    // .mp4, .mkv, .avi, .flv, .mpg
-                                    // .pdf, .docs, .doc, .xlsx, .ppt,
-                                    // .zip, .rar,
                                 ref={fileInputRef}
                                 onChange={(event) => formik.setFieldValue('file', event.currentTarget.files[0])}
                                 onBlur={formik.handleBlur}
@@ -320,14 +343,15 @@ const EvidenceForm = ({modalId, closeModal, prevValues, handleSubmit}) => {
                     </section>}
             </section>
 
-            <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>        
+            <FormButtons closeFunc={closeFunc} isValid={formik.isValid}/>        
         </form>
     )
 }
 
 EvidenceForm.propTypes = {
-    modalId: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    isEdition: PropTypes.bool.isRequired,
+    closeFunc: PropTypes.func.isRequired,
+    studentId: PropTypes.string.isRequired,
     prevValues: PropTypes.shape({
         id: PropTypes.string.isRequired,
         student: PropTypes.string.isRequired,
@@ -337,7 +361,6 @@ EvidenceForm.propTypes = {
         attachment_url: PropTypes.instanceOf(URL).isRequired,
         attachment_file: PropTypes.instanceOf(File).isRequired,
     }),
-    handleSubmit: PropTypes.func.isRequired,
 }
 
 export default EvidenceForm

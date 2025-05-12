@@ -5,11 +5,18 @@ class BaseListSerializer(serializers.ModelSerializer):
     """
     BaseSerializer específico para serializar datos destinados a listas de elementos.
     """
+    id = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
 
     class Meta:
         abstract = True
         fields = ['id', 'name']  # Campos comunes: 'id' y 'name'
+
+    def get_id(self, obj):
+        """
+        Método que a partir de este se guarda el resultado en el campo id.
+        """
+        return f"{obj.id}"
 
     def get_name(self, obj):
         """

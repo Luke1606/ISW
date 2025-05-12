@@ -3,14 +3,13 @@ import { FilePreviewer } from '@/presentation/'
 
 /**
  * @description Ventana para mostrar detalles de un acta de defensa.
- * @param {string} `modalId` - Id del modal en el que se renderiza este componente.
- * @param {function} `closeModal- Función para cerrar el modal en el que se renderiza este componente.
+ * @param {function} `closeFunc- Función para cerrar el componente.
  * @param {Object} `values`- Contiene toda la información del acta de defensa a mostrar.
  * @returns Estructura de los campos a mostrar con la información del acta de defensa contenida en `values`.
  */
-const ReadOnlyDefenseActForm = ({modalId, closeModal, values}) => {
+const ReadOnlyDefenseActForm = ({ closeFunc, values }) => {
     if (!values) return null
-    
+
     return (
         <section
             className='form-container manage-section' 
@@ -30,7 +29,7 @@ const ReadOnlyDefenseActForm = ({modalId, closeModal, values}) => {
                     <h2 
                         className='form-subtitle'
                         >
-                        Datos de la evidencia
+                        Datos del acta
                     </h2>
                     <label 
                         className='form-label' 
@@ -87,7 +86,7 @@ const ReadOnlyDefenseActForm = ({modalId, closeModal, values}) => {
 
             <button
                 className='accept-button'
-                onClick={() => closeModal(modalId)}
+                onClick={closeFunc}
             >
                 Aceptar
             </button>
@@ -96,8 +95,7 @@ const ReadOnlyDefenseActForm = ({modalId, closeModal, values}) => {
 }
 
 ReadOnlyDefenseActForm.propTypes = {
-    modalId: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    closeFunc: PropTypes.func.isRequired,
     values: PropTypes.shape({
         id: PropTypes.string.isRequired,
         student: PropTypes.string.isRequired,

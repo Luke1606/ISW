@@ -7,14 +7,13 @@ import { FormButtons, SearchableSelect } from '@/presentation'
 
 /**
  * @description Ventana para agregar o editar un usuario ya sea profesor o estudiante.
- * @param {string} `usertype`- Tipo de usuario a manejar con este componente.
- * @param {string} `modalId` - Id del modal en el que se renderiza este componente.
- * @param {function} `closeModal`- Función para cerrar el modal en el que se renderiza este componente.
+ * @param {bool} `isStudent`- Binario que expresa si es un formulario de estudiante o de profesor.
+ * @param {bool} `isEdition`- Función a ejecutar al envío del formulario.
+ * @param {function} `closeFunc`- Función para cerrar el componente.
  * @param {Object} `prevValues`- Contiene toda la información del usuario a mostrar.
- * @param {function} `handleSubmit`- Función a ejecutar al envío del formulario.
  * @returns Estructura de los campos a mostrar con la información del usuario contenida en `prevValues`.
  */
-const UserForm = ({isStudent, modalId, closeModal, prevValues, handleSubmit}) => {
+const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
     let specificInitialValues 
 
     if (isStudent)
@@ -81,7 +80,7 @@ const UserForm = ({isStudent, modalId, closeModal, prevValues, handleSubmit}) =>
             group: values?.group,
         }
         await handleSubmit(isStudent? datatypes.user.student : datatypes.user.professor, prevValues?.user?.id, newValues)
-        closeModal(modalId)
+        closeFunc()
     }
 
     const formik = useGenericForm(submitFunction, initialValues, validationSchema)
@@ -115,7 +114,7 @@ const UserForm = ({isStudent, modalId, closeModal, prevValues, handleSubmit}) =>
             <h1
                 className='form-title'
                 >
-                {prevValues? 'Modificar' : 'Registrar'} {isStudent? 'estudiante' : 'profesor'}
+                {isEdition? 'Modificar' : 'Registrar'} {isStudent? 'estudiante' : 'profesor'}
             </h1>
             
             <label 
@@ -234,15 +233,15 @@ const UserForm = ({isStudent, modalId, closeModal, prevValues, handleSubmit}) =>
                     </span>
                 </>}
 
-            <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>
+            <FormButtons closeFunc={closeFunc} isValid={formik.isValid}/>
         </form>
     )
 }
 
 UserForm.propTypes = {
     isStudent: PropTypes.bool.isRequired,
-    modalId: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    isEdition: PropTypes.bool.isRequired,
+    closeFunc: PropTypes.func.isRequired,
     prevValues: PropTypes.shape({
         user: PropTypes.shape({
             id: PropTypes.string.isRequired,
@@ -253,7 +252,6 @@ UserForm.propTypes = {
         faculty: PropTypes.string,
         group: PropTypes.number,
     }),
-    handleSubmit: PropTypes.func.isRequired,
 }
 
 export default UserForm

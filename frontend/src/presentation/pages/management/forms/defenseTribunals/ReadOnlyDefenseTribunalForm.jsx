@@ -1,26 +1,31 @@
 import PropTypes from 'prop-types'
 
-const ReadOnlyDefenseTribunalForm = ({modalId, closeModal, values}) => {
+/**
+ * @description Ventana para mostrar detalles de un acta de defensa.
+ * @param {function} `closeFunc- Función para cerrar el componente.
+ * @param {Object} `values`- Contiene toda la información del tribunal.
+ * @returns Estructura de los campos a mostrar con la información del tribunal contenido en `values`.
+ */
+const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
     
     return (
         <section
             className='form-container'
             >
-            {values?
-                <h1 
-                    className='form-title'
-                    >
-                    Ver detalles de tribunal
-                </h1>
-                :
+            {!values?
                 <h2 
                     className='form-subtitle'
                     >
                     No hay datos disponibles sobre este tribunal
-                </h2>}
-
-            { values &&
+                </h2>
+                :
                 <>
+                    <h1 
+                        className='form-title'
+                        >
+                        Ver detalles de tribunal
+                    </h1>
+                    
                     <section 
                         className='manage-section'
                         >
@@ -65,13 +70,29 @@ const ReadOnlyDefenseTribunalForm = ({modalId, closeModal, values}) => {
                             >
                             Vocal del tribunal:
                         </label>
+
                         <input
                             className='form-input'
                             id='vocal'
                             type='text'
                             value={values.vocal}
                             readOnly
-                        />
+                            />
+
+                        <label 
+                            className='form-label'
+                            htmlFor='opponent'
+                            >
+                            Oponente del tribunal:
+                        </label>
+
+                        <input
+                            className='form-input'
+                            id='opponent'
+                            type='text'
+                            value={values.opponent}
+                            readOnly
+                            />
                     </section>
                 
                     <section 
@@ -118,7 +139,7 @@ const ReadOnlyDefenseTribunalForm = ({modalId, closeModal, values}) => {
 
             <button
                 className='accept-button'
-                onClick={() => closeModal(modalId)}
+                onClick={closeFunc}
                 >
                 Aceptar
             </button>
@@ -128,7 +149,7 @@ const ReadOnlyDefenseTribunalForm = ({modalId, closeModal, values}) => {
 
 ReadOnlyDefenseTribunalForm.propTypes = {
     modalId: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    closeFunc: PropTypes.func.isRequired,
     values: PropTypes.shape({
         date: PropTypes.instanceOf(Date).isRequired,
         president: PropTypes.string.isRequired,

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { FilePreviewer } from '@/presentation'
 
-const ReadOnlyEvidenceForm = ({modalId, closeModal, values}) => {
+const ReadOnlyEvidenceForm = ({ closeFunc, values }) => {
     if (!values) return null
 
     return (
@@ -87,7 +87,7 @@ const ReadOnlyEvidenceForm = ({modalId, closeModal, values}) => {
 
             <button
                 className='accept-button'
-                onClick={() => closeModal(modalId)}
+                onClick={closeFunc}
                 >
                 Aceptar
             </button>
@@ -97,7 +97,7 @@ const ReadOnlyEvidenceForm = ({modalId, closeModal, values}) => {
 
 ReadOnlyEvidenceForm.propTypes = {
     modalId: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    closeFunc: PropTypes.func.isRequired,
     values: PropTypes.shape({
         id: PropTypes.string.isRequired,
         student: PropTypes.string.isRequired,

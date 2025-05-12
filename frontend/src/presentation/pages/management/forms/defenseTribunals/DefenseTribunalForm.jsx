@@ -1,32 +1,74 @@
-import { useCallback, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import * as Yup from 'yup'
 import PropTypes from 'prop-types'
 import { datatypes } from '@/data'
-import { useGenericForm } from '@/logic'
+import { useGenericForm, ManagementService, useLoading, NotificationService } from '@/logic'
 import { SearchableSelect, FormButtons } from '@/presentation'
 
-const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handleSubmit }) => {
-    const isDefenseTribunal = datatype === datatypes.defense_tribunal
+/**
+ * @description Ventana para configurar o aprobar un tribunal.
+ * @param {function} `closeFunc`- Función para cerrar el formulario.
+ * @param {Object} `prevValues`- Contiene toda la información del acta de defensa a mostrar.
+ * @param {bool} `isDefenseTribunal`- Binario que expresa si es un formulario de configurar o aprobar tribunal.
+ * @returns Estructura de los campos a mostrar con la información del acta de defensa contenida en prevValues.
+ */
+const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
     let initialValues = isDefenseTribunal?
         {
             defenseDate: prevValues?.date || '',
             president: prevValues?.president || '',
             secretary: prevValues?.secretary || '',
             vocal: prevValues?.vocal || '',
+            opponent: prevValues?.opponent || '',
             tutorCant: prevValues?.tutors?.length || 1,
             tutors: prevValues?.tutors || Array(prevValues?.tutors?.length || 1).fill('')
         }
         :
         { state: prevValues?.state || '' }
 
-    const getProfessors = useCallback(() => {
-        return []
-    }, [])
+    const [ professors, setProfessors ] = useState([])
+    const [ selectedProfessors, setSelectedProfessors ] = useState([])
 
-    const professors = getProfessors()
+    const { setLoading } = useLoading()
+
+    useEffect(() => {
+        const getProfessors = async () => {
+            setLoading(true)
+            let message = ''
+            let success = false
+            let data = null
+            try {
+                const response = await ManagementService.getAllData(datatypes.user.professor)
+                
+                if (response?.success) {
+                    success = true
+                    data = response?.data?.data
+                } else {
+                    message = response?.message
+                }
+            } catch (error) {
+                message = error.message
+            } finally {
+                if (!success) {
+                    const notification = {
+                        title: 'Error',
+                        message: message
+                    }
+                    NotificationService.showToast(notification, 'error')
+                }
+                setLoading(false)
+            }
+            return data.map(professor => ({ 
+                value: professor.id, 
+                label: professor.name 
+            }))    
+        }
+
+        setProfessors(getProfessors())
+    }, [setLoading])
 
     const validationSchema = useMemo(() => {
-        return datatype === datatypes.defense_tribunal?
+        return isDefenseTribunal?
             Yup.object().shape({
                 defenseDate: Yup.date()
                     .required('La fecha es obligatoria')
@@ -34,13 +76,16 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
                     .min(new Date(), 'La fecha no puede ser en el pasado'),
             
                 president: Yup.string()
-                .required('El presidente es requerido'),
+                    .required('El presidente es requerido'),
             
                 secretary: Yup.string()
-                .required('El secretario es requerido'),
+                    .required('El secretario es requerido'),
                 
                 vocal: Yup.string()
-                .required('El vocal es requerido'),
+                    .required('El vocal es requerido'),
+
+                opponent: Yup.string()
+                    .required('El vocal es requerido'),
 
                 tutorCant: Yup.number()
                     .required('La cantidad de tutor(es) es obligatoria')
@@ -48,24 +93,58 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
                     .max(4, 'El estudiante debe tener como máximo cuatro(4) tutores'),
                 
                 tutors: Yup.array()
-                .of(Yup.string().required('Debe seleccionar un tutor'))
-                .min(Yup.ref('tutorCant'), 'Debe seleccionar todos los tutores')
-                .max(Yup.ref('tutorCant'), 'No debe seleccionar más tutores de los especificados')
+                    .of(Yup.string().required('Debe seleccionar un tutor'))
+                    .min(Yup.ref('tutorCant'), 'Debe seleccionar todos los tutores')
+                    .max(Yup.ref('tutorCant'), 'No debe seleccionar más tutores de los especificados')
             })
             :
             Yup.object().shape({
                 state: Yup.string()
-                .required('Debe seleccionar "Aprobar" o "Desaprobar".')
-                .oneOf(['aproved', 'unaproved'])
+                    .required('Debe seleccionar "Aprobar" o "Desaprobar".')
+                    .oneOf(['aproved', 'unaproved'])
             })
-        }, [datatype])
+    }, [isDefenseTribunal])
+    
+    const submitFunction = async (values) => {
+        const newValues = {
+            id: prevValues?.id,
+            student: prevValues?.student,
+            president: values?.president || prevValues?.president,
+            secretary: values?.secretary || prevValues?.secretary,
+            vocal: values?.vocal || prevValues?.vocal,
+            opponent: values?.opponent || prevValues?.opponent,
+            date: values?.date || prevValues?.date,
+            state: values?.state || prevValues?.state,
+        }
 
-    const formik = useGenericForm( handleSubmit, initialValues, validationSchema)
+        let success = false
+        let message = ''
+        
+        const response = await ManagementService.updateData(datatypes.defense_tribunal, prevValues.id, newValues)
+        
+        success = response?.success
+        message = response?.message
 
-    const professorOptions = professors.map(professor => ({ 
-        value: professor.id, 
-        label: professor.name 
-    }))    
+        closeFunc()
+
+        return {
+            success,
+            message,
+        }
+    }
+
+    const formik = useGenericForm( submitFunction, initialValues, validationSchema)
+
+    
+    useEffect(() => {
+        const updatedSelections = Object.entries(formik.values)
+            .filter(([key]) => key !== 'date' && key !== 'state')
+            .map(([_, value]) => value)
+            .filter(value => value !== '')
+    
+        setSelectedProfessors(updatedSelections)
+    }, [formik.values])
+    
 
     return (
         <form
@@ -98,7 +177,8 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
                     
                     <SearchableSelect 
                         id='president'
-                        elements={professorOptions}/>
+                        elements={professors.filter((option) => !selectedProfessors.includes(option))}
+                        />
                     
                     <span
                         className='error'
@@ -116,7 +196,8 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
                     
                     <SearchableSelect 
                         id='secretary'
-                        elements={professorOptions}/>
+                        elements={professors.filter((option) => !selectedProfessors.includes(option))}
+                        />
 
                     <span
                         className='error'
@@ -134,11 +215,31 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
                     
                     <SearchableSelect 
                         id='vocal'
-                        elements={professorOptions}/>
+                        elements={professors.filter((option) => !selectedProfessors.includes(option))}
+                        />
                     
                     <span
                         className='error'
                         style={formik.errors.vocal && formik.touched.vocal ? {} : { visibility: 'hidden' }}
+                        >
+                        {formik.errors.vocal}
+                    </span>
+
+                    <label 
+                        className='form-label' 
+                        htmlFor='opponent'
+                        >
+                        Vocal del tribunal:
+                    </label>
+                    
+                    <SearchableSelect 
+                        id='opponent'
+                        elements={professors.filter((option) => !selectedProfessors.includes(option))}
+                        />
+                    
+                    <span
+                        className='error'
+                        style={formik.errors.opponent && formik.touched.opponent ? {} : { visibility: 'hidden' }}
                         >
                         {formik.errors.vocal}
                     </span>
@@ -209,7 +310,8 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
 
                                 <SearchableSelect
                                     id={`tutor${index}`}
-                                    elements={professorOptions}/>
+                                    elements={professors.filter((option) => !selectedProfessors.includes(option))}
+                                    />
                             </div>))}
 
                         <span
@@ -221,17 +323,17 @@ const DefenseTribunalForm = ({ datatype, modalId, closeModal, prevValues, handle
                     </section>}
                 </section>
 
-            <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>
+            <FormButtons closeFunc={closeFunc} isValid={formik.isValid}/>
         </form>
     )
 }
 
 DefenseTribunalForm.propTypes = {
-    datatype: PropTypes.oneOf([datatypes.tribunal, datatypes.defense_tribunal]),
-    modalId: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
+    isDefenseTribunal: PropTypes.bool.isRequired,
+    closeFunc: PropTypes.func.isRequired,
     prevValues: PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        student: PropTypes.string.isRequired,
         date: PropTypes.instanceOf(Date),
         president: PropTypes.string,
         secretary: PropTypes.string,
@@ -239,7 +341,7 @@ DefenseTribunalForm.propTypes = {
         opponent: PropTypes.string,
         tutors: PropTypes.arrayOf(PropTypes.string),
         state: PropTypes.oneOf(['pending', 'aproved', 'unaproved'])
-    })
+    }).isRequired
 }
 
 export default DefenseTribunalForm

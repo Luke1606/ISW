@@ -12,11 +12,11 @@ from .management.utils.constants import Datatypes
 
 
 class ManagementGatewayView(ModelViewSet):
-    """
+    '''
     Un ViewSet centralizado que redirige dinámicamente solicitudes a diferentes ViewSets
     según el tipo de dato (`datatype`).
     Incluye lógica de búsqueda avanzada, paginación y caché.
-    """
+    '''
 
     _VIEWSET_MAPPING = {
         Datatypes.User.student: StudentViewSet,
@@ -28,46 +28,45 @@ class ManagementGatewayView(ModelViewSet):
     }
 
     def _initialize_attrs(self, request, **kwargs):
-        self.datatype = kwargs.get("datatype")
-        self.related_user_id = request.query_params.get("related_user_id", None)
+        self.datatype = kwargs.get('datatype')
 
         if not self.datatype or self.datatype not in self._VIEWSET_MAPPING:
-            raise ValidationError("Invalid or missing datatype")
+            raise ValidationError('Tipo de dato no válido o no proporcionado')
 
     def list(self, request, *args, **kwargs):
-        """
+        '''
         Maneja las peticiones de la accion `list`.
-        """
+        '''
         return self._execute_viewset('list', request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
-        """
+        '''
         Maneja las peticiones de la accion `retrieve`.
-        """
+        '''
         return self._execute_viewset('retrieve', request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        """
+        '''
         Maneja las peticiones de la accion `create`.
-        """
+        '''
         return self._execute_viewset('create', request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
-        """
+        '''
         Maneja las peticiones de la accion `update`.
-        """
+        '''
         return self._execute_viewset('update', request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
-        """
+        '''
         Maneja las peticiones de la accion `destroy`.
-        """
+        '''
         return self._execute_viewset('destroy', request, *args, **kwargs)
 
     def _execute_viewset(self, action, request, *args, **kwargs):
-        """
+        '''
         Ejecuta el viewset correspondiente de manera dinámica a partir del `action` y el `datatype`.
-        """
+        '''
         try:
             viewset = self._get_viewset_for_action(action, request, kwargs)
 
@@ -77,19 +76,19 @@ class ManagementGatewayView(ModelViewSet):
 
         except AttributeError as e:
             # Imprimir el traceback completo en la consola
-            print("Traceback completo:")
+            print('Traceback completo:')
             traceback.print_exc()
 
             return Response(
-                {"error": f"Action {action} not implemented for {self.datatype} and caused {str(e)}"},
-                status=status.HTTP_501_NOT_IMPLEMENTED
+                {'error': f'Acción {action} no válida para ese tipo de dato provocó {str(e)}'},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
     def _get_viewset_for_action(self, action, request, kwargs):
-        """
+        '''
         Devuelve una vista generada dinámicamente para el ViewSet correspondiente
         basado en el `datatype` y la acción (list, create, etc.).
-        """
+        '''
         # Inicializar atributos (datatype y related_user_id)
         self._initialize_attrs(request, **kwargs)
 
@@ -99,13 +98,13 @@ class ManagementGatewayView(ModelViewSet):
 
         if not viewset_class:
             return Response(
-                {"error": "Invalid datatype"},
+                {'error': 'Tipo de dato no válido'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         if not action:
             return Response(
-                {"error": f"Unsupported action: {action}."},
+                {'error': f'Acción no soportada: {action}.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -114,7 +113,7 @@ class ManagementGatewayView(ModelViewSet):
         return viewset
 
     def _get_viewset_mapping(self):
-        """
+        '''
         Devuelve el mapeo de ViewSets para cada `datatype`.
-        """
+        '''
         return self._VIEWSET_MAPPING
