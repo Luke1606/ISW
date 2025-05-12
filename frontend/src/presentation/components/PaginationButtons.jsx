@@ -18,7 +18,7 @@ const PaginationButtons = ({paginationParams, optionalButtonClassName = ''}) => 
     }
 
     return (
-        <div className='button-group pagination-button-group'>
+        <div className='button-container pagination-button-container'>
             <button 
                 title='Anterior'
                 className={`${optionalButtonClassName} ${!loop && currentPage===0 && 'hidden'}`}

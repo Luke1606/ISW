@@ -4,7 +4,12 @@ import { ManagementService, NotificationService, useLoading } from '@/logic'
 const useForm = (datatype, idData, relatedUserId) => {
     const { loading, setLoading } = useLoading()
     const [ prevValues, setPrevValues ] = useState(null)
-    
+    const [isEdition, setIsEdition] = useState(Boolean(idData))
+
+    useEffect(() => {
+        setIsEdition(Boolean(idData))
+    }, [idData])
+
     const getPrevValues = useCallback(async (datatype, id, relatedUserId) => {
         if (!id) return null
         setLoading(true)
@@ -37,11 +42,6 @@ const useForm = (datatype, idData, relatedUserId) => {
     useEffect(() => {
         getPrevValues(datatype, idData, relatedUserId)
     }, [datatype, idData, relatedUserId, getPrevValues])
-    
-    const isEdition = idData? 
-                        true
-                        : 
-                        false
     
     return { loading, prevValues, isEdition }
 }

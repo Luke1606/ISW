@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Search, Plus, Edit, Trash2, FileText, Check, X } from 'lucide-react'
+import { Search, Plus, Edit, Trash2, FileText, Check, X, CheckCheck } from 'lucide-react'
 import { listHooks, useFormParams, useModal, useTranslateToSpanish } from '@/logic'
 import { Modal, PaginationButtons, Form, CheckeableListItem } from '@/presentation'
 import { datatypes } from '@/data'
@@ -9,14 +8,17 @@ const List = () => {
     const { datatype, relatedUserId } = useParams()
 
     const {
+        selectAll,
         setChanged,
         currentData,
         handleSearch,
         handleDelete,
         errorMessage,
+        selectedItems,
+        setSelectedItems,
         paginationParams
     } = listHooks.useListDataStates(datatype, relatedUserId)
-
+    
     const permissions = listHooks.usePermisions(datatype)
 
     const {
@@ -24,8 +26,6 @@ const List = () => {
         setSelectedItemId,
         handleOptionChange
     } = listHooks.useItemTouchControl(datatype)
-
-    const [ selectedItems, setSelectedItems ] = useState([])
 
     const deleteModalId = 'delete-modal'
 
@@ -85,13 +85,32 @@ const List = () => {
                     </button>}
 
                     { permissions?.del &&
-                        <button 
-                            title='Eliminar varios'
-                            className={`delete-button ${selectedItems.length <= 1 && 'hidden'}`}
-                            onClick={() => openModal(deleteModalId)}
-                            >
-                            <Trash2 size={40}/>
-                        </button>}
+                        <>
+                            <button
+                                title='Seleccionar todos de esta página'
+                                className='accept-button'
+                                onClick={() => selectAll()}
+                                >
+                                <Check size={40}/>
+                            </button>
+
+                            <button
+                                title='Seleccionar todos'
+                                className='accept-button'
+                                onClick={()=> selectAll(true)}
+                                >
+                                <CheckCheck size={40}/>
+                            </button>
+
+                            <button 
+                                title='Eliminar varios'
+                                className={`delete-button ${selectedItems.length <= 1 && 'hidden'}`}
+                                onClick={() => openModal(deleteModalId)}
+                                >
+                                <Trash2 size={40}/>
+                            </button>
+                        </>
+                        }
                 </div>
 
             {/* Lista de elementos */}
@@ -148,7 +167,10 @@ const List = () => {
                                         className={`button options-button list-button ${selectedItems.length > 1 && 'hidden'}`}
                                         title='Más opciones'
                                         defaultValue={'default'}
-                                        onChange={handleOptionChange}
+                                        onChange={(e) => {
+                                            handleOptionChange(e)
+                                            setChanged(true)
+                                        }}
                                         onClick={() => setSelectedItemId(item.id)}
                                         >
                                         <option 
@@ -178,7 +200,7 @@ const List = () => {
                 </h3>}
             </div>
 
-            <PaginationButtons paginationParams={paginationParams} />
+            <PaginationButtons paginationParams={paginationParams} optionalButtonClassName='list-pagination-button'/>
             
             {/* modal de confirmacion de eliminado */}
             <Modal isOpen={isOpen(deleteModalId)}>

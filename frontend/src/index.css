@@ -41,7 +41,7 @@ button, .button{
 
 button:hover, .button:hover {
     box-shadow: 0 0 15px 5px var(--primary-dark-tone);
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 /* modal */
@@ -153,7 +153,7 @@ button:hover, .button:hover {
 }
 
 /* pagination buttons */
-.pagination-button-group {
+.pagination-button-container {
     display: flex;
     height: 2rem;
     justify-content: space-between;
@@ -163,24 +163,24 @@ button:hover, .button:hover {
 }
 
 /* Botones de "Anterior" y "Siguiente" */
-.pagination-button-group button {
+.pagination-button-container button {
     background: var(--primary-gradient);
     padding: 0.6rem 1.5rem;
 }
 
-.pagination-button-group button:hover {
+.pagination-button-container button:hover {
     background-color: #555; 
     border-color: #777;
 }
 
-.pagination-button-group button:disabled {
+.pagination-button-container button:disabled {
     background-color: #222;
     color: #666;
     cursor: not-allowed;
     border-color: #444;
 }
 
-.pagination-button-group select { /* Select estilizado como botón */
+.pagination-button-container select { /* Select estilizado como botón */
     -webkit-appearance: none; /* Elimina estilos nativos */
     -moz-appearance: none;
     appearance: none;
@@ -194,24 +194,24 @@ button:hover, .button:hover {
     text-align: center;
     text-transform: uppercase;
     transition: all 0.3s ease;
-    width: auto;
+    width: 15rem;
 }
 
-.pagination-button-group select:after {
+.pagination-button-container select:after {
     content: ''; /* Elimina flecha predeterminada del select */
 }
 
-.pagination-button-group select:hover {
+.pagination-button-container select:hover {
     background: var(--primary-transparent-gradient);
     border-color: #595959;
 }
 
-.pagination-button-group select:disabled {
+.pagination-button-container select:disabled {
     color: #666;
     cursor: not-allowed;
 }
 
-.pagination-button-group select option {
+.pagination-button-container select option {
     background: var(--primary-gradient);
     color: white;
     font-size: 1rem;
@@ -1130,7 +1130,8 @@ button:hover, .button:hover {
 
 .manage-section {
     margin: 0;
-    max-width: 35rem;
+    min-width: 26rem;
+    max-width: 40rem;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -1145,7 +1146,7 @@ button:hover, .button:hover {
 }
 
 .preview-image {
-    max-width: 500px;
+    max-width: 450px;
     max-height: 250px;
     object-fit: cover;
     border-radius: 5px;
@@ -1161,7 +1162,12 @@ button:hover, .button:hover {
     font-size: larger;
 }
 
-.form-radio-group {
+.preview-button-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.form-radio-container {
     display: flex;
     flex-direction: row;
     justify-content: center;

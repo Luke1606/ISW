@@ -17,8 +17,8 @@ const Form = ({ reloadFunction }) => {
     const { manageFormParams, closeManageForm } = useFormParams()
 
     const closeForm = () => {
-        closeManageForm()
         reloadFunction(true)
+        closeManageForm()
     }
 
     const datatype = manageFormParams?.datatype
@@ -46,7 +46,7 @@ const Form = ({ reloadFunction }) => {
                     /> 
                 : 
                 <EvidenceForm 
-                    idEdition={isEdition} 
+                    isEdition={isEdition}
                     closeFunc={closeForm}
                     studentId={relatedUserId}
                     prevValues={prevValues} 
@@ -72,10 +72,10 @@ const Form = ({ reloadFunction }) => {
                         values={prevValues}/>
                     :
                     <DefenseTribunalForm 
+                        isEdition={isEdition}
                         datatype={datatype}
                         closeFunc={closeForm}
                         prevValues={prevValues}
-                        isEdition={isEdition}
                         />
             }
             break
@@ -87,10 +87,10 @@ const Form = ({ reloadFunction }) => {
                     />
                 :
                 <DefenseActForm 
+                    isEdition={isEdition} 
                     closeFunc={closeForm} 
                     studentId={relatedUserId}
                     prevValues={prevValues} 
-                    isEdition={isEdition} 
                     />
             break
         case datatypes.user.professor:
@@ -102,10 +102,10 @@ const Form = ({ reloadFunction }) => {
                     />
                 :
                 <UserForm 
-                    isStudent={datatype===datatypes.user.student} 
-                    closeFunc={closeForm} 
-                    prevValues={prevValues} 
                     isEdition={isEdition} 
+                    closeFunc={closeForm} 
+                    isStudent={datatype===datatypes.user.student} 
+                    prevValues={prevValues} 
                     />
             break
         default:

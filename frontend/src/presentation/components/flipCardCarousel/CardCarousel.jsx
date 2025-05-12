@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import FlipCard from './FlipCard'
 import { PaginationButtons } from '../'
@@ -82,16 +82,16 @@ const CardCarousel = ({ elements }) => {
 
 	return (
 		<div 
-			className="card-carousel"
+			className='card-carousel'
 			onMouseEnter={() => setIsHovering(true)}
 			onMouseLeave={() => setIsHovering(false)}
 			>
-			<div className="carousel-container">
-				<div className="carousel-slide">
+			<div className='carousel-container'>
+				<div className='carousel-slide'>
 					<FlipCard cardProps={cardProps}/>
 				</div>
 
-				<PaginationButtons paginationParams={paginationParams} optionalButtonClassName="carousel-button"/>
+				<PaginationButtons paginationParams={paginationParams} optionalButtonClassName='carousel-button'/>
 			</div>
 		</div>
 	)

@@ -9,7 +9,13 @@ const useListDataStates = (datatype, relatedUserId) => {
     const [ data, setData ] = useState({})
     const [ currentPage, setCurrentPage ] = useState(0)
     const [ currentData, setCurrentData ] = useState([])
-    const [ totalPages, setTotalPages ] = useState(0)
+    const [ totalPages, setTotalPages ] = useState(0)    
+    
+    const [ selectedItems, setSelectedItems ] = useState([])
+    
+    useEffect(() => {
+
+    }, [])
     
     const getData = useCallback(async (searchTerm='') => {
         setLoading(true)
@@ -18,13 +24,13 @@ const useListDataStates = (datatype, relatedUserId) => {
 
         try {
             const response = await ManagementService.getAllData(datatype, searchTerm, relatedUserId)
-            console.log(response);
+            
             if (response?.success) {
                 const data = response?.data || {}
-                setCurrentPage(0)
                 setData(data?.data)
                 setTotalPages(data?.total_pages || 0)
-                setCurrentData(data?.data && Object.keys(data?.data).length > 0? data?.data[0] : [])
+                setCurrentPage(currentPage <= data?.total_pages? currentPage : 0)
+                setCurrentData(Object.keys(data?.data || []).length > 0? data?.data[0] : [])
                 success = true
             } else {
                 message = response.message
@@ -41,15 +47,18 @@ const useListDataStates = (datatype, relatedUserId) => {
             }
             setLoading(false)
         }
-    }, [datatype, relatedUserId, setLoading])
+    }, [datatype, relatedUserId, setLoading, currentPage])
 
     useEffect(() => {
-        if (changed)
+        if (changed) {
+            setSelectedItems([])
             getData()
+            setChanged(false)
+        }
     }, [getData, datatype, relatedUserId, changed])
 
     useEffect(() => {
-        if (Object.keys(data).length > currentPage)
+        if (Object.keys(data || []).length > currentPage)
             setCurrentData(data[currentPage])
         else {
             setCurrentPage(0)
@@ -63,17 +72,45 @@ const useListDataStates = (datatype, relatedUserId) => {
     }
 
     // logica de eliminacion
-    const handleDelete = async (datatype, ids=[], relatedUserId) => {
+    const handleDelete = useCallback(async (datatype, ids=[], relatedUserId) => {
+        setLoading(true)
+        let message = ''
+        let success = false
         try {
             if (ids) {
-                await ManagementService.deleteData(datatype, ids, relatedUserId)
-                getData()
+                const response = await ManagementService.deleteData(datatype, ids, relatedUserId)
+                
+                if (response?.success) {
+                    setChanged(true)
+                    success = true
+                } else {
+                    message = response?.message
+                }
             } else {
-                console.warn('Se intento eliminar sin proporcionar elementos')
+                message = 'Se intento eliminar sin proporcionar elementos'
             }
         } catch (error) {
-            console.error(error)
+            message = error?.message
+        } finally {
+            if (!success) {
+                const notification = {
+                    title: 'Error',
+                    message: message
+                }
+                NotificationService.showToast(notification, 'error')
+            }
+            setLoading(false)
         }
+    }, [setLoading])
+    
+    // logica de seleccionar todos
+    const selectAll = (all=false) => {
+        const items = all? Object.values(data).flat() : currentData
+        const ids = items.map(item => item.id)
+        const allSelected = selectedItems.length === ids.length && 
+                            selectedItems.every(id => ids.includes(id))
+
+        setSelectedItems(allSelected? [] : ids)
     }
 
     const paginationParams = {
@@ -85,10 +122,13 @@ const useListDataStates = (datatype, relatedUserId) => {
     }
 
     return {
+        selectAll,
         setChanged,
         currentData,
         handleSearch,
         handleDelete,
+        selectedItems,
+        setSelectedItems,
         paginationParams,
     }
 }
@@ -136,7 +176,8 @@ const useItemTouchControl = (datatype) => {
         if (datatype === datatypes.user.student) {
             options.push({
                 action: () => navigate(`/list/${datatypes.evidence}/${selectedItemId}`),
-                label: 'Listar Evidencias'
+                label: 'Listar Evidencias',
+                value: 'evidence-list'
             })
             if (selectedItemId) {
                 const pendingRequests = await hasPendingRequests(selectedItemId) || false

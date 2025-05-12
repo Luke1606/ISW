@@ -2,18 +2,18 @@ import PropTypes from 'prop-types'
 import { useMemo } from 'react'
 import * as Yup from 'yup'
 import { datatypes } from '@/data'
-import { useGenericForm } from '@/logic'
+import { useGenericForm, ManagementService } from '@/logic'
 import { FormButtons } from '@/presentation'
 
 /**
  * @description Ventana para agregar o editar un solicitud.
- * @param {string} `modalId` - Id del modal en el que se renderiza este componente.
- * @param {function} `closeModal`- Función para cerrar el modal en el que se renderiza este componente.
+ * @param {bool} `isEdition`- Binario que expresa si es un formulario de edición o no.
+ * @param {function} `closeFunc`- Función para cerrar el formulario.
+ * @param {string} `studentId` - Id del estudiante al cual está asociada el acta de defensa.
  * @param {Object} `prevValues`- Contiene toda la información de la solicitud a mostrar.
- * @param {function} `handleSubmit`- Función a ejecutar al envío del formulario.
  * @returns Estructura de los campos a mostrar con la información de la solicitud contenida en prevValues.
  */
-const RequestForm = ({ modalId, closeModal, prevValues, handleSubmit }) => {
+const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
     const initialValues = {
         selectedECE: prevValues?.selected_ece || '',
     }
@@ -35,9 +35,27 @@ const RequestForm = ({ modalId, closeModal, prevValues, handleSubmit }) => {
             student: prevValues?.student,
             selectedECE: values?.selectedECE,
         }
-        await handleSubmit(datatypes.request, prevValues?.student, newValues)
-        closeModal(modalId)
+        let success = false
+        let message = ''
+
+        if (isEdition) {
+            const response = await ManagementService.updateData(datatypes.request, prevValues.id, newValues)
+            success = response?.success
+            message = response?.message
+        } else {
+            const response = await ManagementService.createData(datatypes.request, newValues)
+            success = response?.success
+            message = response?.message
+        }
+
+        closeFunc()
+
+        return {
+            success,
+            message,
+        }
     }
+
     const formik = useGenericForm(
         submitFunction,
         initialValues,
@@ -64,7 +82,7 @@ const RequestForm = ({ modalId, closeModal, prevValues, handleSubmit }) => {
             </label>
             
             <select
-                className='form-select'
+                className='form-input'
                 id='ece-select'
                 {...formik.getFieldProps('selectedECE')}
             >
@@ -93,20 +111,19 @@ const RequestForm = ({ modalId, closeModal, prevValues, handleSubmit }) => {
                 {formik.errors.selectedECE}
             </span>
 
-            <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>
+            <FormButtons closeFunc={closeFunc} isValid={formik.isValid}/>
         </form>
     )
 }
 
 RequestForm.propTypes = {
-    modalId: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    isEdition: PropTypes.bool.isRequired,
+    closeFunc: PropTypes.func.isRequired,
     prevValues: PropTypes.shape({
         id: PropTypes.string.isRequired,
         student: PropTypes.string.isRequired,
         selected_ece: PropTypes.string.isRequired,
     }),
-    handleSubmit: PropTypes.func.isRequired,
 }
 
 export default RequestForm

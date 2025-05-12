@@ -3,7 +3,7 @@ import { FilePreviewer } from '@/presentation'
 
 const ReadOnlyEvidenceForm = ({ closeFunc, values }) => {
     if (!values) return null
-
+    console.log(values);
     return (
         <section
             className='form-container' 
@@ -104,7 +104,7 @@ ReadOnlyEvidenceForm.propTypes = {
         name: PropTypes.string.isRequired,
         description: PropTypes.string,
         attachment_type: PropTypes.string.isRequired,
-        attachment_url: PropTypes.instanceOf(URL).isRequired,
+        attachment_url: PropTypes.string.isRequired,
         attachment_file: PropTypes.instanceOf(File).isRequired,
     }),
 }

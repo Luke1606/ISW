@@ -90,7 +90,7 @@ const Header = () => {
                                     </h2>
 
                                     <h2>
-                                        {spanishRole}
+                                        Cargo: {spanishRole}
                                     </h2>
                                 </figure>
 
