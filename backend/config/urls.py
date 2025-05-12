@@ -3,6 +3,8 @@ URL configuration for backend project.
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from users.views import CookieTokenObtainPairView, CookieTokenRefreshView, CookieTokenBlacklistView, SessionInfoView
 from core.gateway_view import ManagementGatewayView
 from rest_framework.routers import DefaultRouter
@@ -25,9 +27,11 @@ urlpatterns = [
         'get': 'list', 'post': 'create'
     }), name='gateway'),
     path('management/<str:datatype>/<uuid:pk>/', ManagementGatewayView.as_view({
-        'get': 'retrieve', 'patch': 'update', 'delete': 'destroy'
+        'get': 'retrieve', 'put': 'update', 'delete': 'destroy'
     }), name='gateway-specific'),
 
     # Notificaciones
     path('', include(router.urls))
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
