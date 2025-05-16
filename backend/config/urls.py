@@ -2,12 +2,12 @@
 URL configuration for backend project.
 """
 from django.contrib import admin
+from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from users import urls
+
 from core.gateway_view import ManagementGatewayView
-from rest_framework.routers import DefaultRouter
 from notifications.views import NotificationViewSet
 
 router = DefaultRouter()
@@ -17,7 +17,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Endpoints de autenticación y gestión de sesiones
-    path('users/', include('users.urls')),
+    path('users/token/', include('users.urls')),
 
     # Gateway de gestión de datos
     path('management/<str:datatype>/', ManagementGatewayView.as_view({
@@ -28,7 +28,11 @@ urlpatterns = [
     }), name='gateway-specific'),
 
     # Notificaciones
-    path('', include(router.urls))
+    path('', include(router.urls)),
+
+    # path('pending-request/<uuid:pk>', , name='pending-request'),
+    # path('unconfigured-tribunal/<uuid:pk>', , name='unconfigured-tribunal'),
+    # path('pending-tribunal/<uuid:pk>', , name='pending-tribunal'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

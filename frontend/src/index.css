@@ -246,6 +246,7 @@ button:hover, .button:hover {
 
 .carousel-button {
     background: transparent !important;
+    margin-top: 1rem;
     border: none;
 }
 

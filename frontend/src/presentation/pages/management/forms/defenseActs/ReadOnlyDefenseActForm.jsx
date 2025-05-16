@@ -102,7 +102,7 @@ ReadOnlyDefenseActForm.propTypes = {
         name: PropTypes.string.isRequired,
         description: PropTypes.string,
         attachment: PropTypes.instanceOf(File).isRequired,
-    }),
+    }).isRequired,
 }
 
 export default ReadOnlyDefenseActForm

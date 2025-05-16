@@ -27,10 +27,10 @@ class Request(BaseModel):
         """
         Tipos de ECE seleccionables para la solicitud.
         """
-        TD = 'Tesis', 'Trabajo de diploma'
-        PF = 'Portafolio', 'Portafolio'
-        AA = 'Art Cient', 'Defensa de Artículos Científicos'
-        EX = 'Exhimición', 'Exhimición'
+        TD = 'TD', 'Trabajo de diploma'
+        PF = 'PF', 'Portafolio'
+        AA = 'AA', 'Defensa de Artículos Científicos'
+        EX = 'EX', 'Exhimición'
 
     selected_ece = models.CharField(
         max_length=20,
@@ -43,9 +43,9 @@ class Request(BaseModel):
         """
         Estados posibles para la solicitud.
         """
-        A = 'Approved', 'Aprobada'
-        D = 'Disapproved', 'Desaprobada'
-        P = 'Pending', 'Pendiente'
+        A = 'A', 'Aprobada'
+        D = 'D', 'Desaprobada'
+        P = 'P', 'Pendiente'
 
     state = models.CharField(
         max_length=20,

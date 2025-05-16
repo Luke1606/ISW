@@ -26,15 +26,14 @@ class BaseModelViewSet(ModelViewSet):
         # Obtener el queryset inicial
         queryset = super().get_queryset()
 
-        # Usar el método auxiliar para obtener el 'search_term' y filtrar el queryset a partir de este
-        queryset = queryset.model.objects.search(self._get_search_term())
-
         related_user_id = self._get_related_user_id()
 
-        print(related_user_id, queryset)
         if related_user_id and not (self.request.user.user_role == Datatypes.User.professor):
             queryset = queryset.filter(student=related_user_id)
-            print(related_user_id, queryset)
+
+        # Usar el método auxiliar para obtener el 'search_term' y filtrar el queryset a partir de este
+        search_term = self._get_search_term() or ''
+        queryset = queryset.model.objects.search(search_term)
 
         return queryset
 

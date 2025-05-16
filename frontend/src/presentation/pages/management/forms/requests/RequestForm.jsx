@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import * as Yup from 'yup'
 import { datatypes } from '@/data'
 import { useGenericForm, ManagementService } from '@/logic'
-import { FormButtons } from '@/presentation'
+import { FormButtons, SearchableSelect } from '@/presentation'
 
 /**
  * @description Ventana para agregar o editar un solicitud.
@@ -14,27 +14,40 @@ import { FormButtons } from '@/presentation'
  * @returns Estructura de los campos a mostrar con la información de la solicitud contenida en prevValues.
  */
 const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
-    const initialValues = {
+    const initialValues = isEdition?
+    {
         selectedECE: prevValues?.selected_ece || '',
     }
+    :
+    {
+        state: prevValues?.state || '',
+    }
 
-    const validationSchema = useMemo(() => Yup.object().shape({
-        studentName: Yup.string()
-            .required('El nombre del estudiante es obligatorio')
-            .min(3, 'El nombre debe tener al menos 3 caracteres'),
-        
-        selectedECE: Yup.string()
-            .required('Debe seleccionar un ejercicio'),
-            
-        additionalInfo: Yup.string()
-            .max(500, 'La información adicional no puede exceder los 500 caracteres')
-    }), [])
+    const validationSchema = useMemo(() => {
+        isEdition?
+            Yup.object().shape({
+                selectedECE: Yup.string()
+                    .required('Debe seleccionar un ejercicio')
+            })
+            :
+            Yup.object().shape({
+                state: Yup.string()
+                    .required('Debe seleccionar un veredicto')
+            })
+    }, [isEdition])
 
     const submitFunction = async (values) => {
-        const newValues = {
+        const newValues = isEdition?
+        {
             student: prevValues?.student,
-            selectedECE: values?.selectedECE,
+            state: values?.state,
         }
+        :
+        {
+            student: prevValues?.student,
+            selected_ece: values?.selectedECE,
+        }
+
         let success = false
         let message = ''
 
@@ -61,7 +74,7 @@ const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
         initialValues,
         validationSchema
     )
-
+    
     const exerciseOptions = [
         { value: 'TD', label: 'Trabajo de diploma'},
         { value: 'PF', label: 'Portafolio'},
@@ -73,45 +86,112 @@ const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
         <form
             className='form-container manage-section'
             onSubmit={formik.handleSubmit}
-        >
-            <label 
-                className='form-label'
-                htmlFor='ece-select'
-                >
-                Seleccione el ejercicio deseado:
-            </label>
-            
-            <select
-                className='form-input'
-                id='ece-select'
-                {...formik.getFieldProps('selectedECE')}
             >
-                <option 
-                    value='' 
-                    disabled
-                    >
-                    -- Escoja una categoría --
-                </option>
-                
-                {exerciseOptions.map((option) => (
-                    <option 
-                        key={option.value} 
-                        value={option.value}
-                        className='option-element'
+            { (isEdition && !prevValues?.selected_ece)?
+                <>
+                    <h2
+                        className='form-subtitle'
                         >
-                        {option.label}
-                    </option>
-                ))}
-            </select>
-            
-            <span
-                className='error'
-                style={formik.errors.selectedECE && formik.touched.selectedECE ? {} : { visibility: 'hidden' }}
-                >
-                {formik.errors.selectedECE}
-            </span>
+                        No se pudo obtener la información de la solicitud
+                    </h2>
+                    <button 
+                        className='accept-button'
+                        onClick={closeFunc}
+                        >
+                        Aceptar
+                    </button>
+                </>
+                :
+                <>
+                    { isEdition?
+                        <>
+                            <label 
+                                className='form-label'
+                                htmlFor='selected-ece'
+                                >
+                                Ejercicio seleccionado:
+                            </label>
 
-            <FormButtons closeFunc={closeFunc} isValid={formik.isValid}/>
+                            <input 
+                                className='form-input'
+                                type='text' 
+                                id='selected-ece' 
+                                value={exerciseOptions.find((exercise) => exercise.value === prevValues?.selected_ece).label}
+                                readOnly
+                                />
+
+                            <label 
+                                className='form-label'
+                                htmlFor='state'
+                                >
+                                Qué veredicto desea tomar en cuanto a la solicitud?
+                            </label>
+
+                            <div 
+                                className='form-radio-container'
+                                id='state'
+                                >
+                                <label 
+                                    className='form-radio-option'
+                                    >
+                                    <input
+                                        className='form-input'
+                                        type='radio'
+                                        name='state'
+                                        value='A'
+                                        checked={formik.values.state === 'A'}
+                                        onChange={(e) => formik.setFieldValue('state', e.target.value)}
+                                        />
+                                    Aprobar
+                                </label>
+                                
+                                <label 
+                                    className='form-radio-option'
+                                    >
+                                    <input
+                                        className='form-input'
+                                        type='radio'
+                                        name='state'
+                                        value='D'
+                                        checked={formik.values.state === 'D'}
+                                        onChange={(e) => formik.setFieldValue('state', e.target.value)}
+                                        />
+                                    Denegar
+                                </label>
+                            </div>
+                            
+                            <span
+                                className={`error ${formik.errors.state && formik.touched.state && 'hidden' }`}
+                                >
+                                {formik.errors.selectedECE}
+                            </span>
+                        </>
+                        :
+                        <>
+                            <label 
+                                className='form-label'
+                                htmlFor='ece-select'
+                                >
+                                Seleccione el ejercicio deseado:
+                            </label>
+                            
+                            <SearchableSelect 
+                                id='president'
+                                title='Profesor a ocupar el cargo de presidente'
+                                elements={exerciseOptions.filter((option) => !exerciseOptions.includes(option))}
+                                defaultValue={exerciseOptions.find(option => option.value === prevValues?.selected_ece) || {}}
+                                onChange={(value) => formik.setFieldValue('selectedECE', value)}
+                                />
+                            
+                            <span
+                                className={`error ${formik.errors.selectedECE && formik.touched.selectedECE && 'hidden' }`}
+                                >
+                                {formik.errors.selectedECE}
+                            </span>
+                        </>}
+
+                    <FormButtons closeFunc={closeFunc} isValid={formik.isValid}/>
+                </>}
         </form>
     )
 }
@@ -120,10 +200,11 @@ RequestForm.propTypes = {
     isEdition: PropTypes.bool.isRequired,
     closeFunc: PropTypes.func.isRequired,
     prevValues: PropTypes.shape({
-        id: PropTypes.string.isRequired,
+        id: PropTypes.string,
         student: PropTypes.string.isRequired,
-        selected_ece: PropTypes.string.isRequired,
-    }),
+        selected_ece: PropTypes.string,
+        state: PropTypes.string,
+    }).isRequired,
 }
 
 export default RequestForm

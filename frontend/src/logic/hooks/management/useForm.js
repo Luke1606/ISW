@@ -1,17 +1,23 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ManagementService, NotificationService, useLoading } from '@/logic'
+import { ManagementService, NotificationService, useAuth, useLoading } from '@/logic'
+import { datatypes } from '@/data'
 
 const useForm = (datatype, idData, relatedUserId) => {
     const { loading, setLoading } = useLoading()
     const [ prevValues, setPrevValues ] = useState(null)
-    const [isEdition, setIsEdition] = useState(Boolean(idData))
+    const [ isEdition, setIsEdition ] = useState(Boolean(idData))
+    const { user } = useAuth()
 
     useEffect(() => {
-        setIsEdition(Boolean(idData))
-    }, [idData])
+        if (datatype === datatypes.request)
+            setIsEdition(user.user_role !== datatypes.user.student)
+        else 
+            setIsEdition(Boolean(idData))
+    }, [idData, datatype, user])
 
-    const getPrevValues = useCallback(async (datatype, id, relatedUserId) => {
-        if (!id) return null
+    const initializePrevValues = useCallback(async (datatype, id, relatedUserId) => {
+        if (datatype !== datatypes.request && !id) return null
+        else if (datatype === datatypes.request) setPrevValues({ student: user.id })
         setLoading(true)
         let message = ''
         let success = false
@@ -40,8 +46,8 @@ const useForm = (datatype, idData, relatedUserId) => {
     }, [setLoading])
 
     useEffect(() => {
-        getPrevValues(datatype, idData, relatedUserId)
-    }, [datatype, idData, relatedUserId, getPrevValues])
+        initializePrevValues(datatype, idData, relatedUserId)
+    }, [datatype, idData, relatedUserId, initializePrevValues])
     
     return { loading, prevValues, isEdition }
 }

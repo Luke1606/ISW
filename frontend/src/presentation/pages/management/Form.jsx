@@ -57,7 +57,6 @@ const Form = ({ reloadFunction }) => {
 
             specificForm = <RequestForm
                                 closeFunc={closeForm}
-                                studentId={relatedUserId}
                                 prevValues={prevValues}
                                 isEdition={isEdition}
                                 />
@@ -72,7 +71,7 @@ const Form = ({ reloadFunction }) => {
                         values={prevValues}/>
                     :
                     <DefenseTribunalForm 
-                        isEdition={isEdition}
+                        isEdition={isssssEdition}
                         datatype={datatype}
                         closeFunc={closeForm}
                         prevValues={prevValues}

@@ -13,10 +13,6 @@ const useListDataStates = (datatype, relatedUserId) => {
     
     const [ selectedItems, setSelectedItems ] = useState([])
     
-    useEffect(() => {
-
-    }, [])
-    
     const getData = useCallback(async (searchTerm='') => {
         setLoading(true)
         let message = ''
@@ -145,31 +141,28 @@ const useItemTouchControl = (datatype) => {
 
         const hasPendingRequests = async (studentId) => {
             try {   
-                if(await ManagementService.getData('solicitud_pendiente', studentId))
-                    return true
-                return false
+                return await ManagementService.hasPendingRequests(studentId)
             } catch (error) {
                 console.error(error)
+                return false
             }
         }
         
         const hasUnconfiguredDefenseTribunal = async (studentId) => {
             try {
-                if(await ManagementService.getData('defensa_tribunal_sin_configurar', studentId))
-                    return true
-                return false
+                return await ManagementService.hasUnconfiguredDefenseTribunal(studentId)
             } catch (error) {
                 console.error(error)
+                return false
             }
         }
         
         const hasPendingTribunal = async (studentId) => {
             try {
-                if(await ManagementService.getData('tribunal_pendiente', studentId))
-                    return true
-                return false   
+                return await ManagementService.hasPendingTribunal(studentId)
             } catch (error) {
                 console.error(error)
+                return false
             }
         }
 
@@ -182,7 +175,7 @@ const useItemTouchControl = (datatype) => {
             if (selectedItemId) {
                 const pendingRequests = await hasPendingRequests(selectedItemId) || false
 
-                if (user?.user_role === datatypes.user.dptoInf /* && pendingRequests */)
+                if (user?.user_role === datatypes.user.dptoInf && pendingRequests)
                     options.push({ 
                         action: () => openManageForm(datatypes.request, { idData: selectedItemId}),
                         label: 'Aprobar solicitud', 
@@ -191,14 +184,14 @@ const useItemTouchControl = (datatype) => {
         
                 const unconfiguredDefenseTribunal = await hasUnconfiguredDefenseTribunal(selectedItemId) || true
 
-                if (user?.user_role === datatypes.user.dptoInf /* && unconfiguredDefenseTribunal */)
+                if (user?.user_role === datatypes.user.dptoInf && unconfiguredDefenseTribunal)
                     options.push({ 
                         action: () => openManageForm(datatypes.defense_tribunal, { idData: selectedItemId}), 
                         label: 'Configurar defensa y tribunal',
                         value: 'config-tribunal'
                     })
         
-                if (user?.user_role !== datatypes.user.dptoInf /* && !unconfiguredDefenseTribunal */)
+                if (user?.user_role !== datatypes.user.dptoInf && !unconfiguredDefenseTribunal)
                     options.push({ 
                         action: () => openManageForm(datatypes.defense_tribunal, { idData: selectedItemId, view: true}), 
                         label: 'Ver datos de defensa y tribunal',
@@ -206,7 +199,7 @@ const useItemTouchControl = (datatype) => {
                     })
         
                 const pendingTribunal = await hasPendingTribunal(selectedItemId) || false
-                if (user?.user_role === datatypes.user.decan /* && pendingTribunal */) 
+                if (user?.user_role === datatypes.user.decan && pendingTribunal) 
                     options.push({ 
                         action: () => openManageForm(datatypes.tribunal, { idData: selectedItemId }), 
                         label: 'Aprobar tribunal',
