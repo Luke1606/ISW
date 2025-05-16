@@ -41,7 +41,7 @@ const Home = () => {
 			openModal(modalId)
 	}
     
-    const welcomeMessage = `Bienvenido ${user? user.name : 'al Sistema de Gestión de Ejercicios de Culminación de Estudios'}`
+    const welcomeMessage = `Bienvenido(a) ${user? user.name : 'al Sistema de Gestión de Ejercicios de Culminación de Estudios'}`
     const startButtonMessage = user? 'Comenzar' : 'Acceder'
     
     return (
