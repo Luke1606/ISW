@@ -2,7 +2,7 @@ import PropTypes from "prop-types"
 import * as Yup from 'yup'
 import { useMemo } from 'react'
 import { datatypes } from "@/data"
-import { useGenericForm } from '@/logic'
+import { useGenericForm, ManagementService } from '@/logic'
 import { FormButtons, SearchableSelect } from '@/presentation'
 
 /**
@@ -23,7 +23,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
         }
     else 
         specificInitialValues = {
-            role: prevValues?.user?.user_role || '',
+            role: prevValues?.id?.user_role || '',
         }
 
     let specificSchema
@@ -53,8 +53,8 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
 
     const initialValues = {
         ...specificInitialValues,
-        name: prevValues?.user?.name || '',
-        username: prevValues?.user?.username || '',
+        name: prevValues?.id?.name || '',
+        username: prevValues?.id?.username || '',
     }
 
     const validationSchema = useMemo(() => Yup.object().shape({
@@ -71,16 +71,43 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
     }), [specificSchema])
 
     const submitFunction = async (values) => {
-        const newValues = {
-            user: {
-                name: values?.name,
-                username: values?.username,
-            },
-            faculty: values?.faculty,
-            group: values?.group,
+        const user = {
+            name: values?.name,
+            username: values?.username,
         }
-        await handleSubmit(isStudent? datatypes.user.student : datatypes.user.professor, prevValues?.user?.id, newValues)
+
+        const newValues = isStudent?
+            {
+                ...user,
+                faculty: values?.faculty,
+                group: values?.group,
+            }
+            :
+            {
+                ...user,
+                user_role: values.role
+            }
+
+        let success = false
+        let message
+        console.log(newValues);
+        const datatype = isStudent? datatypes.user.student : datatypes.user.professor
+        if (isEdition) {
+            const response = await ManagementService.updateData(datatype, prevValues.id, newValues)
+            success = response?.success
+            message = response?.message
+        } else {
+            const response = await ManagementService.createData(datatype, newValues)
+            success = response?.success
+            message = response?.message
+        }
+
         closeFunc()
+
+        return {
+            success,
+            message,
+        }
     }
 
     const formik = useGenericForm(submitFunction, initialValues, validationSchema)
@@ -177,6 +204,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                         title='Facultad del estudiante'
                         elements={facultyOptions}
                         defaultValue={facultyOptions.find(faculty => faculty.value === prevValues?.faculty) || {}}
+                        onChange={(value) => formik.setFieldValue('faculty', value)}
                         />
 
                     <span
@@ -222,7 +250,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                         id='role-select' 
                         title='Cargo de docente'
                         elements={docentRoleOptions}
-                        defaultValue={docentRoleOptions.find(role => role.value === prevValues?.user?.user_role) || {}}
+                        defaultValue={docentRoleOptions.find(role => role.value === prevValues?.id?.user_role) || {}}
                         />
 
                     <span
@@ -243,7 +271,7 @@ UserForm.propTypes = {
     isEdition: PropTypes.bool.isRequired,
     closeFunc: PropTypes.func.isRequired,
     prevValues: PropTypes.shape({
-        user: PropTypes.shape({
+        id: PropTypes.shape({
             id: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,
             username: PropTypes.string.isRequired,

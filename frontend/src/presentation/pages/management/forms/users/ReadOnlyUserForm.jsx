@@ -3,15 +3,15 @@ import { datatypes } from '@/data'
 
 /**
  * @description Ventana para mostrar detalles de un usuario ya sea estudiante o profesor.
- * @param {string} `modalId`- Id del modal en el que se renderiza este componente.
- * @param {function} `closeModal`- Función para cerrar el modal en el que se renderiza este componente.
+ * @param {function} `closeFunc- Función para cerrar el componente.
  * @param {Object} `values`- Contiene toda la información del usuario a mostrar.
  * @returns Estructura de los campos a mostrar con la información del usuario contenida en `values`.
  */
-const ReadOnlyUserForm = ({modalId, closeModal, values}) => {
+const ReadOnlyUserForm = ({ closeFunc, values }) => {
     if (!values) return null
 
-    const isStudent = values.user.user_role === datatypes.user.student
+    const isStudent = values.id.user_role === datatypes.user.student
+
     return (
         <section
             className='form-container manage-section' 
@@ -33,7 +33,7 @@ const ReadOnlyUserForm = ({modalId, closeModal, values}) => {
                 className='form-input' 
                 id='name' 
                 type='text'  
-                value={values.user.name} 
+                value={values.id.name} 
                 readOnly
                 />
 
@@ -48,10 +48,10 @@ const ReadOnlyUserForm = ({modalId, closeModal, values}) => {
                 className='form-input' 
                 id='username' 
                 type='text'  
-                value={values.user.username} 
+                value={values.id.username} 
                 readOnly
                 />
-            
+
             { isStudent?
                 <>
                     <label 
@@ -95,13 +95,13 @@ const ReadOnlyUserForm = ({modalId, closeModal, values}) => {
                         className='form-input' 
                         type='text' 
                         id='cargo' 
-                        value={values.user.user_role} 
+                        value={values.id.user_role} 
                         readOnly/>
                 </>}
 
                 <button 
                     className='accept-button'
-                    onClick={() => closeModal(modalId)}
+                    onClick={closeFunc}
                     >
                     Aceptar
                 </button>
@@ -110,10 +110,9 @@ const ReadOnlyUserForm = ({modalId, closeModal, values}) => {
 }
 
 ReadOnlyUserForm.propTypes = {
-    modalId: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    closeFunc: PropTypes.func.isRequired,
     values: PropTypes.shape({
-        user: PropTypes.shape({
+        id: PropTypes.shape({
             name: PropTypes.string.isRequired,
             username: PropTypes.string.isRequired,
             user_role: PropTypes.string.isRequired,

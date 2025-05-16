@@ -216,7 +216,7 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
                     </label>
 
                     <div 
-                        className='form-radio-group'
+                        className='form-radio-container'
                         id='attachment-type'
                         >
                         <label 
