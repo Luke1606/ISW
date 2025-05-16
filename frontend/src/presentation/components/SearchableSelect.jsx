@@ -1,14 +1,18 @@
-import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useState } from 'react'
 import Select from 'react-select'
 
-const SearchableSelect = ({ id, title, elements, defaultValue = { value: '', label: 'Seleccione una opción '} }) => {
+const SearchableSelect = ({ id, title, elements, defaultValue = { value: '', label: 'Seleccione una opción '}, onChange }) => {
     const [ selectedOption, setSelectedOption ] = useState(defaultValue)
     const [ remainingElements, setRemainingElements ] = useState(elements)
 
     const handleElementChange = (selected) => {
         setSelectedOption(selected)
         setRemainingElements(elements.filter((element) => element.value !== selected.value))
+
+        if (onChange) {
+            onChange(selected.value)
+        }
     }
     
     return (
@@ -37,7 +41,8 @@ SearchableSelect.propTypes = {
     defaultValue: PropTypes.shape({
         value: PropTypes.string,
         label: PropTypes.string,
-    })
+    }),
+    onChange: PropTypes.func,
 }
 
 export default SearchableSelect
