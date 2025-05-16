@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from users.views import CookieTokenObtainPairView, CookieTokenRefreshView, CookieTokenBlacklistView, SessionInfoView
+from users import urls
 from core.gateway_view import ManagementGatewayView
 from rest_framework.routers import DefaultRouter
 from notifications.views import NotificationViewSet
@@ -16,11 +16,8 @@ router.register(r'notifications', NotificationViewSet, basename='notifications')
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # Autenticación de usuarios
-    path('users/token/', CookieTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('users/token/refresh/', CookieTokenRefreshView.as_view(), name='token_obtain_refresh'),
-    path('users/token/blacklist/', CookieTokenBlacklistView.as_view(), name='token_blacklist'),
-    path('users/token/session-info/', SessionInfoView.as_view(), name='session_info'),
+    # Endpoints de autenticación y gestión de sesiones
+    path('users/', include('users.urls')),
 
     # Gateway de gestión de datos
     path('management/<str:datatype>/', ManagementGatewayView.as_view({

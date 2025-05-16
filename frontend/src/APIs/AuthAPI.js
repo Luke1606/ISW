@@ -94,7 +94,7 @@ const getSessionInfo = async () => {
             const renovationResponse = await setNewAccessToken()
             if (!renovationResponse.success) return null
         }
-        const response = await authApiInstance.get('session-info/')
+        const response = await authApiInstance.get('session/')
 
         if (response.status === 200 && response.data)
             return response.data
@@ -104,6 +104,50 @@ const getSessionInfo = async () => {
     return null
 }
 
+/**
+ * @description Cambia la contraseña de un usuario recien registrado para completar su registro y 
+ * posteriormente intenta autenticarlo. Todo esto mediante sus credenciales.
+ * @param {Object} userFormData - Datos del usuario para autenticación (`username` y `password`).
+ * @returns {Object} Un objeto con la información del usuario autenticado y el estado de la solicitud. Contiene:
+ * - {boolean} `success`- Indica el éxito o fallo de la solicitud.
+ * - {Object} `user`- Contiene la información del usuario
+ * - {string} `message`- Mensaje de respuesta de la solicitud
+ * @example
+ * // Ejemplo de uso:
+ * const response = await authenticate({ username: 'usuario@example.com', password: '123456' })
+ * if (response.success) {
+ *     console.log(response.message)
+ *     console.log(response.user)
+ * }
+ * else
+ *     console.error(response.message) 
+ */
+const changePassword = async (userFormData) => {
+    let message
+    let success = false
+    try {
+        const response = await authApiInstance.post('session/', userFormData)
+        console.log(response)
+        if (response.status === 200) {
+            setAccessToken(response.data.access)
+            message = 'Cuenta confirmada con éxito'
+            const authResponse = await authenticate(userFormData)
+
+            message += authResponse.success? 
+                ' e ' + authResponse.message
+                :
+                ' pero ' + authResponse.message
+
+            success = authResponse.success
+        }
+    } catch (error) {
+        message = error.response?.data?.message || error?.message
+    }
+    return { 
+        success, 
+        message: message || 'Error desconocido' 
+    }
+}
 
 /** 
  * @description Verifica si un token está cerca de expirar.
@@ -179,6 +223,7 @@ const authApi = {
     authenticate, 
     closeSession, 
     getSessionInfo,
+    changePassword,
     isAboutToExpire,
     setNewAccessToken
 }

@@ -35,19 +35,19 @@ class StudentSerializer(serializers.ModelSerializer):
     """
     Serializer para estudiantes.
     """
-    user = CustomUserSerializer()
+    id = CustomUserSerializer()
 
     class Meta:
         model = Student
-        fields = ['user', 'faculty', 'group']
+        fields = ['id', 'faculty', 'group']
 
 
 class ProfessorSerializer(serializers.ModelSerializer):
     """
     Serializer para profesores.
     """
-    user = CustomUserSerializer()
+    id = CustomUserSerializer()
 
     class Meta:
         model = Professor
-        fields = ['user', 'role']
+        fields = ['id', 'role']

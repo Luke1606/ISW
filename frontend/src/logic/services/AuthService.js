@@ -42,6 +42,10 @@ class AuthService {
         return await authApi.getSessionInfo()
     }
 
+    async changePassword(userFormData) {
+        return await authApi.changePassword(userFormData)
+    }
+
     async checkAuth() {
         try {
             if (authApi.isAboutToExpire())
