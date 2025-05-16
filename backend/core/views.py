@@ -29,10 +29,12 @@ class BaseModelViewSet(ModelViewSet):
         # Usar el método auxiliar para obtener el 'search_term' y filtrar el queryset a partir de este
         queryset = queryset.model.objects.search(self._get_search_term())
 
-        related_user_id = self.request.query_params.get('related_user_id', None)
+        related_user_id = self._get_related_user_id()
 
+        print(related_user_id, queryset)
         if related_user_id and not (self.request.user.user_role == Datatypes.User.professor):
             queryset = queryset.filter(student=related_user_id)
+            print(related_user_id, queryset)
 
         return queryset
 
@@ -48,10 +50,8 @@ class BaseModelViewSet(ModelViewSet):
         Sobrescribe el método 'list' para devolver los datos filtrados y paginados.
         Utiliza caché para optimizar el rendimiento.
         """
-        # Crear una clave de caché única basada en los parámetros de la request
-        search_term = self._get_search_term()
-
-        cache_key = f"{self.__class__.__name__}_list_{search_term or ""}"
+        # Crear una clave de caché única
+        cache_key = self._build_cache_key()
 
         # Intentar recuperar los datos del caché
         return Response(
@@ -129,6 +129,14 @@ class BaseModelViewSet(ModelViewSet):
             return search_term
         return None  # Retorna None si es inválido
 
+    def _get_related_user_id(self):
+        """
+        Método auxiliar para obtener el parámetro 'search_term' de la request.
+        Verifica que no sea nulo o una cadena vacía compuesta solo de espacios.
+        """
+        related_user_id = self.request.query_params.get('related_user_id', None)
+        return related_user_id
+
     def _cache_response(self, cache_key, data, timeout=300):
         """
         Guarda los datos en caché.
@@ -143,6 +151,13 @@ class BaseModelViewSet(ModelViewSet):
 
     def invalidate_cache(self):
         """ Elimina la caché basada en los parámetros de búsqueda. """
-        search_term = self._get_search_term()
-        cache_key = f"{self.__class__.__name__}_list_{search_term or ''}"
+        cache_key = self._build_cache_key()
         cache.delete(cache_key)  # Limpia la caché antes de actualizar datos
+
+    def _build_cache_key(self):
+        '''
+        Devuelve una caché key única basada en los parámetros de la request.
+        '''
+        search_term = self._get_search_term()
+        related_user_id = self._get_related_user_id()
+        f'{self.__class__.__name__}_list_{search_term or ''}_{related_user_id or ''}'

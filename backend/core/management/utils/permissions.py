@@ -34,7 +34,7 @@ class IsDecano(permissions.BasePermission):
     Permite acceso solo a los usuarios con el rol de Decano.
     """
     def has_permission(self, request, view=None):
-        return request.user.is_authenticated and request.user.user_role == 'Decano'
+        return request.user.is_authenticated and request.user.user_role == Professor.Roles.DECANO
 
 
 class ReadOnlyForOthers(permissions.BasePermission):

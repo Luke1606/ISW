@@ -139,6 +139,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
     useEffect(() => {
         const updatedSelections = Object.entries(formik.values)
             .filter(([key]) => key !== 'date' && key !== 'state')
+            // eslint-disable-next-line no-unused-vars
             .map(([_, value]) => value)
             .filter(value => value !== '')
     
@@ -177,7 +178,10 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                     
                     <SearchableSelect 
                         id='president'
+                        title='Profesor a ocupar el cargo de presidente'
                         elements={professors.filter((option) => !selectedProfessors.includes(option))}
+                        defaultValue={professors.find(option => option.value === prevValues?.president) || {}}
+                        onChange={(value) => formik.setFieldValue('president', value)}
                         />
                     
                     <span
@@ -196,7 +200,10 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                     
                     <SearchableSelect 
                         id='secretary'
+                        title='Profesor a ocupar el cargo de secretario'
                         elements={professors.filter((option) => !selectedProfessors.includes(option))}
+                        defaultValue={professors.find(option => option.value === prevValues?.president) || {}}
+                        onChange={(value) => formik.setFieldValue('president', value)}
                         />
 
                     <span
@@ -215,7 +222,10 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                     
                     <SearchableSelect 
                         id='vocal'
+                        title='Profesor a ocupar el cargo de vocal'
                         elements={professors.filter((option) => !selectedProfessors.includes(option))}
+                        defaultValue={professors.find(option => option.value === prevValues?.president) || {}}
+                        onChange={(value) => formik.setFieldValue('president', value)}
                         />
                     
                     <span
@@ -234,7 +244,10 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                     
                     <SearchableSelect 
                         id='opponent'
+                        title='Profesor a ocupar el cargo de oponente'
                         elements={professors.filter((option) => !selectedProfessors.includes(option))}
+                        defaultValue={professors.find(option => option.value === prevValues?.president) || {}}
+                        onChange={(value) => formik.setFieldValue('president', value)}
                         />
                     
                     <span
@@ -310,7 +323,10 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
 
                                 <SearchableSelect
                                     id={`tutor${index}`}
+                                    title={`Profesor a ocupar el cargo de tutor ${index}`}
                                     elements={professors.filter((option) => !selectedProfessors.includes(option))}
+                                    defaultValue={professors.find(option => option.value === prevValues?.president) || {}}
+                                    onChange={(value) => formik.setFieldValue('president', value)}
                                     />
                             </div>))}
 
