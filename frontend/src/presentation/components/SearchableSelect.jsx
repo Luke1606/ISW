@@ -1,10 +1,14 @@
 import PropTypes from 'prop-types'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Select from 'react-select'
 
 const SearchableSelect = ({ id, title, elements, defaultValue = { value: '', label: 'Seleccione una opción '}, onChange }) => {
     const [ selectedOption, setSelectedOption ] = useState(defaultValue)
     const [ remainingElements, setRemainingElements ] = useState(elements)
+
+    useEffect(() => {
+        setRemainingElements(elements)
+    }, [elements])
 
     const handleElementChange = (selected) => {
         setSelectedOption(selected)
@@ -14,7 +18,7 @@ const SearchableSelect = ({ id, title, elements, defaultValue = { value: '', lab
             onChange(selected.value)
         }
     }
-    
+
     return (
         <Select
             className='form-input'

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { datatypes } from '@/data'
-import { useForm, useFormParams } from '@/logic'
+import { useAuth, useForm, useFormParams, useLoading } from '@/logic'
 import { 
     UserForm,
     RequestForm,
@@ -26,9 +26,12 @@ const Form = ({ reloadFunction }) => {
     const relatedUserId = manageFormParams?.relatedUserId
     const view = manageFormParams?.view
     
-    const { loading, prevValues, isEdition } = useForm(datatype, idData, relatedUserId)
+    const { loading } = useLoading()
+
+    const { prevValues, isEdition } = useForm(datatype, idData, relatedUserId)
     
-    if (loading || !manageFormParams) return null
+    const { user } = useAuth()
+    if (loading || !manageFormParams || prevValues === null) return null
 
     let specificForm
 
@@ -71,7 +74,7 @@ const Form = ({ reloadFunction }) => {
                         values={prevValues}/>
                     :
                     <DefenseTribunalForm 
-                        isEdition={isssssEdition}
+                        isDefenseTribunal={user.user_role === datatypes.user.dptoInf}
                         datatype={datatype}
                         closeFunc={closeForm}
                         prevValues={prevValues}
