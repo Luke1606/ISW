@@ -22,12 +22,12 @@ const setupInterceptors = (instance) => {
         (response) => response,
         async (error) => {
             const originalRequest = error.config
-
+            const errorResponse = error?.response?.data
             switch (error.response?.status) {
                 case 400:
                     {
-                        console.error(error?.response?.data)
-                        return Promise.reject(new Error(`La petición no es válida. ${error?.response?.message || ''}`))
+                        console.error(errorResponse)
+                        return Promise.reject(new Error(`La petición no es válida. ${errorResponse || ''}`))
                     }
                 case 401: 
                     {
@@ -59,17 +59,17 @@ const setupInterceptors = (instance) => {
                 case 403:
                     {
                     console.error(error?.response?.data)
-                    return Promise.reject(new Error('No tiene acceso a este recurso'))
+                    return Promise.reject(new Error(`No tiene acceso a este recurso. ${errorResponse}`))
                     }
                 case 404:
                     {
                     console.error(error?.response?.data)
-                    return Promise.reject(new Error('Recurso no encontrado'))
+                    return Promise.reject(new Error(`Recurso no encontrado. ${errorResponse}`))
                     }
                 case 500:
                     {
                     console.error(error?.response?.data)
-                    return Promise.reject(new Error('Problemas del servidor'))
+                    return Promise.reject(new Error(`Problemas del servidor. ${errorResponse}`))
                     }
                 default:
                     return Promise.reject(error)
