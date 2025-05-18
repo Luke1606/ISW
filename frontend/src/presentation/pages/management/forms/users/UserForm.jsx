@@ -132,7 +132,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
         { value: datatypes.user.dptoInf, label: 'Profesor miembro del Departamento de Informática' },
         { value: datatypes.user.decan, label: 'Miembro del Decanato ' },
     ]
-    
+
     return (
         <form
             className='form-container manage-section' 
@@ -203,7 +203,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                         id='faculty-select' 
                         title='Facultad del estudiante'
                         elements={facultyOptions}
-                        defaultValue={facultyOptions.find(faculty => faculty.value === prevValues?.faculty) || {}}
+                        defaultValue={facultyOptions.find(faculty => faculty.value === formik.values.faculty)}
                         onChange={(value) => formik.setFieldValue('faculty', value)}
                         />
 
@@ -250,7 +250,8 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                         id='role-select' 
                         title='Cargo de docente'
                         elements={docentRoleOptions}
-                        defaultValue={docentRoleOptions.find(role => role.value === prevValues?.id?.user_role) || {}}
+                        defaultValue={docentRoleOptions.find(role => role.value === formik.values.role)}
+                        onChange={(value) => formik.setFieldValue('role', value)}
                         />
 
                     <span

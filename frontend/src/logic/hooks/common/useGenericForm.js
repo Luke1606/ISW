@@ -17,6 +17,7 @@ const useGenericForm = (submitFunction, initialValues, validationSchema = {}) =>
     const formik = useFormik({
         initialValues,
         validationSchema,
+        enableReinitialize: true,
         validateOnChange: true,
         onSubmit: useCallback(async (values) => {
             setLoading(true)

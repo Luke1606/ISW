@@ -113,13 +113,14 @@ ReadOnlyUserForm.propTypes = {
     closeFunc: PropTypes.func.isRequired,
     values: PropTypes.shape({
         id: PropTypes.shape({
+            id: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,
             username: PropTypes.string.isRequired,
             user_role: PropTypes.string.isRequired,
         }),
         faculty: PropTypes.string,
         group: PropTypes.number,
-    }),
+    }).isRequired,
 }
 
 export default ReadOnlyUserForm

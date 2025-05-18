@@ -178,7 +178,7 @@ const useItemTouchControl = (datatype) => {
                 if (user?.user_role === datatypes.user.dptoInf && pendingRequests)
                     options.push({ 
                         action: () => openManageForm(datatypes.request, { idData: selectedItemId}),
-                        label: 'Aprobar solicitud', 
+                        label: 'Aprobar solicitud',
                         value: 'aprove-request'
                     })
         

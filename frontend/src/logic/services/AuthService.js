@@ -19,8 +19,8 @@ class AuthService {
             console.log(response.message)
 
             notification = {
-                title: response.message,
-                message: '',
+                title: 'Operación exitosa',
+                message: response.message,
             }
             NotificationService.showToast(notification, 'warning')
         } else {
