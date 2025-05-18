@@ -177,4 +177,10 @@ class ProfessorViewSet(BaseModelViewSet):
     queryset = Professor.objects.select_related('id').all()
     serializer_class = ProfessorSerializer
     list_serializer_class = UserListSerializer
-    permission_classes = [permissions.IsAuthenticated, IsDecano]
+    permission_classes_by_action = {
+        'list': [permissions.IsAuthenticated, IsProfessor | IsDecano],
+        'create': [permissions.IsAuthenticated, IsDecano],
+        'update': [permissions.IsAuthenticated, IsDecano],
+        'destroy': [permissions.IsAuthenticated, IsDecano],
+        'retrieve': [permissions.IsAuthenticated, IsProfessor | IsDecano],
+    }

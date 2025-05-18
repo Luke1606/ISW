@@ -213,7 +213,7 @@ button:hover, .button:hover {
 
 .pagination-button-container select option {
     background: var(--primary-gradient);
-    color: white;
+    color: black;
     font-size: 1rem;
 }
 

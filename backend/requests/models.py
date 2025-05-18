@@ -43,14 +43,14 @@ class Request(BaseModel):
         """
         Estados posibles para la solicitud.
         """
-        A = 'A', 'Aprobada'
-        D = 'D', 'Desaprobada'
-        P = 'P', 'Pendiente'
+        APPROVED = 'A', 'Aprobada'
+        DISAPPROVED = 'D', 'Desaprobada'
+        PENDING = 'P', 'Pendiente'
 
     state = models.CharField(
         max_length=20,
         choices=State.choices,
-        default=State.P,
+        default=State.PENDING,
         verbose_name="State"
     )
 
@@ -69,14 +69,14 @@ class Request(BaseModel):
         - El estado por defecto siempre sea "Pendiente" al crear.
         - Se impida modificar cualquier campo excepto el estado.
         """
-        if self.pk:  # La solicitud ya existe, es una actualización
+        if self.pk and Request.objects.filter(pk=self.pk).exists():  # La solicitud ya existe, es una actualización
             original = Request.objects.get(pk=self.pk)
 
             if (self.student != original.student or self.selected_ece != original.selected_ece or self.created_at != original.created_at):
                 raise ValidationError("No está permitido modificar los datos de la solicitud, excepto el estado.")
         else:
             # Al crear, forzar el estado a "Pendiente"
-            self.state = self.State.P
+            self.state = self.State.PENDING
 
         super().save(*args, **kwargs)
 

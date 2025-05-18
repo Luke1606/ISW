@@ -24,18 +24,18 @@ const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
     }
 
     const validationSchema = useMemo(() => {
-        isEdition?
-            Yup.object().shape({
-                selectedECE: Yup.string()
-                    .required('Debe seleccionar un ejercicio')
-            })
-            :
+        return isEdition?
             Yup.object().shape({
                 state: Yup.string()
                     .required('Debe seleccionar un veredicto')
             })
+            :
+            Yup.object().shape({
+                selectedECE: Yup.string()
+                    .required('Debe seleccionar un ejercicio')
+            })
     }, [isEdition])
-
+    
     const submitFunction = async (values) => {
         const newValues = isEdition?
         {
@@ -69,11 +69,7 @@ const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
         }
     }
 
-    const formik = useGenericForm(
-        submitFunction,
-        initialValues,
-        validationSchema
-    )
+    const formik = useGenericForm(submitFunction, initialValues, validationSchema)
     
     const exerciseOptions = [
         { value: 'TD', label: 'Trabajo de diploma'},
@@ -81,7 +77,7 @@ const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
         { value: 'AA', label: 'Defensa de Artículos Científicos'},
         { value: 'EX', label: 'Exhimición'},  
     ]
-
+    
     return (
         <form
             className='form-container manage-section'
@@ -163,7 +159,7 @@ const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
                             <span
                                 className={`error ${formik.errors.state && formik.touched.state && 'hidden' }`}
                                 >
-                                {formik.errors.selectedECE}
+                                {formik.errors.state}
                             </span>
                         </>
                         :
@@ -178,8 +174,8 @@ const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
                             <SearchableSelect 
                                 id='president'
                                 title='Profesor a ocupar el cargo de presidente'
-                                elements={exerciseOptions.filter((option) => !exerciseOptions.includes(option))}
-                                defaultValue={exerciseOptions.find(option => option.value === prevValues?.selected_ece) || {}}
+                                elements={exerciseOptions}
+                                defaultValue={exerciseOptions.find(option => option.value === prevValues?.selected_ece)}
                                 onChange={(value) => formik.setFieldValue('selectedECE', value)}
                                 />
                             
@@ -203,7 +199,7 @@ RequestForm.propTypes = {
         id: PropTypes.string,
         student: PropTypes.string.isRequired,
         selected_ece: PropTypes.string,
-        state: PropTypes.string,
+        state: PropTypes.oneOf(['I', 'P', 'A', 'D'])
     }).isRequired,
 }
 

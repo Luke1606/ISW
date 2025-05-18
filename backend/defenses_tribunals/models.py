@@ -52,20 +52,19 @@ class DefenseTribunal(BaseModel):
         related_name='defense_tribunal_oponent',
         on_delete=models.SET_NULL
     )
-    tutor = models.ForeignKey(
-        to=Professor,
+
+    tutors = models.ManyToManyField(
+        Professor,
         blank=True,
-        null=True,
-        related_name='defense_tribunal_tutor',
-        on_delete=models.SET_NULL
+        related_name='defense_tribunal_tutors'
     )
 
     class State(models.TextChoices):
         """Estados del tribunal de defensa."""
-        APPROVED = 'Apr', 'Aprobado'
-        DISAPPROVED = 'Dis', 'Desaprobado'
-        PENDING = 'Pend', 'Pendiente'
-        INCOMPLETE = 'Inc', 'Incompleto'
+        APPROVED = 'A', 'Aprobado'
+        DISAPPROVED = 'D', 'Desaprobado'
+        PENDING = 'P', 'Pendiente'
+        INCOMPLETE = 'I', 'Incompleto'
 
     state = models.CharField(
         max_length=20,
@@ -93,8 +92,16 @@ class DefenseTribunal(BaseModel):
         Envia notificaciones si se cumplen ciertas condiciones.
         """
         # Determinar si los campos están completos
-        is_complete = all(field is not None for field in [self.president, self.secretary, self.vocal, self.oponent, self.tutor])
-        previous_state = None if not self.pk else DefenseTribunal.objects.get(pk=self.pk).state
+        is_complete = all(field is not None for field in [
+            self.president, self.secretary, self.vocal, self.oponent, self.tutor
+            ])
+        if not self.pk:
+            previous_state = None
+        else:
+            try:
+                previous_state = DefenseTribunal.objects.get(pk=self.pk).state
+            except DefenseTribunal.DoesNotExist:
+                previous_state = None
 
         if is_complete and self.state == self.State.INCOMPLETE:
             self.state = self.State.PENDING
@@ -111,7 +118,7 @@ class DefenseTribunal(BaseModel):
         # Si el decano cambia el estado (APROBADO o DESAPROBADO), notificar al Dpto Inf
         if previous_state != self.state and self.state in [self.State.APPROVED, self.State.DISAPPROVED]:
             dpto_inf_professors = Professor.objects.search(role=Datatypes.User.dptoInf)
-            # pylint: disable=no-member
+
             notification_message = f"""El tribunal del estudiante {self.student.user.first_name}
                 cambió su estado a {self.state}."""
             notification_url = f"form/{Datatypes.tribunal}/{self.id}"

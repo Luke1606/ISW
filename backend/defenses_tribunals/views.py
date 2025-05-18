@@ -1,6 +1,9 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError, PermissionDenied
+from rest_framework.response import Response
 from core.views import BaseModelViewSet
 from core.management.utils.permissions import IsDptoInfProfessor, IsDecano, IsStudent
+from users.models import Student, Professor
 from .models import DefenseTribunal
 from .serializers import DefenseTribunalSerializer
 
@@ -26,6 +29,7 @@ class DefenseTribunalViewSet(BaseModelViewSet):
         """
         Asigna permisos dinámicos según la acción.
         """
+        print(self.request.user.user_role)
         return [
             permission()
             for permission in self.permission_classes_by_action.get(self.action, self.permission_classes)
@@ -38,23 +42,26 @@ class DefenseTribunalViewSet(BaseModelViewSet):
         - Profesores solo pueden acceder a tribunales en los que estén involucrados.
         - Estudiantes solo pueden acceder a su propio tribunal.
         """
-        tribunal = self.get_object()
+        student_id = kwargs.get("pk")
+        student = get_object_or_404(Student, id=student_id)
+        tribunal = DefenseTribunal.objects.filter(student_id=student_id).first()
+
         user = request.user
         non_permission = "No tienes permiso para acceder a este tribunal."
 
-        if user.is_student:
+        if user.is_student and student.id != user:
             # Restringir a estudiantes su propio tribunal
-            if tribunal.student != user.student:
-                raise PermissionDenied(non_permission)
+            raise PermissionDenied(non_permission)
 
         elif user.is_professor:
-            if user.professor.role in {user.professor.Roles.DECANO, user.professor.Roles.DPTO_INF}:
+            if user.user_role in {Professor.Roles.DECANO, Professor.Roles.DPTO_INF}:
                 # Decanos y Dpto Inf tienen acceso completo
                 pass
-            elif user.professor.role == user.professor.Roles.PROFESSOR:
+            elif user.user_role == Professor.Roles.PROFESSOR:
                 # Profesores solo tienen acceso a tribunales relacionados
-                related_students_ids = user.professor.get_related_students_ids()
-                if tribunal.student.id not in related_students_ids:
+                professor = Professor.objects.get(id=user)
+                related_students_ids = professor.get_related_students_ids()
+                if student.id.id not in related_students_ids:
                     raise PermissionDenied(non_permission)
             else:
                 raise PermissionDenied(non_permission)
@@ -62,7 +69,8 @@ class DefenseTribunalViewSet(BaseModelViewSet):
         else:
             raise PermissionDenied(non_permission)
 
-        return super().retrieve(request, *args, **kwargs)
+        serializer = self.get_serializer(tribunal)
+        return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         """

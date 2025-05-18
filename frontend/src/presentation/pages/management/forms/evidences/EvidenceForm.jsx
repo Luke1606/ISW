@@ -21,7 +21,7 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
         url: prevValues?.attachment_url || '',
         file: prevValues?.attachment_file || null
     }
-    
+
     const validateUrl = (urlString) => {
         try {
             const urlObject = new URL(urlString)
@@ -358,7 +358,7 @@ EvidenceForm.propTypes = {
         name: PropTypes.string.isRequired,
         description: PropTypes.string,
         attachment_type: PropTypes.string.isRequired,
-        attachment_url: PropTypes.instanceOf(URL).isRequired,
+        attachment_url: PropTypes.string.isRequired,
         attachment_file: PropTypes.instanceOf(File).isRequired,
     }),
 }

@@ -26,14 +26,14 @@ class BaseModelViewSet(ModelViewSet):
         # Obtener el queryset inicial
         queryset = super().get_queryset()
 
-        related_user_id = self._get_related_user_id()
-
-        if related_user_id and not (self.request.user.user_role == Datatypes.User.professor):
-            queryset = queryset.filter(student=related_user_id)
-
         # Usar el método auxiliar para obtener el 'search_term' y filtrar el queryset a partir de este
         search_term = self._get_search_term() or ''
         queryset = queryset.model.objects.search(search_term)
+
+        related_user_id = self._get_related_user_id()
+
+        if related_user_id and self.request.user.user_role != Datatypes.User.professor:
+            queryset = queryset.filter(student=related_user_id)
 
         return queryset
 
@@ -130,10 +130,9 @@ class BaseModelViewSet(ModelViewSet):
 
     def _get_related_user_id(self):
         """
-        Método auxiliar para obtener el parámetro 'search_term' de la request.
-        Verifica que no sea nulo o una cadena vacía compuesta solo de espacios.
+        Método auxiliar para obtener el parámetro 'related_user_id' de la request.
         """
-        related_user_id = self.request.query_params.get('related_user_id', None)
+        related_user_id = self.request.query_params.get('related_user_id', '')
         return related_user_id
 
     def _cache_response(self, cache_key, data, timeout=300):
@@ -149,7 +148,9 @@ class BaseModelViewSet(ModelViewSet):
         return cache.get(cache_key)
 
     def invalidate_cache(self):
-        """ Elimina la caché basada en los parámetros de búsqueda. """
+        """
+        Elimina la caché basada en los parámetros de búsqueda.
+        """
         cache_key = self._build_cache_key()
         cache.delete(cache_key)  # Limpia la caché antes de actualizar datos
 
@@ -159,4 +160,4 @@ class BaseModelViewSet(ModelViewSet):
         '''
         search_term = self._get_search_term()
         related_user_id = self._get_related_user_id()
-        f'{self.__class__.__name__}_list_{search_term or ''}_{related_user_id or ''}'
+        return f'{self.__class__.__name__}_list_{search_term or ''}_{related_user_id}'
