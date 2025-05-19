@@ -20,7 +20,7 @@ const Form = ({ reloadFunction }) => {
         reloadFunction(true)
         closeManageForm()
     }
-
+    
     const datatype = manageFormParams?.datatype
     const idData = manageFormParams?.idData
     const relatedUserId = manageFormParams?.relatedUserId
@@ -74,7 +74,7 @@ const Form = ({ reloadFunction }) => {
                         values={prevValues}/>
                     :
                     <DefenseTribunalForm 
-                        isDefenseTribunal={user.user_role === datatypes.user.dptoInf}
+                        isDefenseTribunal={user.user_role !== datatypes.user.decan}
                         datatype={datatype}
                         closeFunc={closeForm}
                         prevValues={prevValues}

@@ -7,12 +7,11 @@ import PropTypes from 'prop-types'
  * @returns Estructura de los campos a mostrar con la información del tribunal contenido en `values`.
  */
 const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
-    
     return (
         <section
             className='form-container'
             >
-            {!values?
+            {!values || values?.state !== 'A'?
                 <h2 
                     className='form-subtitle'
                     >
@@ -25,115 +24,119 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                         >
                         Ver detalles de tribunal
                     </h1>
-                    
-                    <section 
-                        className='manage-section'
-                        >
-                        <h2 
-                            className='form-subtitle'
+
+                    <section
+                        className='multi-layered-form'
+                        >   
+                        <section 
+                            className='manage-section'
                             >
-                            Miembros del tribunal
-                        </h2>
+                            <h2 
+                                className='form-subtitle'
+                                >
+                                Miembros del tribunal
+                            </h2>
 
-                        <label 
-                            className='form-label'
-                            htmlFor='president'
-                            >
-                            Presidente del tribunal:
-                        </label>
+                            <label 
+                                className='form-label'
+                                htmlFor='president'
+                                >
+                                Presidente del tribunal:
+                            </label>
 
-                        <input
-                            className='form-input'
-                            id='president'
-                            type='text'
-                            value={values.president}
-                            readOnly
-                            />
-
-                        <label 
-                            className='form-label'
-                            htmlFor='secretary'
-                            >
-                            Secretario del tribunal:
-                        </label>
-                        <input
-                            className='form-input'
-                            id='secretary'
-                            type='text'
-                            value={values.secretary}
-                            readOnly
-                        />
-
-                        <label 
-                            className='form-label'
-                            htmlFor='vocal'
-                            >
-                            Vocal del tribunal:
-                        </label>
-
-                        <input
-                            className='form-input'
-                            id='vocal'
-                            type='text'
-                            value={values.vocal}
-                            readOnly
-                            />
-
-                        <label 
-                            className='form-label'
-                            htmlFor='opponent'
-                            >
-                            Oponente del tribunal:
-                        </label>
-
-                        <input
-                            className='form-input'
-                            id='opponent'
-                            type='text'
-                            value={values.opponent}
-                            readOnly
-                            />
-                    </section>
-                
-                    <section 
-                        className='manage-section'
-                        >
-                        <h2 
-                            className='form-subtitle'
-                            >
-                            Otros datos
-                        </h2>
-                        
-                        <label 
-                            className='form-label'
-                            htmlFor='defense-date'
-                            >
-                            Fecha de defensa:
-                        </label>
-
-                        <input
-                            className='form-input'
-                            id='defense-date'
-                            type='date'
-                            value={values.date instanceof Date ? values.date.toISOString().split('T')[0] : values.date}
-                            readOnly
-                            />
-
-                        <label 
-                            className='form-label'
-                            >
-                            Tutores:
-                        </label>
-                    
-                        {values.tutors.map((tutor, index) => (
                             <input
-                                key={index}
                                 className='form-input'
+                                id='president'
                                 type='text'
-                                value={tutor}
+                                value={values.president}
                                 readOnly
                                 />
-                        ))}
+
+                            <label 
+                                className='form-label'
+                                htmlFor='secretary'
+                                >
+                                Secretario del tribunal:
+                            </label>
+                            <input
+                                className='form-input'
+                                id='secretary'
+                                type='text'
+                                value={values.secretary}
+                                readOnly
+                            />
+
+                            <label 
+                                className='form-label'
+                                htmlFor='vocal'
+                                >
+                                Vocal del tribunal:
+                            </label>
+
+                            <input
+                                className='form-input'
+                                id='vocal'
+                                type='text'
+                                value={values.vocal}
+                                readOnly
+                                />
+
+                            <label 
+                                className='form-label'
+                                htmlFor='opponent'
+                                >
+                                Oponente del tribunal:
+                            </label>
+
+                            <input
+                                className='form-input'
+                                id='opponent'
+                                type='text'
+                                value={values.opponent}
+                                readOnly
+                                />
+                        </section>
+                    
+                        <section 
+                            className='manage-section'
+                            >
+                            <h2 
+                                className='form-subtitle'
+                                >
+                                Otros datos
+                            </h2>
+                            
+                            <label 
+                                className='form-label'
+                                htmlFor='defense-date'
+                                >
+                                Fecha de defensa:
+                            </label>
+
+                            <input
+                                className='form-input'
+                                id='defense-date'
+                                type='date'
+                                value={values.date instanceof Date ? values.date.toISOString().split('T')[0] : values.date}
+                                readOnly
+                                />
+
+                            <label 
+                                className='form-label'
+                                >
+                                Tutores:
+                            </label>
+                        
+                            {values.tutors.map((tutor, index) => (
+                                <input
+                                    key={index}
+                                    className='form-input'
+                                    type='text'
+                                    value={tutor}
+                                    readOnly
+                                    />
+                            ))}
+                        </section>
                     </section>
                 </>}
 
@@ -157,6 +160,7 @@ ReadOnlyDefenseTribunalForm.propTypes = {
         vocal: PropTypes.string.isRequired,
         opponent: PropTypes.string.isRequired,
         tutors: PropTypes.arrayOf(PropTypes.string).isRequired,
+        state: PropTypes.oneOf(['A', 'D', 'P', 'I'])
     })
 }
 
