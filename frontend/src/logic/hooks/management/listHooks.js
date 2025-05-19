@@ -136,98 +136,72 @@ const useItemTouchControl = (datatype) => {
     const { openManageForm } = useFormParams()
     const navigate = useNavigate()
 
-    const getOptions = useCallback(async () => {
-        let options = []
-
-        const hasPendingRequests = async (studentId) => {
-            try {   
-                return await ManagementService.hasPendingRequests(studentId)
-            } catch (error) {
-                console.error(error)
-                return false
-            }
-        }
-        
-        const hasUnconfiguredDefenseTribunal = async (studentId) => {
-            try {
-                return await ManagementService.hasUnconfiguredDefenseTribunal(studentId)
-            } catch (error) {
-                console.error(error)
-                return false
-            }
-        }
-        
-        const hasPendingTribunal = async (studentId) => {
-            try {
-                return await ManagementService.hasPendingTribunal(studentId)
-            } catch (error) {
-                console.error(error)
-                return false
-            }
-        }
-
-        if (datatype === datatypes.user.student) {
-            options.push({
-                action: () => navigate(`/list/${datatypes.evidence}/${selectedItemId}`),
-                label: 'Listar Evidencias',
-                value: 'evidence-list'
-            })
-            if (selectedItemId) {
-                const pendingRequests = await hasPendingRequests(selectedItemId) || false
-
-                if (user?.user_role === datatypes.user.dptoInf && pendingRequests)
-                    options.push({ 
-                        action: () => openManageForm(datatypes.request, { idData: selectedItemId}),
-                        label: 'Aprobar solicitud',
-                        value: 'aprove-request'
-                    })
-        
-                const unconfiguredDefenseTribunal = await hasUnconfiguredDefenseTribunal(selectedItemId) || true
-
-                if (user?.user_role === datatypes.user.dptoInf && unconfiguredDefenseTribunal)
-                    options.push({ 
-                        action: () => openManageForm(datatypes.defense_tribunal, { idData: selectedItemId}), 
-                        label: 'Configurar defensa y tribunal',
-                        value: 'config-tribunal'
-                    })
-        
-                if (user?.user_role !== datatypes.user.dptoInf && !unconfiguredDefenseTribunal)
-                    options.push({ 
-                        action: () => openManageForm(datatypes.defense_tribunal, { idData: selectedItemId, view: true}), 
-                        label: 'Ver datos de defensa y tribunal',
-                        value: 'view-tribunal'
-                    })
-        
-                const pendingTribunal = await hasPendingTribunal(selectedItemId) || false
-                if (user?.user_role === datatypes.user.decan && pendingTribunal) 
-                    options.push({ 
-                        action: () => openManageForm(datatypes.tribunal, { idData: selectedItemId }), 
-                        label: 'Aprobar tribunal',
-                        value: 'aprove-tribunal'
-                    })
-        
-                if (user?.user_role !== datatypes.user.professor /* && !unconfiguredDefenseTribunal && !pendingTribunal */)
-                    options.push({ 
-                        action: () => navigate(`/list/${datatypes.defense_act}/${selectedItemId}`), 
-                        label: 'Listar actas de defensa',
-                        value: 'list-defense_act'
-                    })
-
-                if (user?.user_role === datatypes.user.professor /* && !unconfiguredDefenseTribunal && !pendingTribunal */)
-                    options.push({
-                        action: () => navigate(`/list/${datatypes.defense_act}/${selectedItemId}`), 
-                        label: 'Gestionar actas de defensa',
-                        value: 'gest-defense_act'
-                    })
-            }
-        }
-        setItemOptions(options)
-    }, [datatype, selectedItemId, user?.user_role, openManageForm, navigate])
-
     useEffect(() => {
-        if (datatype===datatypes.user.student)
+        const getOptions = async () => {
+            let options = []
+
+            if (datatype === datatypes.user.student) {
+                options.push({
+                    action: () => navigate(`/list/${datatypes.evidence}/${selectedItemId}`),
+                    label: 'Listar Evidencias',
+                    value: 'evidence-list'
+                })
+                if (selectedItemId) {
+                    const lastRequest = await (await ManagementService.getData(datatypes.request, selectedItemId)).data
+
+                    if (user?.user_role === datatypes.user.dptoInf && lastRequest?.state === 'P')
+                        options.push({ 
+                            action: () => openManageForm(datatypes.request, { idData: selectedItemId}),
+                            label: 'Aprobar solicitud',
+                            value: 'aprove-request'
+                        })
+            
+                    const defenseTribunal = await (await ManagementService.getData(datatypes.defense_tribunal, selectedItemId)).data
+                    
+                    if (user?.user_role === datatypes.user.dptoInf && defenseTribunal?.state === 'I')
+                        options.push({ 
+                            action: () => openManageForm(datatypes.defense_tribunal, { idData: selectedItemId}), 
+                            label: 'Configurar defensa y tribunal',
+                            value: 'config-tribunal'
+                        })
+            
+                    if (user?.user_role !== datatypes.user.dptoInf && defenseTribunal?.state === 'A')
+                        options.push({ 
+                            action: () => openManageForm(datatypes.defense_tribunal, { idData: selectedItemId, view: true}), 
+                            label: 'Ver datos de defensa y tribunal',
+                            value: 'view-tribunal'
+                        })
+            
+                    if (user?.user_role === datatypes.user.decan && defenseTribunal?.state === 'P')
+                        options.push({ 
+                            action: () => openManageForm(datatypes.tribunal, { idData: selectedItemId }), 
+                            label: 'Aprobar tribunal',
+                            value: 'aprove-tribunal'
+                        })
+            
+                    if (user?.user_role !== datatypes.user.professor && defenseTribunal?.state === 'A')
+                        options.push({ 
+                            action: () => navigate(`/list/${datatypes.defense_act}/${selectedItemId}`), 
+                            label: 'Listar actas de defensa',
+                            value: 'list-defense_act'
+                        })
+
+                    if (user?.user_role === datatypes.user.professor && defenseTribunal?.state === 'A')
+                        options.push({
+                            action: () => navigate(`/list/${datatypes.defense_act}/${selectedItemId}`), 
+                            label: 'Gestionar actas de defensa',
+                            value: 'gest-defense_act'
+                        })
+                }
+            }
+            setItemOptions(options)
+        }
+
+        if (datatype===datatypes.user.student) {
+            setItemOptions([])
             getOptions()
-    }, [datatype, selectedItemId, user, getOptions])
+        }
+    }, [datatype, selectedItemId, user, openManageForm, navigate])
 
     const handleOptionChange = (event) => {
             const selectedOption = itemOptions.find(

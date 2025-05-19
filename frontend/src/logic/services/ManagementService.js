@@ -20,18 +20,6 @@ class ManagementService {
     async deleteData(datatype, ids) {
         return await managementApi.deleteData(datatype, ids)
     }
-
-    async hasPendingRequests (studentId) {
-        return await managementApi.hasPendingRequests(studentId)
-    }
-
-    async hasUnconfiguredDefenseTribunal (studentId) {
-        return await managementApi.hasUnconfiguredDefenseTribunal(studentId)
-    }
-
-    async hasPendingTribunal (studentId) {
-        return await managementApi.hasPendingTribunal(studentId)
-    }
 }
 
 export default new ManagementService()

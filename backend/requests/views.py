@@ -2,12 +2,12 @@
 Vistas de la aplicacion solicitudes.
 """
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from defenses_tribunals.models import DefenseTribunal
 from core.views import BaseModelViewSet
-from core.management.utils.permissions import IsDptoInfProfessor, IsStudent, ReadOnlyForOthers
+from core.management.utils.permissions import IsDptoInfProfessor, IsStudent
 from users.models import Student
 from .serializers import RequestSerializer
 from .models import Request
@@ -23,7 +23,7 @@ class RequestViewSet(BaseModelViewSet):
     permission_classes_by_action = {
         'create': [IsStudent],
         'update': [IsDptoInfProfessor],
-        'retrieve': [ReadOnlyForOthers | IsDptoInfProfessor],
+        'retrieve': [permissions.IsAuthenticated],
         'destroy': [],
         'list': [],
     }
@@ -51,7 +51,7 @@ class RequestViewSet(BaseModelViewSet):
             raise ValidationError(
                 "No puedes registrar otra solicitud mientras una previa esté en estado Pendiente o si está Aprobada."
             )
-        print(student)
+
         # Crear la solicitud con estado "Pendiente"
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -97,7 +97,7 @@ class RequestViewSet(BaseModelViewSet):
         last_request = Request.objects.filter(student=student).order_by('-created_at').first()
 
         if not last_request:
-            raise Response("No se encontró ninguna solicitud para este estudiante.", status=status.HTTP_404_NOT_FOUND)
+            return Response("No se encontró ninguna solicitud para este estudiante.", status=status.HTTP_404_NOT_FOUND)
 
         serializer = self.get_serializer(last_request)
         return Response(serializer.data, status=status.HTTP_200_OK)

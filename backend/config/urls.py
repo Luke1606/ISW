@@ -29,10 +29,6 @@ urlpatterns = [
 
     # Notificaciones
     path('', include(router.urls)),
-
-    # path('pending-request/<uuid:pk>', , name='pending-request'),
-    # path('unconfigured-tribunal/<uuid:pk>', , name='unconfigured-tribunal'),
-    # path('pending-tribunal/<uuid:pk>', , name='pending-tribunal'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -72,6 +72,13 @@ class ManagementGatewayView(ModelViewSet):
 
             if isinstance(viewset, Response):  # Si es una respuesta de error
                 return viewset
+
+            if viewset is None:  # Validación para evitar errores
+                return Response(
+                    f"No se pudo obtener el ViewSet para la acción {action}.",
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             return viewset(request._request, *args, **kwargs)
 
         except AttributeError as e:
@@ -80,7 +87,7 @@ class ManagementGatewayView(ModelViewSet):
             traceback.print_exc()
 
             return Response(
-                {'error': f'Acción {action} no válida para ese tipo de dato provocó {str(e)}'},
+                f'Acción {action} no válida para ese tipo de dato provocó {str(e)}',
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -98,13 +105,13 @@ class ManagementGatewayView(ModelViewSet):
 
         if not viewset_class:
             return Response(
-                {'error': 'Tipo de dato no válido'},
+                'Tipo de dato no válido',
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         if not action:
             return Response(
-                {'error': f'Acción no soportada: {action}.'},
+                f'Acción no soportada: {action}.',
                 status=status.HTTP_400_BAD_REQUEST
             )
 

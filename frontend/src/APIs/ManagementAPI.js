@@ -85,33 +85,12 @@ const deleteData = (datatype, ids) =>
         data: { data: { ids } }
     })
 
-const hasPendingRequests = async (studentId) =>
-    await handleRequest({
-        method: 'get',
-        url: `pending-request/${studentId}/`,
-    })
-    
-const hasUnconfiguredDefenseTribunal = async (studentId) =>
-    await handleRequest({
-        method: 'get',
-        url: `unconfigured-tribunal/${studentId}/`,
-    })
-
-const hasPendingTribunal = async (studentId) =>
-    await handleRequest({
-        method: 'get',
-        url: `pending-tribunal/${studentId}/`,
-    })
-
 const managementApi = { 
     getAllData, 
     getData, 
     createData, 
-    updateData, 
+    updateData,
     deleteData,
-    hasPendingRequests,
-    hasUnconfiguredDefenseTribunal,
-    hasPendingTribunal
 }
 export default managementApi
 
