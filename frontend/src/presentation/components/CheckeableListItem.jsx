@@ -19,6 +19,7 @@ const CheckeableListItem = ({item, children, checked, setSelectedItems}) => {
                 >
                 <input 
                     className='list-checkbox'
+                    name='list-item-check'
                     type='checkbox' 
                     checked={checked} 
                     readOnly

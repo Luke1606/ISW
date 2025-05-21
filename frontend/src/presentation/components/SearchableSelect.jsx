@@ -10,6 +10,11 @@ const SearchableSelect = ({ id, title, elements, defaultValue = { value: '', lab
         setRemainingElements(elements)
     }, [elements])
 
+    useEffect(() => {
+        if (defaultValue.value !== selectedOption.value)
+        setSelectedOption(defaultValue)
+    }, [defaultValue, selectedOption])
+
     const handleElementChange = (selected) => {
         setSelectedOption(selected)
         setRemainingElements(elements.filter((element) => element.value !== selected.value))
