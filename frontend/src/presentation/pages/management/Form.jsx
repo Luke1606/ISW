@@ -31,6 +31,7 @@ const Form = ({ reloadFunction }) => {
     const { prevValues, isEdition } = useForm(datatype, idData, relatedUserId)
     
     const { user } = useAuth()
+
     if (loading || !manageFormParams || prevValues === null) return null
 
     let specificForm
@@ -64,22 +65,18 @@ const Form = ({ reloadFunction }) => {
                                 isEdition={isEdition}
                                 />
             break
-        case datatypes.tribunal:
         case datatypes.defense_tribunal:
-            if (datatype===datatypes.tribunal && view) printError()
-            else {
-                specificForm = view?
-                    <ReadOnlyDefenseTribunalForm 
-                        closeFunc={closeForm} 
-                        values={prevValues}/>
-                    :
-                    <DefenseTribunalForm 
-                        isDefenseTribunal={user.user_role !== datatypes.user.decan}
-                        datatype={datatype}
-                        closeFunc={closeForm}
-                        prevValues={prevValues}
-                        />
-            }
+            specificForm = view?
+                <ReadOnlyDefenseTribunalForm 
+                    closeFunc={closeForm} 
+                    values={prevValues}/>
+                :
+                <DefenseTribunalForm 
+                    isDefenseTribunal={user.user_role !== datatypes.user.decan}
+                    datatype={datatype}
+                    closeFunc={closeForm}
+                    prevValues={prevValues}
+                    />
             break
         case datatypes.defense_act:    
             specificForm = view?

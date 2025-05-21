@@ -34,7 +34,7 @@ const Home = () => {
 					navigate(`/list/${datatypes.user.student}/${user.id}`)
 					break
 				default:
-					navigate(`/list/${datatypes.user.student}/`)
+					navigate(`/list/${datatypes.user.defaultUser}/`)
 					break
 			}
 		} else
