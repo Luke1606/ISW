@@ -44,11 +44,12 @@ class BaseModelManager(models.Manager):
         """
 
         # Si no se especifica queryset, usar todos los objetos
-        if queryset is None:
+        if queryset is None or not queryset:
             queryset = self.get_queryset()
 
         search_term = args[0] if args else None
         queryset_filter = QuerysetFilter(self.model)
+
         queryset = queryset_filter.filter_by_conditions(queryset=queryset, join_type=join_type, search_term=search_term, **kwargs)
 
         return queryset

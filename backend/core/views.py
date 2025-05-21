@@ -35,7 +35,7 @@ class BaseModelViewSet(ModelViewSet):
         if related_user_id and self.request.user.user_role != Datatypes.User.professor:
             queryset = queryset.filter(student=related_user_id)
 
-        return queryset
+        return queryset.order_by('-created_at')
 
     def get_serializer_class(self):
         # Si la acción es 'list' y hay un list_serializer_class definido, usarlo
@@ -49,12 +49,10 @@ class BaseModelViewSet(ModelViewSet):
         Sobrescribe el método 'list' para devolver los datos filtrados y paginados.
         Utiliza caché para optimizar el rendimiento.
         """
-        # Crear una clave de caché única
-        cache_key = self._build_cache_key()
 
         # Intentar recuperar los datos del caché
         return Response(
-            self._get_or_set_cached_response(cache_key, lambda: self._generate_response()),
+            self._get_or_set_cached_response(lambda: self._generate_response()),
             status=status.HTTP_200_OK
         )
 
@@ -79,14 +77,14 @@ class BaseModelViewSet(ModelViewSet):
 
         return Response({"message": f"{deleted_count} elementos eliminados"}, status=status.HTTP_200_OK)
 
-    def _get_or_set_cached_response(self, cache_key, data_function):
-        cached_data = self._get_cached_response(cache_key)
+    def _get_or_set_cached_response(self, data_function):
+        cached_data = self._get_cached_response()
         if cached_data:
             return cached_data
 
         # Llama a la función que genera los datos si no están en la caché
         data = data_function()
-        self._cache_response(cache_key, data, timeout=self._cache_timeout)
+        self._cache_response(data, timeout=self._cache_timeout)
         return data
 
     def _generate_response(self):
@@ -135,24 +133,25 @@ class BaseModelViewSet(ModelViewSet):
         related_user_id = self.request.query_params.get('related_user_id', '')
         return related_user_id
 
-    def _cache_response(self, cache_key, data, timeout=300):
+    def _cache_response(self, data, timeout=300):
         """
         Guarda los datos en caché.
         """
+        cache_key = self._build_cache_key()
         cache.set(cache_key, data, timeout)
 
-    def _get_cached_response(self, cache_key):
+    def _get_cached_response(self):
         """
         Recupera datos del caché.
         """
+        cache_key = self._build_cache_key()
         return cache.get(cache_key)
 
     def invalidate_cache(self):
         """
         Elimina la caché basada en los parámetros de búsqueda.
         """
-        cache_key = self._build_cache_key()
-        cache.delete(cache_key)  # Limpia la caché antes de actualizar datos
+        cache.clear()
 
     def _build_cache_key(self):
         '''

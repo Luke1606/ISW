@@ -57,7 +57,7 @@ class QuerysetFilter:
         # Aplicar filtros básicos con el FilterSet dinámico
         if kwargs:
             basic_conditions = self.dynamic_filter_factory.filter_with_join_type(
-                data=kwargs, join_type=join_type
+                queryset=queryset, data=kwargs, join_type=join_type
             )
             combined_conditions &= basic_conditions
 
@@ -65,6 +65,7 @@ class QuerysetFilter:
         if search_term:
             for field, lookup in self.model.SEARCHABLE_FIELDS.items():
                 if lookup == "date_range":
+                    print('asdadasaaaaaaaaaaa')
                     date_condition = self._build_date_condition(field, search_term)
                     if date_condition:
                         combined_conditions |= date_condition

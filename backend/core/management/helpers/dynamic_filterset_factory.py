@@ -1,6 +1,7 @@
 """
 Una fábrica para generar clases `FilterSet` dinámicas basadas en los campos definidos en `SEARCHABLE_FIELDS` de un modelo.
 """
+import traceback
 from django_filters import rest_framework as filters
 from django.db.models import Q
 
@@ -42,6 +43,7 @@ class DynamicFilterSetFactory:
                 model = self.model
                 fields = {
                     field: [lookup] for field, lookup in searchable_fields.items()
+                    if lookup != 'date_range'
                 }
 
         return DynamicFilterSet
@@ -58,6 +60,7 @@ class DynamicFilterSetFactory:
         Returns:
             QuerySet: QuerySet filtrado basado en las condiciones combinadas.
         """
+
         # Crear el FilterSet dinámico
         filterset_class = self.create()
         filterset = filterset_class(data=data, queryset=queryset)
