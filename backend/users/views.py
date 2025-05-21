@@ -169,6 +169,27 @@ class StudentViewSet(BaseModelViewSet):
         except ValueError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+    def update(self, request, *args, **kwargs):
+        '''
+        Permitir actualizar el username, asegurando que no haya duplicados.
+        '''
+        instance = self.get_object()
+        data = request.data
+        user_instance = instance.id
+
+        user_data = {key: data[key] for key in ['username', 'name', 'pic'] if key in data}
+        student_data = {key: data[key] for key in ['faculty', 'group'] if key in data}
+
+        user_serializer = CustomUserSerializer(user_instance, data=user_data, partial=True)
+        user_serializer.is_valid(raise_exception=True)
+        user_serializer.save()
+
+        serializer = self.get_serializer(instance, data=student_data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class ProfessorViewSet(BaseModelViewSet):
     '''
@@ -184,3 +205,44 @@ class ProfessorViewSet(BaseModelViewSet):
         'destroy': [permissions.IsAuthenticated, IsDecano],
         'retrieve': [permissions.IsAuthenticated, IsProfessor | IsDecano],
     }
+
+    def create(self, request, *args, **kwargs):
+        '''
+        Personaliza la creación para usar create_user_by_role.
+        '''
+        data = request.data
+        user_manager = CustomUser.objects
+        try:
+            # Crear usuario con el rol docente proporcionado
+            professor = user_manager.create_user_by_role(
+                role=data.get('role'),
+                name=data.get('name'),
+                username=data.get('username'),
+                pic=data.get('pic'),
+            )
+
+            serializer = ProfessorSerializer(professor)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        '''
+        Permitir actualizar el profesor.
+        '''
+        instance = self.get_object()
+        data = request.data
+        user_instance = instance.id
+
+        user_data = {key: data[key] for key in ['username', 'name', 'pic'] if key in data}
+        professor_data = {key: data[key] for key in ['role'] if key in data}
+
+        user_serializer = CustomUserSerializer(user_instance, data=user_data, partial=True)
+        user_serializer.is_valid(raise_exception=True)
+        user_serializer.save()
+
+        serializer = self.get_serializer(instance, data=professor_data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

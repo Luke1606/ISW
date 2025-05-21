@@ -8,7 +8,7 @@ from .models import Notification
 from .serializers import NotificationSerializer
 
 
-def send_notification(notification_title, notification_message, notification_url, users, important):
+def send_notification(notification_title, notification_message, notification_url, users, important=False):
     channel_layer = get_channel_layer()
 
     if not notification_url:
@@ -31,10 +31,10 @@ def send_notification(notification_title, notification_message, notification_url
             group_name,
             {
                 'type': 'send_notification',
-                'notification': {
-                    serialized_notification,
-                    important
-                }
+                'notification': dict(
+                    notification=serialized_notification,
+                    important=important
+                )
             }
         )
 

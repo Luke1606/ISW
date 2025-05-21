@@ -49,7 +49,6 @@ class Evidence(BaseModel):
         """
         Validación personalizada para asegurar que los campos de adjunto sean consistentes.
         """
-        print(self.attachment_type, self.attachment_file, self.attachment_url)
         if self.attachment_type == self.Type.URL and not self.attachment_url:
             raise ValidationError('URL field must be provided when attachment type is URL.')
         if self.attachment_type == self.Type.FILE and not self.attachment_file:

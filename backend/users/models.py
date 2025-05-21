@@ -168,11 +168,13 @@ class Professor(BaseModel):
         NONE = 'None', 'Ninguno'
         PROFESSOR = Datatypes.User.professor, 'Profesor'
         DPTO_INF = Datatypes.User.dptoInf, 'Departamento de Informática'
-        DECANO = Datatypes.User.decan, 'Decano'
+        DECAN = Datatypes.User.decan, 'Decano'
 
     role = models.CharField(max_length=20, choices=Roles.choices, default=Roles.NONE)
     SEARCHABLE_FIELDS = {
         **BaseModel.SEARCHABLE_FIELDS,
+        'id__username': 'icontains',
+        'id__name': 'icontains',
         'role': 'exact',
     }
 
@@ -188,7 +190,7 @@ class Professor(BaseModel):
                 president=self.id,
                 secretary=self.id,
                 vocal=self.id,
-                oponent=self.id,
+                opponent=self.id,
                 join_type='OR'
             )
             return list(tribunal_queryset.values_list('student_id', flat=True))
