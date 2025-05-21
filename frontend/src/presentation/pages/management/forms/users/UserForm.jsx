@@ -61,20 +61,27 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
         name: Yup.string()
             .min(3, 'El nombre de usuario debe tener al menos 3 caracteres')
             .required('El nombre de usuario es obligatorio')
-            .matches(/^[a-zA-Z\s]*$/, 'El nombre no puede contener números ni caracteres especiales'),
+            .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/, 'El nombre no puede contener números ni caracteres especiales'),
 
         username: Yup.string()
             .min(3, 'El nombre de usuario debe tener al menos 4 caracteres')
             .required('El nombre de usuario es obligatorio')
-            .matches(/^[a-zA-Z0-9]*$/, 'El nombre no puede contener caracteres especiales'),
+            .matches(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]*$/, 'El nombre no puede contener caracteres especiales'),
         ...specificSchema   
     }), [specificSchema])
 
     const submitFunction = async (values) => {
-        const user = {
-            name: values?.name,
-            username: values?.username,
-        }
+        const user = isEdition?
+            {
+                id: prevValues?.id,
+                name: values?.name,
+                username: values?.username,
+            }
+            :
+            {
+                name: values?.name,
+                username: values?.username,
+            }
 
         const newValues = isStudent?
             {
@@ -85,15 +92,15 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
             :
             {
                 ...user,
-                user_role: values.role
+                role: values.role
             }
-
+        
         let success = false
         let message
-        console.log(newValues);
+
         const datatype = isStudent? datatypes.user.student : datatypes.user.professor
         if (isEdition) {
-            const response = await ManagementService.updateData(datatype, prevValues.id, newValues)
+            const response = await ManagementService.updateData(datatype, prevValues.id.id, newValues)
             success = response?.success
             message = response?.message
         } else {

@@ -25,7 +25,7 @@ const LoginForm = ({ closeFunc }) => {
                 username: Yup.string()
                     .min(3, 'El nombre de usuario debe tener al menos 3 caracteres')
                     .required('El nombre de usuario es obligatorio')
-                    .matches(/^[a-zA-Z0-9]*$/, 'El nombre no puede contener caracteres especiales'),
+                    .matches(/^[0-9a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/, 'El nombre no puede contener caracteres especiales'),
                 password: Yup.string()
                     .min(10, 'La contraseña debe tener al menos 10 caracteres')
                     .matches(/[a-z]/, 'La contraseña debe contener al menos una letra minúscula')
