@@ -1,9 +1,9 @@
 import { 
     NotificationCenter, 
     ProtectedRoutes, 
+    ListWrapper, 
     Layout, 
     Home, 
-    List, 
     Error
 } from './'
 
@@ -21,7 +21,7 @@ const routes = [
                 children: [
                     {
                         path: 'list/:datatype/:relatedUserId?',
-                        element: <List />,
+                        element: <ListWrapper />,
                     },
                     {
                         path: 'notifications',

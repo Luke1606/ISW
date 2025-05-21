@@ -1,12 +1,10 @@
-import { useParams } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import { Search, Plus, Edit, Trash2, FileText, Check, X, CheckCheck } from 'lucide-react'
 import { listHooks, useFormParams, useModal, useTranslateToSpanish } from '@/logic'
 import { Modal, PaginationButtons, Form, CheckeableListItem } from '@/presentation'
 import { datatypes } from '@/data'
 
-const List = () => {
-    const { datatype, relatedUserId } = useParams()
-
+const List = ({ datatype, relatedUserId }) => {
     const {
         selectAll,
         setChanged,
@@ -47,7 +45,7 @@ const List = () => {
                     'Gestionar'
                     :
                     'Listar'    
-                } {spanishDatatype}s
+                } {`${spanishDatatype}${['a', 'e', 'i', 'o', 'u'].includes(spanishDatatype.slice(-1).toLowerCase()) ? 's' : 'es'}`}
             </h2>
             
             {/* Barra de busqueda */}
@@ -165,6 +163,7 @@ const List = () => {
                                 { datatype === datatypes.user.student &&
                                     <select 
                                         className={`button options-button list-button ${selectedItems.length > 1 && 'hidden'}`}
+                                        name='options'
                                         title='Más opciones'
                                         defaultValue={'default'}
                                         onChange={(e) => {
@@ -246,6 +245,11 @@ const List = () => {
             </Modal>
         </div>
     )
+}
+
+List.propTypes = {
+    datatype: PropTypes.string.isRequired,
+    relatedUserId: PropTypes.string,
 }
 
 export default List
