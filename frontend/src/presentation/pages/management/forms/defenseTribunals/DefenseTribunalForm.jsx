@@ -15,7 +15,10 @@ import { SearchableSelect, FormButtons } from '@/presentation'
 const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
     let initialValues = isDefenseTribunal?
         {
-            defenseDate: prevValues?.date || '',
+            defenseDate: prevValues?.defense_date instanceof Date?
+                prevValues?.defense_date?.toISOString().split('T')[0] 
+                :
+                prevValues?.defense_date || '',
             president: prevValues?.president || '',
             secretary: prevValues?.secretary || '',
             vocal: prevValues?.vocal || '',
@@ -25,7 +28,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
         }
         :
         { state: prevValues?.state || '' }
-
+    
     const [ professors, setProfessors ] = useState([])
     const [ selectedProfessors, setSelectedProfessors ] = useState([])
 
@@ -63,15 +66,13 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
             }
         }
 
-        if (isDefenseTribunal)
-            fetchProfessors()
+        fetchProfessors()
     }, [isDefenseTribunal])
 
     const validationSchema = useMemo(() => {
         return isDefenseTribunal?
             Yup.object().shape({
                 defenseDate: Yup.string()
-                    .required('La fecha es obligatoria')
                     .matches(/^\d{4}-\d{2}-\d{2}$/, 'Formato de fecha incorrecto') // Valida formato YYYY-MM-DD
                     .test('valid-date', 'La fecha no puede ser en el pasado', value => {
                         if (!value) return false
@@ -119,7 +120,8 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
             secretary: values?.secretary || prevValues?.secretary,
             vocal: values?.vocal || prevValues?.vocal,
             opponent: values?.opponent || prevValues?.opponent,
-            date: values?.date || prevValues?.date,
+            tutors: values?.tutors || prevValues?.tutors,
+            defense_date: values?.defenseDate || prevValues?.defense_date,
             state: values?.state || prevValues?.state,
         }
 
@@ -270,9 +272,10 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             className='form-input'
                             id='defense-date'
                             type='date'
-                            {...formik.getFieldProps('defenseDate')}
+                            value={formik.values.defenseDate? formik.values.defenseDate : ''}
+                            onChange={(event) => formik.setFieldValue('defenseDate', event.target.value)}
                             />
-                        
+
                         <span
                             className={`error ${formik.errors.defenseDate && formik.touched.defenseDate && 'hidden'}`}
                             >
@@ -365,7 +368,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             className='form-input'
                             id='president'
                             type='text'
-                            value={prevValues.president}
+                            value={professors.find(option => option.value === prevValues?.president)?.label || ''}
                             readOnly
                             />
 
@@ -379,7 +382,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             className='form-input'
                             id='secretary'
                             type='text'
-                            value={prevValues.secretary}
+                            value={professors.find(option => option.value === prevValues?.secretary)?.label || ''}
                             readOnly
                         />
 
@@ -394,7 +397,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             className='form-input'
                             id='vocal'
                             type='text'
-                            value={prevValues.vocal}
+                            value={professors.find(option => option.value === prevValues?.vocal)?.label || ''}
                             readOnly
                             />
 
@@ -409,7 +412,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             className='form-input'
                             id='opponent'
                             type='text'
-                            value={prevValues.opponent}
+                            value={professors.find(option => option.value === prevValues?.opponent)?.label || ''}
                             readOnly
                             />
                     </section>
@@ -434,7 +437,10 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             className='form-input'
                             id='defense-date'
                             type='date'
-                            value={prevValues.date instanceof Date ? prevValues.date.toISOString().split('T')[0] : prevValues.date}
+                            value={prevValues.defense_date instanceof Date?
+                                prevValues.defense_date.toISOString().split('T')[0]
+                                :
+                                prevValues.defense_date}
                             readOnly
                             />
 
@@ -449,7 +455,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                                 key={index}
                                 className='form-input'
                                 type='text'
-                                value={tutor}
+                                value={professors.find(option => option.value === tutor)?.label || ''}
                                 readOnly
                                 />
                         ))}
@@ -514,12 +520,12 @@ DefenseTribunalForm.propTypes = {
     prevValues: PropTypes.shape({
         id: PropTypes.string.isRequired,
         student: PropTypes.string.isRequired,
-        date: PropTypes.instanceOf(Date),
+        defense_date: PropTypes.instanceOf(Date),
         president: PropTypes.string,
         secretary: PropTypes.string,
         vocal: PropTypes.string,
         opponent: PropTypes.string,
-        tutors: PropTypes.PropTypes.string.isRequired,
+        tutors: PropTypes.array.isRequired,
         state: PropTypes.oneOf(['I', 'P', 'A', 'D']).isRequired
     }).isRequired
 }

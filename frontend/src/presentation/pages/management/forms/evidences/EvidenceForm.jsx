@@ -39,7 +39,7 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
         name: Yup.string()
             .min(4, 'El nombre debe tener al menos 4 caracteres')
             .required('El nombre es obligatorio')
-            .matches(/^[\w\s]+$/, 'No se permiten caracteres especiales'),
+            .matches(/^[0-9a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/, 'No se permiten caracteres especiales'),
         
         description: Yup.string(),
         
