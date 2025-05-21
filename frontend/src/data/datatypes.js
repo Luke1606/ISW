@@ -3,6 +3,7 @@
  */
 const datatypes = {
     user: {
+        defaultUser: 'user',
         student: 'student',
         professor: 'professor',
         dptoInf: 'dptoInf',
@@ -11,7 +12,6 @@ const datatypes = {
     evidence: 'evidence',
     request: 'request',
     defense_tribunal: 'defense_tribunal',
-    tribunal: 'tribunal',
     defense_act: 'defense_act',
     report: 'report',
     default: 'none'

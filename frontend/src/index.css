@@ -929,6 +929,38 @@ button:hover, .button:hover {
     background-color: rgb(200, 0, 0);
 }
 
+.datatype-selector {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    gap: 3rem !important;
+}
+
+.datatype-link {
+    cursor: pointer;
+    color: var(--primary-dark-tone);
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: all 0.3s ease !important;
+}
+
+.datatype-link.active {
+    font-weight: bold;
+    color: white;
+    background: var(--primary-gradient);
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.datatype-link:hover {
+    color: white;
+    background: var(--primary-transparent-gradient);
+    transform: scale(1.1);
+}
+
 .manage-list {
     background: rgba(230, 230, 230, 0.8);
     width: 95%;

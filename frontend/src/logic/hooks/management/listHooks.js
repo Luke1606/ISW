@@ -46,12 +46,16 @@ const useListDataStates = (datatype, relatedUserId) => {
     }, [datatype, relatedUserId, setLoading, currentPage])
 
     useEffect(() => {
+        setChanged(true)
+    }, [datatype, relatedUserId])
+
+    useEffect(() => {
         if (changed) {
             setSelectedItems([])
             getData()
             setChanged(false)
         }
-    }, [getData, datatype, relatedUserId, changed])
+    }, [getData, changed])
 
     useEffect(() => {
         if (Object.keys(data || []).length > currentPage)
@@ -174,7 +178,7 @@ const useItemTouchControl = (datatype) => {
             
                     if (user?.user_role === datatypes.user.decan && defenseTribunal?.state === 'P')
                         options.push({ 
-                            action: () => openManageForm(datatypes.tribunal, { idData: selectedItemId }), 
+                            action: () => openManageForm(datatypes.defense_tribunal, { idData: selectedItemId }), 
                             label: 'Aprobar tribunal',
                             value: 'aprove-tribunal'
                         })

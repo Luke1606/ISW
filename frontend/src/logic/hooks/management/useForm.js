@@ -16,20 +16,23 @@ const useForm = (datatype, idData, relatedUserId) => {
     }, [idData, datatype, user])
     
     useEffect(() => {
-        const initializePrevValues = async (datatype, id, relatedUserId) => {
-            if (datatype !== datatypes.request && !id) return null
-            else if (datatype === datatypes.request && !id) {
+        const initializePrevValues = async () => {
+            if (datatype !== datatypes.request && !idData) {
+                setPrevValues({})
+                return
+            }
+            else if (datatype === datatypes.request && !idData) {
                 setPrevValues({ student: user.id })
                 return
             }
-            
+
             setLoading(true)
             
             let message = ''
             let success = false
     
             try {
-                const response = await ManagementService.getData(datatype, id, relatedUserId)
+                const response = await ManagementService.getData(datatype, idData, relatedUserId)
                 
                 if (response.success) {
                     setPrevValues(response.data)
@@ -52,7 +55,7 @@ const useForm = (datatype, idData, relatedUserId) => {
             }
         }
 
-        initializePrevValues(datatype, idData, relatedUserId)
+        initializePrevValues()
     }, [datatype, idData, relatedUserId, setLoading, user.id])
     
     return { prevValues, isEdition }
