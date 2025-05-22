@@ -58,9 +58,9 @@ const DefenseActForm = ({ isEdition, closeFunc, studentId, prevValues }) => {
     const submitFunction = async (values) => {
         const newValues = {
             student: prevValues?.student || studentId,
-            name: values?.name,
-            description: values?.description,
-            attachment: values?.attachment,
+            name: values?.name || values?.name,
+            description: values?.description || prevValues?.description,
+            attachment: values?.attachment || prevValues?.attachment,
         }
         let success = false
         let message = ''
@@ -157,7 +157,6 @@ const DefenseActForm = ({ isEdition, closeFunc, studentId, prevValues }) => {
                             className='form-input'
                             id='description'
                             rows='4'
-                            title='Resumen o descripción del acta'
                             placeholder='Describa el contenido del acta'
                             {...formik.getFieldProps('description')}
                             />

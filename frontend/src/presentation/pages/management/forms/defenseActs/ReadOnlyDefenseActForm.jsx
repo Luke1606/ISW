@@ -12,7 +12,7 @@ const ReadOnlyDefenseActForm = ({ closeFunc, values }) => {
 
     return (
         <section
-            className='form-container manage-section' 
+            className='form-container' 
             >
             <h1 
                 className='form-title'

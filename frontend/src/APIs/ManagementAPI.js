@@ -68,7 +68,7 @@ const createData = async (datatype, data) => {
 const updateData = async (datatype, id, data) => {
     const formattedData = (
         datatype === datatypes.evidence || datatype === datatypes.defense_act? 
-            fileTransform(data) 
+            fileTransform(data)
             :
             data)
     return await handleRequest({
@@ -105,7 +105,11 @@ const fileTransform = (data) => {
 }
 
 const fetchFileFromUrl = async (url) => {
-    const response = await fetch(url)
-    const blob = await response.blob()
-    return new File([blob], 'archivo_adjuntado', { type: blob.type })
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    const urlParts = url.split('/');
+    const originalFileName = urlParts[urlParts.length - 1]
+
+    return new File([blob], originalFileName, { type: blob.type })
 }

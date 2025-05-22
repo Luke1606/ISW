@@ -94,11 +94,11 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
     const submitFunction = async (values) => {
         const newValues = {
             student: prevValues?.student || studentId,
-            name: values?.name,
-            description: values?.description,
-            attachment_type: values?.attachmentType,
-            attachment_url: values?.url,
-            attachment_file: values?.file
+            name: values?.name || prevValues?.name,
+            description: values?.description || prevValues?.description,
+            attachment_type: values?.attachmentType || prevValues?.attachment_type,
+            attachment_url: values?.url || prevValues?.attachment_url,
+            attachment_file: values?.file || prevValues?.attachment_file,
         }
 
         let success = false
