@@ -52,7 +52,7 @@ class BaseModelManager(models.Manager):
 
         queryset = queryset_filter.filter_by_conditions(queryset=queryset, join_type=join_type, search_term=search_term, **kwargs)
 
-        return queryset
+        return queryset.distinct()
 
 
 class BaseModel(models.Model):

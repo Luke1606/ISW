@@ -54,15 +54,17 @@ class DefenseTribunalViewSet(BaseModelViewSet):
             raise PermissionDenied(non_permission)
 
         elif user.is_professor:
-            if user.user_role not in {Professor.Roles.DECAN, Professor.Roles.DPTO_INF}:
-                # Decanos y Dpto Inf tienen acceso completo
-                raise PermissionDenied(non_permission)
-            elif user.user_role == Professor.Roles.PROFESSOR:
+            if user.user_role == Professor.Roles.PROFESSOR:
                 # Profesores solo tienen acceso a tribunales relacionados
                 professor = Professor.objects.get(id=user)
                 related_students_ids = professor.get_related_students_ids()
+
                 if student.id.id not in related_students_ids:
                     raise PermissionDenied(non_permission)
+
+            elif user.user_role not in {Professor.Roles.DECAN, Professor.Roles.DPTO_INF}:
+                # Decanos y Dpto Inf tienen acceso completo
+                raise PermissionDenied(non_permission)
 
         serializer = self.get_serializer(tribunal)
         return Response(serializer.data, status=status.HTTP_200_OK)

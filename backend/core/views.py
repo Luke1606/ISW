@@ -5,6 +5,7 @@ from rest_framework.serializers import Serializer
 from django.core.paginator import Paginator
 from django.core.cache import cache
 from core.management.utils.constants import Datatypes
+from users.models import Professor
 
 
 class BaseModelViewSet(ModelViewSet):
@@ -32,8 +33,15 @@ class BaseModelViewSet(ModelViewSet):
 
         related_user_id = self._get_related_user_id()
 
-        if related_user_id and self.request.user.user_role != Datatypes.User.professor:
-            queryset = queryset.filter(student=related_user_id)
+        datatype = self.kwargs.get('datatype')
+
+        if related_user_id:
+            if self.request.user.user_role != Datatypes.User.professor:
+                queryset = queryset.filter(student=related_user_id)
+            if self.request.user.user_role == Datatypes.User.professor and datatype == Datatypes.User.student:
+                professor = Professor.objects.get(id_id=related_user_id)
+                student_ids = professor.get_related_students_ids()
+                queryset = queryset.filter(id_id__in=student_ids)
 
         return queryset.order_by('-created_at')
 

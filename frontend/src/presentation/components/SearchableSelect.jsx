@@ -1,21 +1,29 @@
 import PropTypes from 'prop-types'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Select from 'react-select'
 
-const SearchableSelect = ({ id, title, elements, defaultValue = { value: '', label: 'Seleccione una opción '}, onChange }) => {
+const SearchableSelect = ({ 
+    id, 
+    title, 
+    elements, 
+    onChange,
+    defaultValue = { value: '', label: 'Seleccione una opción '}
+}) => {
     const [ selectedOption, setSelectedOption ] = useState(defaultValue)
     const [ remainingElements, setRemainingElements ] = useState(elements)
+    const changedRef = useRef(null)
 
     useEffect(() => {
         setRemainingElements(elements)
     }, [elements])
 
     useEffect(() => {
-        if (defaultValue.value !== selectedOption.value)
-        setSelectedOption(defaultValue)
+        if (defaultValue.value !== selectedOption.value && !changedRef.current)
+            setSelectedOption(defaultValue)
     }, [defaultValue, selectedOption])
 
     const handleElementChange = (selected) => {
+        changedRef.current = true
         setSelectedOption(selected)
         setRemainingElements(elements.filter((element) => element.value !== selected.value))
 

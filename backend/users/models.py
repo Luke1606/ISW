@@ -187,11 +187,13 @@ class Professor(BaseModel):
         if self.role == self.Roles.PROFESSOR:
             from defenses_tribunals.models import DefenseTribunal
             tribunal_queryset = DefenseTribunal.objects.search(
-                president=self.id,
-                secretary=self.id,
-                vocal=self.id,
-                opponent=self.id,
+                president=self,
+                secretary=self,
+                vocal=self,
+                opponent=self,
                 join_type='OR'
             )
+
+            tribunal_queryset = tribunal_queryset.filter(state=DefenseTribunal.State.APPROVED)
             return list(tribunal_queryset.values_list('student_id', flat=True))
         return []
