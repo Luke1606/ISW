@@ -165,6 +165,9 @@ class StudentViewSet(BaseModelViewSet):
             )
 
             serializer = StudentSerializer(student)
+
+            super().invalidate_cache()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValueError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -187,6 +190,8 @@ class StudentViewSet(BaseModelViewSet):
         serializer = self.get_serializer(instance, data=student_data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        super().invalidate_cache()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -222,6 +227,9 @@ class ProfessorViewSet(BaseModelViewSet):
             )
 
             serializer = ProfessorSerializer(professor)
+
+            super().invalidate_cache()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValueError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -244,5 +252,7 @@ class ProfessorViewSet(BaseModelViewSet):
         serializer = self.get_serializer(instance, data=professor_data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+
+        super().invalidate_cache()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
