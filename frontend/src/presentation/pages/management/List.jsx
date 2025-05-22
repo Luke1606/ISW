@@ -16,7 +16,7 @@ const List = ({ datatype, relatedUserId }) => {
         setSelectedItems,
         paginationParams
     } = listHooks.useListDataStates(datatype, relatedUserId)
-    
+
     const permissions = listHooks.usePermisions(datatype)
 
     const {

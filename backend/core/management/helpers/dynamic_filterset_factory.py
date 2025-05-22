@@ -1,7 +1,6 @@
 """
 Una fábrica para generar clases `FilterSet` dinámicas basadas en los campos definidos en `SEARCHABLE_FIELDS` de un modelo.
 """
-import traceback
 from django_filters import rest_framework as filters
 from django.db.models import Q
 

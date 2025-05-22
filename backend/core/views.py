@@ -65,6 +65,9 @@ class BaseModelViewSet(ModelViewSet):
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
+        """
+        Método destroy personalizado para poder eliminar un conjunto de elementos a partir de una lista de ids.
+        """
         self.invalidate_cache()
 
         ids = request.data.get("ids", [])

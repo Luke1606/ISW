@@ -3,7 +3,6 @@
  */
 const datatypes = {
     user: {
-        defaultUser: 'user',
         student: 'student',
         professor: 'professor',
         dptoInf: 'dptoInf',
