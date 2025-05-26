@@ -1,124 +1,290 @@
 import PropTypes from 'prop-types'
-import { useMemo, useRef } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import * as Yup from 'yup'
+import { CheckCheck } from 'lucide-react'
 import { datatypes } from '@/data'
-import { ManagementService, useGenericForm } from '@/logic'
-import { FilePreviewer, FormButtons, SearchableSelect } from '@/presentation'
+import { ManagementService, NotificationService, useGenericForm, useAuth, useTranslateToSpanish } from '@/logic'
+import { FilePreviewer, FormButtons, SearchableSelect, CheckeableListItem } from '@/presentation'
 
-const ReportForm = ({ modalId, closeModal, userRole }) => {
+const ReportForm = ({ closeFunc }) => {
+    const [ sended, setSended ] = useState(false)
+    const [ reportPDF, setReportPDF ] = useState(null)
+    const [ userType, setUserType ] = useState(datatypes.user.student)
+    const { user } = useAuth()
+
     const initialValues = {
-        infoType: '',
-        selectedElements: [],
-        selectedElementsInfo: [],
+        userType: userType,
+        selectedUsers: [],
+        selectedUsersInfo: [],
     }
 
-    const AVAILABLE_INFO_MAPPING = useMemo(() => {
+    const AVAILABLE_USER_INFO_MAPPING = useMemo(() => {
+        const role = user.user_role
+        if (role === datatypes.user.student) 
+            return [datatypes.evidence, datatypes.request, datatypes.defense_tribunal]
+        if (role === datatypes.user.decan) {
+            if (userType === datatypes.user.student)
+                return [datatypes.evidence, datatypes.request, datatypes.defense_tribunal, datatypes.defense_act]
+            else
+                return [datatypes.defense_act]
+        } else
+            return [datatypes.evidence, datatypes.request, datatypes.defense_tribunal, datatypes.defense_act]
+    }, [user.user_role, userType])
 
-    }, [userRole])
+    const [ users, setUsers ] = useState([])
+    const [ selectedUsers, setSelectedUsers ] = useState([])
 
-    const AVAILABLE_SUB_INFO_MAPPING = useMemo(() => {
+    useEffect(() => {
+        const fetchUsers = async () => {
+            let message = ''
+            let success = false
+            try {
+                const response = await ManagementService.getAllData(userType)
 
-    }, [AVAILABLE_INFO_MAPPING])
+                if (response.success) {
+                    const usersList = Object.values(response?.data?.data).flat()
+                    success = true
+
+                    if (usersList) 
+                        setUsers(usersList)
+                } else {
+                    message = response?.message
+                }
+            } catch (error) {
+                message = error.message
+            } finally {
+                if (!success) {
+                    const notification = {
+                        title: 'Error',
+                        message: message
+                    }
+                    NotificationService.showToast(notification, 'error')
+                }
+            }
+        }
+        setSelectedUsers([])
+        fetchUsers()
+    }, [userType])
 
     const validationSchema = useMemo(() => Yup.object().shape({
-        infoType: Yup.string()
+        userType: Yup.string()
             .required('La información a reportar es obligatoria')
-            .oneOf(AVAILABLE_INFO_MAPPING),
+            .oneOf(
+                user.user_role === datatypes.user.decan?
+                    [datatypes.user.student, datatypes.user.professor]
+                    :
+                    [datatypes.user.student]
+                ),
         
         selectedElements: Yup.array()
-            .of(Yup.ObjectSchema({
+            .of(Yup.object().shape({
                 id: Yup.string().required(),
                 name: Yup.string().required(),
             })),
+    
         
         selectedElementsInfo: Yup.array()
-            .oneOf(AVAILABLE_SUB_INFO_MAPPING)
-            .required('La información a reportar de los elementos seleccionados es obligatoria'),
-    }), [AVAILABLE_INFO_MAPPING, AVAILABLE_SUB_INFO_MAPPING])
+            .required('La información a reportar de los elementos seleccionados es obligatoria')
+            .oneOf(AVAILABLE_USER_INFO_MAPPING),
+    }), [user.user_role, AVAILABLE_USER_INFO_MAPPING])
 
     const submitFunction = async (values) => {
-        await ManagementService.generateReport(values)
+        const newValues = {
+            type: user.user_role === datatypes.user.student?
+                datatypes.user.student 
+                : 
+                values.userType,
+            users: user.user_role === datatypes.user.student?
+                user.id
+                : 
+                values.selectedUsers,
+            infos: values.selectedUsersInfo,
+        }
+        const { success, data, message } = await ManagementService.generateReport(newValues)
+
+        setSended(true)
+
+        if (success) {
+            setReportPDF(data)
+        }
+
+        return {
+            success,
+            message
+        }
     }
 
     const formik = useGenericForm(submitFunction, initialValues, validationSchema)
 
-    const fileInputRef = useRef(null)
-
     const handleInfoTypeChange = (e) => {
-        const infoType = e.target.value
+        const userType = e.target.value
 
-        if (formik.values.infoType !== infoType) {
-            formik.setValues({
-                ...formik.values,
-                infoType,
-                selectedElements: null,
-                selectedElementsInfo: null,
-            })
-            if (fileInputRef.current) 
-                fileInputRef.current.value = ''
+        if (formik.values.userType !== userType) {
+            formik.setFieldValue('selectedUsers', [])
+            formik.setFieldValue('selectedUsersInfo', [])
+            formik.setFieldValue('userType', userType)
+            setUserType(userType)
         }
     }
 
+    const translate = useTranslateToSpanish()
+
+    const selectAll = () => {
+        const ids = Object.values(users).map(user => user.id)
+        const allSelected = selectedUsers.length === ids.length && 
+                            selectedUsers.every(id => ids.includes(id))
+        setSelectedUsers(allSelected? [] : ids)
+    }
+
     return (
-        <form
+        <section
             className='form-container'
-            onSubmit={formik.handleSubmit}
             >
             <h1 
                 className='form-title'
                 >
                 Generar reporte
             </h1>
-            
-            <section 
-                className='multi-layered-form'
-                >
-                <section 
-                    className='manage-section'
+
+            { !sended?
+                <form
+                    onSubmit={formik.handleSubmit}
                     >
-                    <h2 
-                        className='form-subtitle'
+                    <section 
+                        className='multi-layered-form'
                         >
-                        Datos del reporte
-                    </h2>
+                        <section 
+                            className='manage-section'
+                            >
+                            <h2 
+                                className='form-subtitle'
+                                >
+                                Datos del reporte
+                            </h2>
 
-                    <label 
-                        className='form-label' 
-                        htmlFor='info'
-                        >
-                        Información a reportar:
-                    </label>
+                            { user.user_role === datatypes.user.decan &&
+                                <>  
+                                    <label 
+                                        className='form-label'
+                                        htmlFor='user-type'
+                                        >
+                                        Tipo de usuario a reportar:
+                                    </label>
 
-                    <SearchableSelect
-                        id='info'
-                        elements={AVAILABLE_INFO_MAPPING}
-                        />
+                                    <div 
+                                        className='form-radio-container'
+                                        id='user-type'
+                                        >
+                                        <label 
+                                            className='form-radio-option'
+                                            >
+                                            <input
+                                                className='form-input'
+                                                type='radio'
+                                                name='userType'
+                                                value={datatypes.user.student}
+                                                checked={formik.values.userType === datatypes.user.student}
+                                                onChange={handleInfoTypeChange}
+                                                />
+                                            Estudiantes
+                                        </label>
+                                        
+                                        <label 
+                                            className='form-radio-option'
+                                            >
+                                            <input
+                                                className='form-input'
+                                                type='radio'
+                                                name='userType'
+                                                value={datatypes.user.professor}
+                                                checked={formik.values.userType === datatypes.user.professor}
+                                                onChange={handleInfoTypeChange}
+                                                />
+                                            Profesores
+                                        </label>
+                                    </div>
+                                </>}
+                        
+                            <span
+                                className='error'
+                                style={formik.errors.userType && formik.touched.userType ? {} : { visibility: 'hidden' }}
+                                >
+                                {formik.errors.userType}
+                            </span>
+
+                            <label 
+                                className='form-label' 
+                                htmlFor='elements-info'
+                                >
+                                Datos de los usuarios a reportar:
+                            </label>
+                        
+                            <SearchableSelect 
+                                id='elements-info'
+                                title='Datos a reportar de los usuarios seleccionados'
+                                defaultValue={formik.values.selectedElementsInfo?.map((info) => ({ value: info, label: translate(info)}))}
+                                elements={AVAILABLE_USER_INFO_MAPPING.map((info) => ({ value: info, label: translate(info)}))}
+                                onChange={(value) => formik.setFieldValue('selectedElementsInfo', value)}
+                                isMulti={true}
+                                />
                     
-                    <span
-                        className='error'
-                        style={formik.errors.infoType && formik.touched.infoType ? {} : { visibility: 'hidden' }}
-                        >
-                        {formik.errors.infoType}
-                    </span>
+                            <span
+                                className='error'
+                                style={formik.errors.description && formik.touched.description ? {} : { visibility: 'hidden' }}
+                                >
+                                {formik.errors.description}
+                            </span>
+                        </section>
 
-                    <label 
-                        className='form-label' 
-                        htmlFor='description'
-                        >
-                        Elementos a reportar:
-                    </label>
-                    
+                        <section
+                            className='manage-section'
+                            >
+                            <label 
+                                className='form-label' 
+                                htmlFor='users'
+                                >
+                                Usuarios a reportar:
+                            </label>
 
-                
-                    <span
-                        className='error'
-                        style={formik.errors.description && formik.touched.description ? {} : { visibility: 'hidden' }}
-                        >
-                        {formik.errors.description}
-                    </span>
-                </section>
+                            <button
+                                title='Seleccionar todos'
+                                type='button'
+                                className='accept-button'
+                                onClick={selectAll}
+                                >
+                                <CheckCheck size={40}/>
+                            </button>
 
-                {formik.values.attachmentType &&
+                            <div
+                                className='manage-list report-list'
+                                >
+                                { users?.length > 0?
+                                    users?.map((user, index) => (
+                                        <CheckeableListItem 
+                                            key={`${user.id}-${index}`} 
+                                            item={user}
+                                            checked={selectedUsers.includes(user.id)}
+                                            setSelectedItems={setSelectedUsers}
+                                            />)
+                                        )
+                                    :
+                                    <h3 className='list-item-title'>
+                                        No hay elementos que mostrar.
+                                    </h3>}
+                            </div>
+
+                            <span
+                                className={`error ${formik.errors.description && formik.touched.description && 'hidden'}`}
+                                >
+                                {formik.errors.description}
+                            </span>
+                        </section>
+                    </section>
+
+                    <FormButtons closeFunc={closeFunc} isValid={formik.isValid}/>
+                </form>
+                :
+                <>
                     <section
                         className='manage-section'
                         >
@@ -128,37 +294,27 @@ const ReportForm = ({ modalId, closeModal, userRole }) => {
                             Reporte generado en pdf
                         </h2>
 
-                        {(formik.values.url || formik.values.file) &&
-                            <>
-                                <label className='form-label'>
-                                    Adjunto actual:
-                                </label>
-                                
-                                {formik.values.attachmentType === 'url'?
-                                    <a 
-                                        className='form-label'
-                                        href={formik.values.url} 
-                                        target='_blank' 
-                                        rel='noopener noreferrer'>
-                                        {formik.values.url}
-                                    </a>
-                                    :
-                                    <FilePreviewer 
-                                        source={formik.values.file}
-                                        />}
-                            </>}
-                    </section>}
-            </section>
+                        {reportPDF?
+                            <FilePreviewer 
+                                source={reportPDF}
+                                />
+                        :
+                        'Esperando respuesta...'}
+                    </section>
 
-            <FormButtons modalId={modalId} closeModal={closeModal} isValid={formik.isValid}/>      
-        </form>
+                    <button 
+                        className='accept-button'
+                        onClick={closeFunc}
+                        >
+                        Cerrar
+                    </button>
+                </>}
+        </section>
     )
 }
 
 ReportForm.propTypes = {
-    modalId: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired,
-    userRole: PropTypes.string.isRequired,
+    closeFunc: PropTypes.func.isRequired,
 }
 
 export default ReportForm

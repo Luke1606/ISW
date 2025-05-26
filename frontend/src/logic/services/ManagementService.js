@@ -20,6 +20,10 @@ class ManagementService {
     async deleteData(datatype, ids) {
         return await managementApi.deleteData(datatype, ids)
     }
+
+    async generateReport(data) {
+        return await managementApi.generateReport(data)
+    }
 }
 
 export default new ManagementService()

@@ -78,12 +78,21 @@ const updateData = async (datatype, id, data) => {
     })
 }
 
-const deleteData = (datatype, ids) =>
-    handleRequest({
+const deleteData = async (datatype, ids) => {
+    return await handleRequest({
         method: 'delete',
         url: `${datatype}/`,
         data: { data: { ids } }
     })
+}
+
+const generateReport = async (data) => {
+    return await handleRequest({
+        method: 'post',
+        url: 'report/',
+        data: data
+    })
+}
 
 const managementApi = { 
     getAllData, 
@@ -91,6 +100,7 @@ const managementApi = {
     createData, 
     updateData,
     deleteData,
+    generateReport
 }
 export default managementApi
 

@@ -1299,3 +1299,11 @@ button:hover, .button:hover {
 .hidden {
     visibility: hidden;
 }
+
+.report-list {
+    max-height: 300px; /* Ajusta la altura según tu necesidad */
+    overflow-y: auto; /* Agrega scroll vertical solo cuando sea necesario */
+    overflow-x: hidden; /* Evita scroll horizontal */
+    border: 1px solid #ccc; /* Opcional, para visualizar mejor el área */
+    padding: 10px;    
+}

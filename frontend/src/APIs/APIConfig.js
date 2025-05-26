@@ -22,19 +22,30 @@ const setupInterceptors = (instance) => {
         (response) => response,
         async (error) => {
             const originalRequest = error.config
-            const errorResponse = error?.response?.data
+
+            const errorResponse = Array.isArray(error?.response?.data)?
+                error?.response?.data.flat()
+                :
+                error?.response?.data
+        
+        // Si `errorResponse` es un objeto, obtenemos sus valores y los concatenamos
+            const errorMessage = typeof errorResponse === 'object' && errorResponse !== null? 
+                Object.values(errorResponse).flat().join(', ') 
+                : 
+                errorResponse
+        
             switch (error.response?.status) {
                 case 400:
                     {
                         console.error(errorResponse)
-                        return Promise.reject(new Error(`La petición no es válida. ${errorResponse || ''}`))
+                        return Promise.reject(new Error(`La petición no es válida. ${errorMessage || ''}`))
                     }
-                case 401: 
+                case 401:
                     {
                         console.error(error?.response?.data)
                         if(!retry){
                             retry = true
-                            const errorMessage = 'Sesión expirada. Por favor, inicia sesión nuevamente.'
+                            const sessionErrorMessage = 'Sesión expirada. Por favor, inicia sesión nuevamente.'
             
                             if (!accessToken) {
                                 try {
@@ -45,7 +56,7 @@ const setupInterceptors = (instance) => {
                                         return instance(originalRequest)
                                     } else {
                                         authApi.closeSession() // Cerrar sesión si el refresco del token falla
-                                        return Promise.reject(new Error(errorMessage))
+                                        return Promise.reject(new Error(sessionErrorMessage))
                                     }
                                 } catch (error) {
                                     console.log(error)
@@ -58,18 +69,18 @@ const setupInterceptors = (instance) => {
                     break
                 case 403:
                     {
-                    console.error(error?.response?.data)
-                    return Promise.reject(new Error(`No tiene acceso a este recurso. ${errorResponse}`))
+                    console.error(errorMessage)
+                    return Promise.reject(new Error(`No tiene acceso a este recurso. ${errorMessage}`))
                     }
                 case 404:
                     {
-                    console.error(error?.response?.data)
-                    return Promise.reject(new Error(`Recurso no encontrado. ${errorResponse}`))
+                    console.error(errorMessage)
+                    return Promise.reject(new Error(`Recurso no encontrado. ${errorMessage}`))
                     }
                 case 500:
                     {
-                    console.error(error?.response?.data)
-                    return Promise.reject(new Error(`Problemas del servidor. ${errorResponse}`))
+                    console.error(errorMessage)
+                    return Promise.reject(new Error(`Problemas del servidor. ${errorMessage}`))
                     }
                 default:
                     return Promise.reject(error)
