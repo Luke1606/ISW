@@ -5,21 +5,32 @@ import Select from 'react-select'
 const SearchableSelect = ({ 
     id, 
     title, 
-    elements, 
+    elements,
     onChange,
+    isMulti=false,
     defaultValue = { value: '', label: 'Seleccione una opción '}
 }) => {
-    const [ selectedOption, setSelectedOption ] = useState(defaultValue)
+    const [ selectedOption, setSelectedOption ] = useState(isMulti? [] : defaultValue)
     const [ remainingElements, setRemainingElements ] = useState(elements)
     const changedRef = useRef(null)
 
     useEffect(() => {
         setRemainingElements(elements)
+        changedRef.current = null
+        console.log('cambiazote');
     }, [elements])
 
     useEffect(() => {
-        if (defaultValue.value !== selectedOption.value && !changedRef.current)
-            setSelectedOption(defaultValue)
+        if (!Array.isArray(selectedOption) && 
+            defaultValue.value !== selectedOption?.value && 
+            !changedRef.current) {
+                setSelectedOption(defaultValue)
+            }
+        if (Array.isArray(selectedOption) && 
+            !selectedOption?.some(option => option.value === defaultValue.value) && 
+            !changedRef.current) {
+                setSelectedOption([])
+            }
     }, [defaultValue, selectedOption])
 
     const handleElementChange = (selected) => {
@@ -41,6 +52,7 @@ const SearchableSelect = ({
             value={selectedOption}
             defaultValue={defaultValue}
             onChange={handleElementChange}
+            isMulti={isMulti}
             placeholder='Seleccione una opción...'
             isSearchable
             noOptionsMessage={() => 'No se encontraron coincidencias'}
@@ -60,6 +72,7 @@ SearchableSelect.propTypes = {
         label: PropTypes.string,
     }),
     onChange: PropTypes.func,
+    isMulti: PropTypes.bool,
 }
 
 export default SearchableSelect
