@@ -11,6 +11,7 @@ import { datatypes } from '@/data'
  */
 const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
     const [ professors, setProfessors ] = useState([])
+    
     useEffect(() => {
         const fetchProfessors = async () => {
             let message = ''
@@ -24,11 +25,11 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                             professor => {
                                 console.log(professor);
                                 if ([
-                                    values.president,
-                                    values.secretary, 
-                                    values.vocal, 
-                                    values.opponent].includes(professor.id) ||
-                                    values.tutors.includes(professor.id)
+                                    values?.president,
+                                    values?.secretary, 
+                                    values?.vocal, 
+                                    values?.opponent].includes(professor.id) ||
+                                    values?.tutors.includes(professor.id)
                                 ) {
                                     return {
                                         value: professor.id,
@@ -101,7 +102,7 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                             className='form-input'
                             id='president'
                             type='text'
-                            value={professors.find(option => option.value === values?.president)?.label || ''}
+                            value={professors.find(option => option?.value === values?.president)?.label || ''}
                             readOnly
                             />
 
@@ -115,7 +116,7 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                             className='form-input'
                             id='secretary'
                             type='text'
-                            value={professors.find(option => option.value === values?.secretary)?.label || ''}
+                            value={professors.find(option => option?.value === values?.secretary)?.label || ''}
                             readOnly
                         />
 
@@ -130,7 +131,7 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                             className='form-input'
                             id='vocal'
                             type='text'
-                            value={professors.find(option => option.value === values?.vocal)?.label || ''}
+                            value={professors.find(option => option?.value === values?.vocal)?.label || ''}
                             readOnly
                             />
 
@@ -145,7 +146,7 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                             className='form-input'
                             id='opponent'
                             type='text'
-                            value={professors.find(option => option.value === values?.opponent)?.label || ''}
+                            value={professors.find(option => option?.value === values?.opponent)?.label || ''}
                             readOnly
                             />
                     </section>
@@ -170,25 +171,25 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                             className='form-input'
                             id='defense-date'
                             type='date'
-                            value={values.defense_date instanceof Date?
-                                values.defense_date.toISOString().split('T')[0]
+                            value={values?.defense_date instanceof Date?
+                                values?.defense_date.toISOString().split('T')[0]
                                 :
-                                values.defense_date}
+                                values?.defense_date}
                             readOnly
                             />
 
                         <label 
                             className='form-label'
                             >
-                            {values.tutors? 'Tutores:' : 'No tiene tutores'}
+                            {values?.tutors? 'Tutores:' : 'No tiene tutores'}
                         </label>
                     
-                        {values.tutors && values.tutors.map((tutor, index) => (
+                        {values?.tutors && values?.tutors.map((tutor, index) => (
                             <input
                                 key={index}
                                 className='form-input'
                                 type='text'
-                                value={professors.find(option => option.value === tutor)?.label || ''}
+                                value={professors.find(option => option?.value === tutor)?.label || ''}
                                 readOnly
                                 />
                         ))}

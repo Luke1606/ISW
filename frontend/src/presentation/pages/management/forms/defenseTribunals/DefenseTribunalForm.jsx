@@ -67,7 +67,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
         }
 
         fetchProfessors()
-    }, [isDefenseTribunal])
+    }, [])
 
     const validationSchema = useMemo(() => {
         return isDefenseTribunal?
@@ -298,13 +298,15 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             Cantidad de tutor(es) del estudiante (máximo 4):
                         </label>
 
-                        <input
-                            className='form-input'
+                        <SearchableSelect
                             id='tutor-cant'
-                            type='number'
-                            min='1' 
-                            max='4'
-                            {...formik.getFieldProps('tutorCant')}
+                            title='Cantidad de tutores asociados al estudiante'
+                            elements={Array.from({ length: 4 }, (_, index) => ({
+                                value: index + 1,
+                                label: String(index + 1)
+                            }))}                            
+                            defaultValue={{value: 1, label: '1'}}
+                            onChange={(value) => formik.setFieldValue('tutorCant', value || 1)}
                             />
 
                         <span

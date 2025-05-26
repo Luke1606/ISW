@@ -3,6 +3,7 @@ import { datatypes } from '@/data'
 import { useAuth, useForm, useFormParams, useLoading } from '@/logic'
 import { 
     UserForm,
+    ReportForm,
     RequestForm,
     EvidenceForm, 
     DefenseActForm,
@@ -29,7 +30,7 @@ const Form = ({ reloadFunction }) => {
     const { loading } = useLoading()
 
     const { prevValues, isEdition } = useForm(datatype, idData, relatedUserId)
-    
+
     const { user } = useAuth()
 
     if (loading || !manageFormParams || prevValues === null) return null
@@ -105,6 +106,14 @@ const Form = ({ reloadFunction }) => {
                     closeFunc={closeForm} 
                     isStudent={datatype===datatypes.user.student} 
                     prevValues={prevValues} 
+                    />
+            break
+        case datatypes.report:
+            specificForm = view?
+                printError()
+                :
+                <ReportForm
+                    closeFunc={closeForm} 
                     />
             break
         default:
