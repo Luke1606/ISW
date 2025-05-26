@@ -15,7 +15,7 @@ from .models import Request
 
 class RequestViewSet(BaseModelViewSet):
     """
-    Vista asociada a las solicitudes. Integración con BaseModelViewSet y funcionalidad personalizada.
+    Vista asociada a las solicitudes.
     """
     queryset = Request.objects.all()
     serializer_class = RequestSerializer

@@ -14,7 +14,7 @@ class EvidenceListSerializer(BaseListSerializer):
 
     def get_name(self, obj):
         """
-        Combina first_name y last_name del usuario.
+        Devuelve el nombre de la evidencia.
         """
         return f"{obj.name}"
 

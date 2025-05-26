@@ -11,14 +11,12 @@ const authApiInstance = createApiInstance('http://localhost:8000/users/token/', 
  * @param {Object} userFormData - Datos del usuario para autenticación (`username` y `password`).
  * @returns {Object} Un objeto con la información del usuario autenticado y el estado de la solicitud. Contiene:
  * - {boolean} `success`- Indica el éxito o fallo de la solicitud.
- * - {Object} `user`- Contiene la información del usuario
  * - {string} `message`- Mensaje de respuesta de la solicitud
  * @example
  * // Ejemplo de uso:
  * const response = await authenticate({ username: 'usuario@example.com', password: '123456' })
  * if (response.success) {
  *     console.log(response.message)
- *     console.log(response.user)
  * }
  * else
  *     console.error(response.message) 

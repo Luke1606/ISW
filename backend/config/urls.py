@@ -8,6 +8,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from core.gateway_view import ManagementGatewayView
+from reports.views import ReportView
 from notifications.views import NotificationViewSet
 
 router = DefaultRouter()
@@ -18,6 +19,8 @@ urlpatterns = [
 
     # Endpoints de autenticación y gestión de sesiones
     path('users/token/', include('users.urls')),
+
+    path('management/report/', ReportView.as_view(), name='report'),
 
     # Gateway de gestión de datos
     path('management/<str:datatype>/', ManagementGatewayView.as_view({

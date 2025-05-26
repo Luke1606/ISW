@@ -149,7 +149,7 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
             <h1 
                 className='form-title'
                 >
-                {prevValues? 'Modificar' : 'Registrar'} evidencia
+                {isEdition? 'Modificar' : 'Registrar'} evidencia
             </h1>
             
             <section 

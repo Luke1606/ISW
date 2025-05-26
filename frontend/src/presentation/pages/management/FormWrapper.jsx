@@ -12,9 +12,9 @@ import {
     ReadOnlyEvidenceForm,
     ReadOnlyDefenseActForm,
     ReadOnlyDefenseTribunalForm
-} from './'
+} from '.'
 
-const Form = ({ reloadFunction }) => {
+const FormWrapper = ({ reloadFunction }) => {
     const { manageFormParams, closeManageForm } = useFormParams()
 
     const closeForm = () => {
@@ -124,8 +124,8 @@ const Form = ({ reloadFunction }) => {
     return specificForm
 }
 
-Form.propTypes = {
+FormWrapper.propTypes = {
     reloadFunction: PropTypes.func.isRequired,
 }
 
-export default Form
+export default FormWrapper

@@ -152,10 +152,9 @@ class StudentViewSet(BaseModelViewSet):
         Personaliza la creación para usar create_user_by_role.
         '''
         data = request.data
-        user_manager = CustomUser.objects
         try:
             # Crear usuario con el rol de estudiante
-            student = user_manager.create_user_by_role(
+            student = CustomUser.objects.create_user_by_role(
                 role=Datatypes.User.student,
                 name=data.get('name'),
                 username=data.get('username'),

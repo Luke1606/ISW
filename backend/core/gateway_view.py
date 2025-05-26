@@ -15,7 +15,6 @@ class ManagementGatewayView(ModelViewSet):
     '''
     Un ViewSet centralizado que redirige dinámicamente solicitudes a diferentes ViewSets
     según el tipo de dato (`datatype`).
-    Incluye lógica de búsqueda avanzada, paginación y caché.
     '''
 
     _VIEWSET_MAPPING = {

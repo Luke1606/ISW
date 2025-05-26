@@ -45,9 +45,11 @@ class CustomUserManager(BaseUserManager, BaseModelManager):
                 raise ValueError('El campo "grupo" es obligatorio para estudiantes.')
             if not extra_fields.get('faculty'):
                 raise ValueError('El campo "facultad" es obligatorio para estudiantes.')
-            Student.objects.create(id=user, **extra_fields)
+            specific_user = Student.objects.create(id=user, **extra_fields)
         else:
-            Professor.objects.create(id=user, role=role)
+            specific_user = Professor.objects.create(id=user, role=role)
+
+        return specific_user
 
     def create_superuser(self, username, password, name, pic, **extra_fields):
         '''
