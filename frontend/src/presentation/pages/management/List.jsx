@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { Search, Plus, Edit, Trash2, FileText, Check, X, CheckCheck } from 'lucide-react'
 import { listHooks, useFormParams, useModal, useTranslateToSpanish } from '@/logic'
-import { Modal, PaginationButtons, Form, CheckeableListItem } from '@/presentation'
+import { Modal, PaginationButtons, FormWrapper, CheckeableListItem } from '@/presentation'
 import { datatypes } from '@/data'
 
 const List = ({ datatype, relatedUserId }) => {
@@ -241,7 +241,7 @@ const List = ({ datatype, relatedUserId }) => {
             </Modal>
 
             <Modal isOpen={isManageFormOpen()}>
-                <Form reloadFunction={setChanged}/>
+                <FormWrapper reloadFunction={setChanged}/>
             </Modal>
         </div>
     )
