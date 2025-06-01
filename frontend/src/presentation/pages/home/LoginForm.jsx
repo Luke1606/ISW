@@ -76,7 +76,7 @@ const LoginForm = ({ closeFunc }) => {
                     </div>
                 </div>
 
-                <p className='form-instructions'>
+                <p className='form-instructions login-instruccions'>
                     {formik.values.auth?
                         'Ingrese su nombre de usuario y contraseña para iniciar sesión. Si es la primera vez que se autentica, seleccione "Registro inicial".'
                         : 
@@ -132,7 +132,7 @@ const LoginForm = ({ closeFunc }) => {
                 />
 
                 <span
-                    className={`error ${formik.errors.username && formik.touched.username && 'hidden'}`}
+                    className={`error ${!(formik.errors.username && formik.touched.username) && 'hidden'}`}
                     >
                     {formik.errors.username}
                 </span>
@@ -144,7 +144,7 @@ const LoginForm = ({ closeFunc }) => {
                     />
 
                 <span
-                    className={`error ${formik.errors.password && formik.touched.password && 'hidden'}`}
+                    className={`error ${!(formik.errors.password && formik.touched.password) && 'hidden'}`}
                     >
                     {formik.errors.password}
                 </span>

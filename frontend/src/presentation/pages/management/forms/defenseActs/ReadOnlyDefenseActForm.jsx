@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types'
-import { FilePreviewer } from '@/presentation/'
+import { FilePreviewer } from '@/presentation'
+import { useReadOnlyDefenseActForm } from '@/logic'
+
 
 /**
  * @description Ventana para mostrar detalles de un acta de defensa.
@@ -8,6 +10,8 @@ import { FilePreviewer } from '@/presentation/'
  * @returns Estructura de los campos a mostrar con la información del acta de defensa contenida en `values`.
  */
 const ReadOnlyDefenseActForm = ({ closeFunc, values }) => {
+    const authorName = useReadOnlyDefenseActForm(values)
+
     if (!values) return null
 
     return (
@@ -31,6 +35,22 @@ const ReadOnlyDefenseActForm = ({ closeFunc, values }) => {
                         >
                         Datos del acta
                     </h2>
+
+                    <label 
+                        className='form-label' 
+                        htmlFor='author'
+                        >
+                        Autor del acta:
+                    </label>
+                    
+                    <input
+                        className='form-input'
+                        id='author'
+                        type='text'
+                        value={authorName || ''}
+                        readOnly
+                        />
+
                     <label 
                         className='form-label' 
                         htmlFor='name'
@@ -99,6 +119,7 @@ ReadOnlyDefenseActForm.propTypes = {
     values: PropTypes.shape({
         id: PropTypes.string.isRequired,
         student: PropTypes.string.isRequired,
+        author: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
         description: PropTypes.string,
         attachment: PropTypes.instanceOf(File).isRequired,

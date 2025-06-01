@@ -66,14 +66,14 @@ describe('AuthService', () => {
     })
 
     it('should retrieve session info', async () => {
-        authApi.getSessionInfo.mockResolvedValue({ user: 'testUser', role: 'admin' });
+        authApi.getSessionInfo.mockResolvedValue({ user: 'testUser', role: 'admin' })
 
         const response = await AuthService.getSessionInfo()
 
         expect(authApi.getSessionInfo).toHaveBeenCalled()
         expect(response.user).toBe('testUser')
         expect(response.role).toBe('admin')
-    });
+    })
 
     it('should update password correctly', async () => {
         authApi.changePassword.mockResolvedValue({ success: true })

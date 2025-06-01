@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
-import * as Yup from 'yup'
 import PropTypes from 'prop-types'
-import { datatypes } from '@/data'
-import { useGenericForm, ManagementService, NotificationService } from '@/logic'
+import { exerciseOptions } from '@/data'
 import { SearchableSelect, FormButtons } from '@/presentation'
+import { useDefenseTribunalForm } from '@/logic'
 
 /**
  * @description Ventana para configurar o aprobar un tribunal.
@@ -13,145 +11,8 @@ import { SearchableSelect, FormButtons } from '@/presentation'
  * @returns Estructura de los campos a mostrar con la información del acta de defensa contenida en prevValues.
  */
 const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
-    let initialValues = isDefenseTribunal?
-        {
-            defenseDate: prevValues?.defense_date instanceof Date?
-                prevValues?.defense_date?.toISOString().split('T')[0] 
-                :
-                prevValues?.defense_date || '',
-            president: prevValues?.president || '',
-            secretary: prevValues?.secretary || '',
-            vocal: prevValues?.vocal || '',
-            opponent: prevValues?.opponent || '',
-            tutorCant: prevValues?.tutors?.length || 1,
-            tutors: prevValues?.tutors || Array(prevValues?.tutors?.length || 1).fill('')
-        }
-        :
-        { state: prevValues?.state || '' }
+    const { professors, selectedProfessors, formik } = useDefenseTribunalForm(isDefenseTribunal, closeFunc, prevValues)
     
-    const [ professors, setProfessors ] = useState([])
-    const [ selectedProfessors, setSelectedProfessors ] = useState([])
-
-    useEffect(() => {
-        const fetchProfessors = async () => {
-            let message = ''
-            let success = false
-            try {
-                const response = await ManagementService.getAllData(datatypes.user.professor)
-
-                if (response.success) {
-                    const profs = Object.values(response?.data?.data)
-                        .flat().map(
-                            professor => ({
-                                value: professor.id,
-                                label: professor.name
-                            })
-                        )
-                    success = true
-                    if (profs) 
-                        setProfessors(profs)
-                } else {
-                    message = response?.message
-                }
-            } catch (error) {
-                message = error.message
-            } finally {
-                if (!success) {
-                    const notification = {
-                        title: 'Error',
-                        message: message
-                    }
-                    NotificationService.showToast(notification, 'error')
-                }
-            }
-        }
-
-        fetchProfessors()
-    }, [])
-
-    const validationSchema = useMemo(() => {
-        return isDefenseTribunal?
-            Yup.object().shape({
-                defenseDate: Yup.string()
-                    .matches(/^\d{4}-\d{2}-\d{2}$/, 'Formato de fecha incorrecto') // Valida formato YYYY-MM-DD
-                    .test('valid-date', 'La fecha no puede ser en el pasado', value => {
-                        if (!value) return false
-                        const selectedDate = new Date(value)
-                        const today = new Date()
-                        today.setHours(0, 0, 0, 0) // Elimina la hora para comparar solo la fecha
-                        return selectedDate >= today
-                    }),
-        
-                president: Yup.string()
-                    .required('El presidente es requerido'),
-            
-                secretary: Yup.string()
-                    .required('El secretario es requerido'),
-                
-                vocal: Yup.string()
-                    .required('El vocal es requerido'),
-
-                opponent: Yup.string()
-                    .required('El vocal es requerido'),
-
-                tutorCant: Yup.number()
-                    .required('La cantidad de tutor(es) es obligatoria')
-                    .min(1, 'El estudiante debe tener como mínimo un(1) tutor')
-                    .max(4, 'El estudiante debe tener como máximo cuatro(4) tutores'),
-                
-                tutors: Yup.array()
-                    .of(Yup.string().required('Debe seleccionar un tutor'))
-                    .min(Yup.ref('tutorCant'), 'Debe seleccionar todos los tutores')
-                    .max(Yup.ref('tutorCant'), 'No debe seleccionar más tutores de los especificados')
-            })
-            :
-            Yup.object().shape({
-                state: Yup.string()
-                    .required('Debe seleccionar "Aprobar" o "Desaprobar".')
-                    .oneOf(['A', 'D'])
-            })
-    }, [isDefenseTribunal])
-
-    const submitFunction = async (values) => {
-        const newValues = {
-            id: prevValues?.id,
-            student: prevValues?.student,
-            president: values?.president || prevValues?.president,
-            secretary: values?.secretary || prevValues?.secretary,
-            vocal: values?.vocal || prevValues?.vocal,
-            opponent: values?.opponent || prevValues?.opponent,
-            tutors: values?.tutors || prevValues?.tutors,
-            defense_date: values?.defenseDate || prevValues?.defense_date,
-            state: values?.state || prevValues?.state,
-        }
-
-        let success = false
-        let message = ''
-        
-        const response = await ManagementService.updateData(datatypes.defense_tribunal, prevValues.id, newValues)
-        
-        success = response?.success
-        message = response?.message
-
-        closeFunc()
-
-        return {
-            success,
-            message,
-        }
-    }
-
-    const formik = useGenericForm(submitFunction, initialValues, validationSchema)
-    
-    useEffect(() => {
-        const updatedSelections = Object.entries(formik.values)
-            .filter(([key]) => ['president', 'secretary', 'vocal', 'opponent', 'tutors'].includes(key))
-            .flatMap(([key, value]) => key === 'tutors' && Array.isArray(value) ? value : [value])
-            .filter(value => value !== '')
-
-        setSelectedProfessors(updatedSelections)
-    }, [formik.values])
-
     return (
         <form
             className='form-container'
@@ -174,8 +35,14 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                         <h2 
                             className='form-subtitle'
                             >
-                            Miembros del tribunal y fecha de la defensa:
+                            Miembros del tribunal:
                         </h2>
+
+                        <h3
+                            className='form-label'
+                            >
+                            El ECE seleccionado fue {exerciseOptions?.find((exercise) => exercise.value === prevValues?.selected_ece).label}
+                        </h3>
 
                         <label 
                             className='form-label' 
@@ -187,13 +54,13 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                         <SearchableSelect 
                             id='president'
                             title='Profesor a ocupar el cargo de presidente'
-                            elements={professors.filter((option) => !selectedProfessors.includes(option.value))}
-                            defaultValue={professors.find(option => option.value === prevValues?.president)}
+                            elements={professors?.filter((option) => !selectedProfessors?.includes(option.value))}
+                            defaultValue={professors?.find(option => option.value === prevValues?.president)}
                             onChange={(value) => formik.setFieldValue('president', value)}
                             />
                         
                         <span
-                            className={`error ${formik.errors.president && formik.touched.president && 'hidden'}`}
+                            className={`error ${!(formik.errors.president && formik.touched.president && 'hidden')}`}
                             >
                             {formik.errors.president}
                         </span>
@@ -208,13 +75,13 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                         <SearchableSelect 
                             id='secretary'
                             title='Profesor a ocupar el cargo de secretario'
-                            elements={professors.filter((option) => !selectedProfessors.includes(option.value))}
-                            defaultValue={professors.find(option => option.value === prevValues?.secretary)}
+                            elements={professors?.filter((option) => !selectedProfessors?.includes(option.value))}
+                            defaultValue={professors?.find(option => option.value === prevValues?.secretary)}
                             onChange={(value) => formik.setFieldValue('secretary', value)}
                             />
 
                         <span
-                            className={`error ${formik.errors.secretary && formik.touched.secretary && 'hidden'}`}
+                            className={`error ${!(formik.errors.secretary && formik.touched.secretary && 'hidden')}`}
                             >
                             {formik.errors.secretary}
                         </span>
@@ -229,13 +96,13 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                         <SearchableSelect 
                             id='vocal'
                             title='Profesor a ocupar el cargo de vocal'
-                            elements={professors.filter((option) => !selectedProfessors.includes(option.value))}
-                            defaultValue={professors.find(option => option.value === prevValues?.vocal)}
+                            elements={professors?.filter((option) => !selectedProfessors?.includes(option.value))}
+                            defaultValue={professors?.find(option => option.value === prevValues?.vocal)}
                             onChange={(value) => formik.setFieldValue('vocal', value)}
                             />
                         
                         <span
-                            className={`error ${formik.errors.vocal && formik.touched.vocal && 'hidden'}`}
+                            className={`error ${!(formik.errors.vocal && formik.touched.vocal && 'hidden')}`}
                             >
                             {formik.errors.vocal}
                         </span>
@@ -250,36 +117,15 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                         <SearchableSelect 
                             id='opponent'
                             title='Profesor a ocupar el cargo de oponente'
-                            elements={professors.filter((option) => !selectedProfessors.includes(option.value))}
-                            defaultValue={professors.find(option => option.value === prevValues?.opponent)}
+                            elements={professors?.filter((option) => !selectedProfessors?.includes(option.value))}
+                            defaultValue={professors?.find(option => option.value === prevValues?.opponent)}
                             onChange={(value) => formik.setFieldValue('opponent', value)}
                             />
                         
                         <span
-                            className={`error ${formik.errors.opponent && formik.touched.opponent && 'hidden'}`}
+                            className={`error ${!(formik.errors.opponent && formik.touched.opponent && 'hidden')}`}
                             >
                             {formik.errors.opponent}
-                        </span>
-
-                        <label 
-                            className='form-label' 
-                            htmlFor='defense-date'
-                            >
-                            Fecha de defensa:
-                        </label>
-                        
-                        <input
-                            className='form-input'
-                            id='defense-date'
-                            type='date'
-                            value={formik.values.defenseDate? formik.values.defenseDate : ''}
-                            onChange={(event) => formik.setFieldValue('defenseDate', event.target.value)}
-                            />
-
-                        <span
-                            className={`error ${formik.errors.defenseDate && formik.touched.defenseDate && 'hidden'}`}
-                            >
-                            {formik.errors.defenseDate}
                         </span>
                     </section>
 
@@ -302,15 +148,15 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             id='tutor-cant'
                             title='Cantidad de tutores asociados al estudiante'
                             elements={Array.from({ length: 4 }, (_, index) => ({
-                                value: index + 1,
+                                value: `${index + 1}`,
                                 label: String(index + 1)
                             }))}                            
-                            defaultValue={{value: 1, label: '1'}}
+                            defaultValue={{value: '1', label: '1'}}
                             onChange={(value) => formik.setFieldValue('tutorCant', value || 1)}
                             />
 
                         <span
-                            className={`error ${formik.errors.tutorCant && formik.touched.tutorCant && 'hidden'}`}
+                            className={`error ${!(formik.errors.tutorCant && formik.touched.tutorCant && 'hidden')}`}
                             >
                             {formik.errors.tutorCant}
                         </span>
@@ -335,16 +181,46 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                                 <SearchableSelect
                                     id={`tutor${index}`}
                                     title={`Profesor a ocupar el cargo de tutor ${index}`}
-                                    elements={professors.filter((option) => !selectedProfessors.includes(option.value))}
-                                    defaultValue={prevValues?.tutors && professors.find(option => option.value === prevValues?.tutors[index])}
+                                    elements={professors?.filter((option) => !selectedProfessors?.includes(option.value))}
+                                    defaultValue={prevValues?.tutors && professors?.find(option => option.value === prevValues?.tutors[index])}
                                     onChange={(value) => formik.setFieldValue('tutors', [...(formik.values.tutors || []), value])}
                                     />
                             </div>))}
 
                         <span
-                            className={`error ${formik.errors.tutors && formik.touched.tutors && 'hidden'}`}
+                            className={`error ${!(formik.errors.tutors && formik.touched.tutors && 'hidden')}`}
                             >
                             {formik.errors.tutors}
+                        </span>
+                    </section>
+
+                    <section 
+                        className='manage-section'
+                        >
+                        <h2 
+                            className='form-subtitle'
+                            >
+                            Miembros del tribunal:
+                        </h2>
+                        <label 
+                            className='form-label' 
+                            htmlFor='defense-date'
+                            >
+                            Fecha de defensa:
+                        </label>
+                        
+                        <input
+                            className='form-input'
+                            id='defense-date'
+                            type='date'
+                            value={formik.values.defenseDate? formik.values.defenseDate : ''}
+                            onChange={(event) => formik.setFieldValue('defenseDate', event.target.value)}
+                            />
+
+                        <span
+                            className={`error ${!(formik.errors.defenseDate && formik.touched.defenseDate && 'hidden')}`}
+                            >
+                            {formik.errors.defenseDate}
                         </span>
                     </section>
                 </>
@@ -370,7 +246,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             className='form-input'
                             id='president'
                             type='text'
-                            value={professors.find(option => option.value === prevValues?.president)?.label || ''}
+                            value={professors?.find(option => option.value === prevValues?.president)?.label || ''}
                             readOnly
                             />
 
@@ -384,7 +260,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             className='form-input'
                             id='secretary'
                             type='text'
-                            value={professors.find(option => option.value === prevValues?.secretary)?.label || ''}
+                            value={professors?.find(option => option.value === prevValues?.secretary)?.label || ''}
                             readOnly
                         />
 
@@ -399,7 +275,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             className='form-input'
                             id='vocal'
                             type='text'
-                            value={professors.find(option => option.value === prevValues?.vocal)?.label || ''}
+                            value={professors?.find(option => option.value === prevValues?.vocal)?.label || ''}
                             readOnly
                             />
 
@@ -414,7 +290,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             className='form-input'
                             id='opponent'
                             type='text'
-                            value={professors.find(option => option.value === prevValues?.opponent)?.label || ''}
+                            value={professors?.find(option => option.value === prevValues?.opponent)?.label || ''}
                             readOnly
                             />
                     </section>
@@ -457,7 +333,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                                 key={index}
                                 className='form-input'
                                 type='text'
-                                value={professors.find(option => option.value === tutor)?.label || ''}
+                                value={professors?.find(option => option.value === tutor)?.label || ''}
                                 readOnly
                                 />
                         ))}
@@ -503,7 +379,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             </div>
                             
                             <span
-                                className={`error ${formik.errors.state && formik.touched.state && 'hidden' }`}
+                                className={`error ${!(formik.errors.state && formik.touched.state && 'hidden')}`}
                                 >
                                 {formik.errors.state}
                             </span>
@@ -522,6 +398,7 @@ DefenseTribunalForm.propTypes = {
     prevValues: PropTypes.shape({
         id: PropTypes.string.isRequired,
         student: PropTypes.string.isRequired,
+        selected_ece: PropTypes.string.isRequired,
         defense_date: PropTypes.instanceOf(Date),
         president: PropTypes.string,
         secretary: PropTypes.string,

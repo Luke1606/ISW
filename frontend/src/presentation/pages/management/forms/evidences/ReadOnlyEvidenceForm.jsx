@@ -3,6 +3,7 @@ import { FilePreviewer } from '@/presentation'
 
 const ReadOnlyEvidenceForm = ({ closeFunc, values }) => {
     if (!values) return null
+
     return (
         <section
             className='form-container' 

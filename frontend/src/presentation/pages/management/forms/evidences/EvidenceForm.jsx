@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types'
-import { useMemo, useRef } from 'react'
-import * as Yup from 'yup'
-import { datatypes } from '@/data'
-import { useGenericForm, ManagementService } from '@/logic'
-import { FilePreviewer, FormButtons } from '@/presentation'
+import { FilePreviewer, FormButtons, TextAreaField } from '@/presentation'
+import { useEvidenceForm } from '@/logic'
 
 /**
  * @description Ventana para agregar o editar un acta de defensa.
@@ -14,132 +11,7 @@ import { FilePreviewer, FormButtons } from '@/presentation'
  * @returns Estructura de los campos a mostrar con la información del acta de defensa contenida en prevValues.
  */
 const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
-    const initialValues = {
-        name: prevValues?.name || '',
-        description: prevValues?.description || '',
-        attachmentType: prevValues?.attachment_type || '',
-        url: prevValues?.attachment_url || '',
-        file: prevValues?.attachment_file || null
-    }
-
-    const validateUrl = (urlString) => {
-        try {
-            const urlObject = new URL(urlString)
-            console.log('URL válida:', urlObject.href)
-            return true
-        } catch (error) {
-            console.error('La URL ingresada no es válida', error)
-            return false
-        }        
-    }
-
-    const MAX_FILE_SIZE = 100 * 1024 * 1024
-
-    const validationSchema = useMemo(() => Yup.object().shape({
-        name: Yup.string()
-            .min(4, 'El nombre debe tener al menos 4 caracteres')
-            .required('El nombre es obligatorio')
-            .matches(/^[0-9a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/, 'No se permiten caracteres especiales'),
-        
-        description: Yup.string(),
-        
-        attachmentType: Yup.string()
-            .required('El tipo de adjunto es obligatorio')   
-            .oneOf(['url', 'file']),
-        
-        url: Yup.string()
-            .when('attachmentType', {
-                is: 'url',
-                then: (schema) => {
-                    return schema.required('La URL es obligatoria')
-                        .test(
-                            'is-valid-url',
-                            'Debe ser una URL válida',
-                            (value) => !!value && validateUrl(value)
-                        )
-                },
-                otherwise: (schema) => schema.notRequired()
-        }),
-
-        file: Yup.lazy((value, context) => {
-            return context.parent.attachmentType === 'file'?
-                Yup.mixed().required('El archivo es obligatorio')
-                    .test(
-                        'is-file',
-                        'El adjunto debe ser un archivo',
-                        (value) => value instanceof File
-                    )
-                    .test(
-                        'fileSize',
-                        'El archivo debe ser menor a 100MB',
-                        (file) => file && file.size <= MAX_FILE_SIZE
-                    )
-                    .test(
-                        'fileType',
-                        'Formato no permitido',
-                        (file) => file && [
-                            'image/jpg', 'image/jpeg', 'image/png', 'image/gif', 
-                            'application/pdf', 'application/msword', 
-                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                            'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                            'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                            'video/mp4', 'video/x-matroska', 'video/x-msvideo', 'video/x-flv'
-                        ].includes(file.type)
-                    )
-                :
-                Yup.mixed().notRequired()
-        })
-    }), [MAX_FILE_SIZE])
-
-    const submitFunction = async (values) => {
-        const newValues = {
-            student: prevValues?.student || studentId,
-            name: values?.name || prevValues?.name,
-            description: values?.description || prevValues?.description,
-            attachment_type: values?.attachmentType || prevValues?.attachment_type,
-            attachment_url: values?.url || prevValues?.attachment_url,
-            attachment_file: values?.file || prevValues?.attachment_file,
-        }
-
-        let success = false
-        let message = ''
-
-        if (isEdition) {
-            const response = await ManagementService.updateData(datatypes.evidence, prevValues.id, newValues)
-            success = response?.success
-            message = response?.message
-        } else {
-            const response = await ManagementService.createData(datatypes.evidence, newValues)
-            success = response?.success
-            message = response?.message
-        }
-
-        closeFunc()
-
-        return {
-            success,
-            message,
-        }
-    }
-
-    const formik = useGenericForm(submitFunction, initialValues, validationSchema)
-
-    const fileInputRef = useRef(null)
-
-    const handleAttachmentTypeChange = (e) => {
-        const attachmentType = e.target.value
-
-        if (formik.values.attachmentType !== attachmentType) {
-            formik.setValues({
-                ...formik.values,
-                attachmentType,
-                url: '',
-                file: null,
-            })
-            if (fileInputRef.current) 
-                fileInputRef.current.value = ''
-        }
-    }
+    const { handleAttachmentTypeChange, fileInputRef, formik } = useEvidenceForm(isEdition, closeFunc, studentId, prevValues)
 
     return (
         <form
@@ -180,8 +52,7 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
                         />
                     
                     <span
-                        className='error'
-                        style={formik.errors.name && formik.touched.name ? {} : { visibility: 'hidden' }}
+                        className={`error ${!(formik.errors.name && formik.touched.name && 'hidden')}`}
                         >
                         {formik.errors.name}
                     </span>
@@ -193,17 +64,14 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
                         Descripción:
                     </label>
                     
-                    <textarea
-                        className='form-input'
+                    <TextAreaField 
                         id='description'
-                        rows='4'
                         placeholder='Describa la evidencia...'
-                        {...formik.getFieldProps('description')}
+                        formikProps={formik.getFieldProps('description')}
                         />
                 
                     <span
-                        className='error'
-                        style={formik.errors.description && formik.touched.description ? {} : { visibility: 'hidden' }}
+                        className={`error ${!(formik.errors.description && formik.touched.description && 'hidden')}`}
                         >
                         {formik.errors.description}
                     </span>
@@ -247,6 +115,12 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
                             Archivo Local
                         </label>
                     </div>
+
+                    <span
+                        className={`error ${!(formik.errors.attachmentType && formik.touched.attachmentType && 'hidden')}`}
+                        >
+                        {formik.errors.attachmentType}
+                    </span>
                 </section>
 
                 {formik.values.attachmentType &&
@@ -308,12 +182,12 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
                         </div>
                     
                         <span
-                            className='error'
-                            style={formik.values.attachmentType === 'url'?
-                                formik.errors.url && formik.touched.url? {} : { visibility: 'hidden' }
-                                :
-                                formik.errors.file && formik.touched.file? {} : { visibility: 'hidden' }
-                            }
+                            className={`error ${
+                                formik.values.attachmentType === 'url'?
+                                    !(formik.errors.url && formik.touched.url && 'hidden')
+                                    :
+                                    !(formik.errors.file && formik.touched.file && 'hidden')
+                            }`}
                             >
                             {formik.values.attachmentType === 'url'?
                                 formik.errors.url

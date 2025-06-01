@@ -147,6 +147,7 @@ const useItemTouchControl = (datatype) => {
             if (datatype === datatypes.user.student) {
                 options.push({
                     action: () => navigate(`/list/${datatypes.evidence}/${selectedItemId}`),
+                    usesForm: false,
                     label: 'Listar Evidencias',
                     value: 'evidence-list'
                 })
@@ -156,7 +157,8 @@ const useItemTouchControl = (datatype) => {
                     if (user?.user_role === datatypes.user.dptoInf && lastRequest?.state === 'P')
                         options.push({ 
                             action: () => openManageForm(datatypes.request, { idData: selectedItemId}),
-                            label: 'Aprobar solicitud',
+                            usesForm: true,
+                            label: 'Evaluar solicitud',
                             value: 'aprove-request'
                         })
             
@@ -165,6 +167,7 @@ const useItemTouchControl = (datatype) => {
                     if (user?.user_role === datatypes.user.dptoInf && defenseTribunal?.state === 'I')
                         options.push({ 
                             action: () => openManageForm(datatypes.defense_tribunal, { idData: selectedItemId}), 
+                            usesForm: true,
                             label: 'Configurar defensa y tribunal',
                             value: 'config-tribunal'
                         })
@@ -172,6 +175,7 @@ const useItemTouchControl = (datatype) => {
                     if (user?.user_role !== datatypes.user.dptoInf && defenseTribunal?.state === 'A')
                         options.push({ 
                             action: () => openManageForm(datatypes.defense_tribunal, { idData: selectedItemId, view: true}), 
+                            usesForm: true,
                             label: 'Ver datos de defensa y tribunal',
                             value: 'view-tribunal'
                         })
@@ -179,13 +183,15 @@ const useItemTouchControl = (datatype) => {
                     if (user?.user_role === datatypes.user.decan && defenseTribunal?.state === 'P')
                         options.push({ 
                             action: () => openManageForm(datatypes.defense_tribunal, { idData: selectedItemId }), 
-                            label: 'Aprobar tribunal',
+                            usesForm: true,
+                            label: 'Evaluar tribunal',
                             value: 'aprove-tribunal'
                         })
             
                     if (user?.user_role !== datatypes.user.professor && defenseTribunal?.state === 'A')
                         options.push({ 
                             action: () => navigate(`/list/${datatypes.defense_act}/${selectedItemId}`), 
+                            usesForm: false,
                             label: 'Listar actas de defensa',
                             value: 'list-defense_act'
                         })
@@ -193,6 +199,7 @@ const useItemTouchControl = (datatype) => {
                     if (user?.user_role === datatypes.user.professor && defenseTribunal?.state === 'A')
                         options.push({
                             action: () => navigate(`/list/${datatypes.defense_act}/${selectedItemId}`), 
+                            usesForm: false,
                             label: 'Gestionar actas de defensa',
                             value: 'gest-defense_act'
                         })
@@ -207,13 +214,19 @@ const useItemTouchControl = (datatype) => {
         }
     }, [datatype, selectedItemId, user, openManageForm, navigate])
 
-    const handleOptionChange = (event) => {
+    const handleOptionChange = (event, callback) => {
             const selectedOption = itemOptions.find(
                 opt => opt.value === event.target.value
             )
-            
-            if (selectedOption) 
+
+            if (selectedOption) {
                 selectedOption.action()
+                if (!selectedOption?.usesForm && callback) {
+                    callback()
+                }
+                setSelectedItemId('')
+            }
+            event.target.value = 'default'
     }
 
     return {

@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
-import { useEffect, useState } from 'react'
-import { ManagementService, NotificationService } from '@/logic'
-import { datatypes } from '@/data'
+import { exerciseOptions } from '@/data'
+import { useReadOnlyDefenseActForm } from '@/logic'
 
 /**
  * @description Ventana para mostrar detalles de un acta de defensa.
@@ -10,57 +9,8 @@ import { datatypes } from '@/data'
  * @returns Estructura de los campos a mostrar con la información del tribunal contenido en `values`.
  */
 const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
-    const [ professors, setProfessors ] = useState([])
-    
-    useEffect(() => {
-        const fetchProfessors = async () => {
-            let message = ''
-            let success = false
-            try {
-                const response = await ManagementService.getAllData(datatypes.user.professor)
+    const professors = useReadOnlyDefenseActForm(values)
 
-                if (response.success) {
-                    const profs = Object.values(response?.data?.data)
-                        .flat().map(
-                            professor => {
-                                console.log(professor);
-                                if ([
-                                    values?.president,
-                                    values?.secretary, 
-                                    values?.vocal, 
-                                    values?.opponent].includes(professor.id) ||
-                                    values?.tutors.includes(professor.id)
-                                ) {
-                                    return {
-                                        value: professor.id,
-                                        label: professor.name
-                                    }
-                                }
-                            }
-                        )
-                    
-                    success = true
-                    if (profs) 
-                        setProfessors(profs)
-                } else {
-                    message = response?.message
-                }
-            } catch (error) {
-                message = error.message
-            } finally {
-                if (!success) {
-                    const notification = {
-                        title: 'Error',
-                        message: message
-                    }
-                    NotificationService.showToast(notification, 'error')
-                }
-            }
-        }
-
-        fetchProfessors()
-    }, [values])
-    
     return (
         <section
             className='form-container'
@@ -159,6 +109,21 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                             >
                             Otros datos
                         </h2>
+
+                        <label 
+                            className='form-label'
+                            htmlFor='selected-ece'
+                            >
+                            ECE seleccionado:
+                        </label>
+
+                        <input
+                            className='form-input'
+                            id='selected-ece'
+                            type='text'
+                            value={exerciseOptions.find((exercise) => exercise.value === values?.selected_ece).label}
+                            readOnly
+                            />
                         
                         <label 
                             className='form-label'
@@ -212,6 +177,7 @@ ReadOnlyDefenseTribunalForm.propTypes = {
     closeFunc: PropTypes.func.isRequired,
     values: PropTypes.shape({
         defense_date: PropTypes.instanceOf(Date).isRequired,
+        selected_ece: PropTypes.string.isRequired,
         president: PropTypes.string.isRequired,
         secretary: PropTypes.string.isRequired,
         vocal: PropTypes.string.isRequired,

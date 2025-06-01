@@ -166,10 +166,7 @@ const List = ({ datatype, relatedUserId }) => {
                                         name='options'
                                         title='Más opciones'
                                         defaultValue={'default'}
-                                        onChange={(e) => {
-                                            handleOptionChange(e)
-                                            setChanged(true)
-                                        }}
+                                        onChange={(e) => handleOptionChange(e, () => setChanged(true))}
                                         onClick={() => setSelectedItemId(item.id)}
                                         >
                                         <option 

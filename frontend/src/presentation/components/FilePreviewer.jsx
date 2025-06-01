@@ -89,6 +89,7 @@ const FilePreviewer = ({ source }) => {
                 {(fileType === 'image' || fileType === 'pdf') && (
                     <button 
                         title='Abrir en pantalla completa en otra pestaña'
+                        type='button'
                         className='accept-button fullscreen-button' 
                         onClick={openFullscreen}
                         >
@@ -97,6 +98,7 @@ const FilePreviewer = ({ source }) => {
 
                 <button 
                     title='Descargar'
+                    type='button'
                     className='accept-button download-button' 
                     onClick={() => downloadRef.current.click()} // Activa el enlace oculto
                     >

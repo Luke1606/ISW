@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types'
-import { useMemo } from 'react'
-import * as Yup from 'yup'
-import { datatypes } from '@/data'
-import { useGenericForm, ManagementService } from '@/logic'
+import { exerciseOptions } from '@/data'
+import { useRequestForm } from '@/logic'
 import { FormButtons, SearchableSelect } from '@/presentation'
 
 /**
@@ -13,70 +11,8 @@ import { FormButtons, SearchableSelect } from '@/presentation'
  * @param {Object} `prevValues`- Contiene toda la información de la solicitud a mostrar.
  * @returns Estructura de los campos a mostrar con la información de la solicitud contenida en prevValues.
  */
-const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
-    const initialValues = isEdition?
-    {
-        selectedECE: prevValues?.selected_ece || '',
-    }
-    :
-    {
-        state: prevValues?.state || '',
-    }
-
-    const validationSchema = useMemo(() => {
-        return isEdition?
-            Yup.object().shape({
-                state: Yup.string()
-                    .required('Debe seleccionar un veredicto')
-            })
-            :
-            Yup.object().shape({
-                selectedECE: Yup.string()
-                    .required('Debe seleccionar un ejercicio')
-            })
-    }, [isEdition])
-    
-    const submitFunction = async (values) => {
-        const newValues = isEdition?
-        {
-            student: prevValues?.student,
-            state: values?.state,
-        }
-        :
-        {
-            student: prevValues?.student,
-            selected_ece: values?.selectedECE,
-        }
-
-        let success = false
-        let message = ''
-
-        if (isEdition) {
-            const response = await ManagementService.updateData(datatypes.request, prevValues.id, newValues)
-            success = response?.success
-            message = response?.message
-        } else {
-            const response = await ManagementService.createData(datatypes.request, newValues)
-            success = response?.success
-            message = response?.message
-        }
-
-        closeFunc()
-
-        return {
-            success,
-            message,
-        }
-    }
-
-    const formik = useGenericForm(submitFunction, initialValues, validationSchema)
-    
-    const exerciseOptions = [
-        { value: 'TD', label: 'Trabajo de diploma'},
-        { value: 'PF', label: 'Portafolio'},
-        { value: 'AA', label: 'Defensa de Artículos Científicos'},
-        { value: 'EX', label: 'Exhimición'},  
-    ]
+const RequestForm = ({ isEdition, closeFunc, prevValues }) => {
+    const { formik } = useRequestForm(isEdition, closeFunc, prevValues)
     
     return (
         <form
@@ -101,6 +37,11 @@ const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
                 <>
                     { isEdition?
                         <>
+                            <p className='form-instructions'>
+                                Tenga en cuenta que para seleccionar un veredicto debe haber revisado las evidencias del estudiante antes. 
+                                Para ver las evidencias presione {'"Cancelar"'}, vuelva a seleccionar el estudiante y acceda a la sección {'"Listar evidencias"'}.
+                            </p>
+
                             <label 
                                 className='form-label'
                                 htmlFor='selected-ece'
@@ -157,13 +98,20 @@ const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
                             </div>
                             
                             <span
-                                className={`error ${formik.errors.state && formik.touched.state && 'hidden' }`}
+                                className={`error ${!(formik.errors.state && formik.touched.state && 'hidden')}`}
                                 >
                                 {formik.errors.state}
                             </span>
                         </>
                         :
                         <>
+                            <p className='form-instructions'>
+                                Tenga en cuenta que para seleccionar un ejercicio de culminación de estudios 
+                                debe haber almacenado las evidencias necesarias para solicitarlo, si desea
+                                investigar más puede acceder al manual {'"Evidencias necesarias para cada ECE"'} 
+                                en la sección manuales de la pantalla principal. 
+                            </p>
+
                             <label 
                                 className='form-label'
                                 htmlFor='ece-select'
@@ -180,7 +128,7 @@ const RequestForm = ({ closeFunc, prevValues, isEdition }) => {
                                 />
                             
                             <span
-                                className={`error ${formik.errors.selectedECE && formik.touched.selectedECE && 'hidden' }`}
+                                className={`error ${!(formik.errors.selectedECE && formik.touched.selectedECE && 'hidden')}`}
                                 >
                                 {formik.errors.selectedECE}
                             </span>

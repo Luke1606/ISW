@@ -1,8 +1,5 @@
 import PropTypes from "prop-types"
-import * as Yup from 'yup'
-import { useMemo } from 'react'
-import { datatypes } from "@/data"
-import { useGenericForm, ManagementService } from '@/logic'
+import { useUserForm } from '@/logic'
 import { FormButtons, SearchableSelect } from '@/presentation'
 
 /**
@@ -14,132 +11,7 @@ import { FormButtons, SearchableSelect } from '@/presentation'
  * @returns Estructura de los campos a mostrar con la información del usuario contenida en `prevValues`.
  */
 const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
-    let specificInitialValues 
-
-    if (isStudent)
-        specificInitialValues = {
-            faculty: prevValues?.faculty || '',
-            group: prevValues?.group || ''
-        }
-    else 
-        specificInitialValues = {
-            role: prevValues?.id?.user_role || '',
-        }
-
-    let specificSchema
-
-    if (isStudent)
-        specificSchema = {
-            faculty: Yup.string()
-                .when('role', (role, schema) => {
-                    return role === datatypes.user.student? 
-                        schema.required('La facultad es requerida')
-                        :
-                        schema.notRequired()
-                }),
-            group: Yup.number()
-                .when('role', (role, schema) => {
-
-                    return role === datatypes.user.student? 
-                        schema.required('El grupo es requerido')
-                        : 
-                        schema.notRequired()
-                })
-        }
-    else
-        specificSchema = {
-            role: Yup.string().required('El rol es obligatorio'),
-        }
-
-    const initialValues = {
-        ...specificInitialValues,
-        name: prevValues?.id?.name || '',
-        username: prevValues?.id?.username || '',
-    }
-
-    const validationSchema = useMemo(() => Yup.object().shape({
-        name: Yup.string()
-            .min(3, 'El nombre de usuario debe tener al menos 3 caracteres')
-            .required('El nombre de usuario es obligatorio')
-            .matches(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/, 'El nombre no puede contener números ni caracteres especiales'),
-
-        username: Yup.string()
-            .min(3, 'El nombre de usuario debe tener al menos 4 caracteres')
-            .required('El nombre de usuario es obligatorio')
-            .matches(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]*$/, 'El nombre no puede contener caracteres especiales'),
-        ...specificSchema   
-    }), [specificSchema])
-
-    const submitFunction = async (values) => {
-        const user = isEdition?
-            {
-                id: prevValues?.id,
-                name: values?.name,
-                username: values?.username,
-            }
-            :
-            {
-                name: values?.name,
-                username: values?.username,
-            }
-
-        const newValues = isStudent?
-            {
-                ...user,
-                faculty: values?.faculty,
-                group: values?.group,
-            }
-            :
-            {
-                ...user,
-                role: values.role
-            }
-        
-        let success = false
-        let message
-
-        const datatype = isStudent? datatypes.user.student : datatypes.user.professor
-        if (isEdition) {
-            const response = await ManagementService.updateData(datatype, prevValues.id.id, newValues)
-            success = response?.success
-            message = response?.message
-        } else {
-            const response = await ManagementService.createData(datatype, newValues)
-            success = response?.success
-            message = response?.message
-        }
-
-        closeFunc()
-
-        return {
-            success,
-            message,
-        }
-    }
-
-    const formik = useGenericForm(submitFunction, initialValues, validationSchema)
-
-    /**
-     * @description Distintas opciones a mostrar en el elemento `select` con id de valor `faculty-select`
-     */
-    const facultyOptions = [
-        { value: 'FTI', label: 'Facultad de Tecnologías Interactivas' },
-        { value: 'FTE', label: 'Facultad de Tecnologías Educativas' },
-        { value: 'CITEC', label: 'Facultad de Ciencias y Tecnologías Computacionales' },
-        { value: 'FTL', label: 'Facultad de Tecnologías Libres' },
-        { value: 'FCS', label: 'Facultad de Ciberseguridad' },
-        { value: 'FIO', label: 'Facultad de Información Organizacional' },
-    ]
-
-    /**
-     * @description Distintas opciones a mostrar en el elemento `select` con id de valor `faculty-select`
-     */
-    const docentRoleOptions = [
-        { value: datatypes.user.professor, label: 'Profesor' },
-        { value: datatypes.user.dptoInf, label: 'Profesor miembro del Departamento de Informática' },
-        { value: datatypes.user.decan, label: 'Miembro del Decanato ' },
-    ]
-
+    const { facultyOptions, docentRoleOptions, formik } = useUserForm(isStudent, isEdition, closeFunc, prevValues)
     return (
         <form
             className='form-container manage-section' 
@@ -168,8 +40,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                 />
             
             <span
-                className='error'
-                style={formik.errors.name && formik.touched.name ? {} : { visibility: 'hidden' }}
+                className={`error ${!(formik.errors.name && formik.touched.name && 'hidden')}`}
                 >
                 {formik.errors.name}
             </span>
@@ -191,8 +62,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                 />
 
             <span
-                className='error'
-                style={formik.errors.username && formik.touched.username ? {} : { visibility: 'hidden' }}
+                className={`error ${!(formik.errors.username && formik.touched.username && 'hidden')}`}
                 >
                 {formik.errors.username}
             </span>
@@ -215,8 +85,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                         />
 
                     <span
-                        className='error'
-                        style={formik.errors.faculty && formik.touched.faculty ? {} : { visibility: 'hidden' }}
+                        className={`error ${!(formik.errors.faculty && formik.touched.faculty && 'hidden')}`}
                         >
                         {formik.errors.faculty}
                     </span>
@@ -238,8 +107,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                         />
 
                     <span
-                        className='error'
-                        style={formik.errors.group && formik.touched.group ? {} : { visibility: 'hidden' }}
+                        className={`error ${!(formik.errors.group && formik.touched.group && 'hidden')}`}
                         >
                         {formik.errors.group}
                     </span>
@@ -262,8 +130,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                         />
 
                     <span
-                        className='error'
-                        style={formik.errors.role && formik.touched.role ? {} : { visibility: 'hidden' }}
+                        className={`error ${!(formik.errors.role && formik.touched.role && 'hidden')}`}
                         >
                         {formik.errors.role}
                     </span>

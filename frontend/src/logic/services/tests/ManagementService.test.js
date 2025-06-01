@@ -35,17 +35,17 @@ describe('ManagementService', () => {
     it('should call createData with correct parameters', async () => {
         await ManagementService.createData(datatype, data)
         expect(managementApi.createData).toHaveBeenCalledWith(datatype, data)
-    });
+    })
 
     it('should call updateData with correct parameters', async () => {
         await ManagementService.updateData(datatype, id, data)
         expect(managementApi.updateData).toHaveBeenCalledWith(datatype, id, data)
-    });
+    })
 
     it('should call deleteData with correct parameters', async () => {
         await ManagementService.deleteData(datatype, ids)
         expect(managementApi.deleteData).toHaveBeenCalledWith(datatype, ids)
-    });
+    })
 
     it('should call generateReport with correct parameters', async () => {
         await ManagementService.generateReport(data);

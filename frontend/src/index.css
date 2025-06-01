@@ -7,7 +7,7 @@
 }
 
 body {
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
     background-color: #fff7e6;
     color: #333;
     margin: 0;
@@ -1081,7 +1081,7 @@ button:hover, .button:hover {
     align-items: center;
     justify-content: center;
     padding: 20px; 
-    font-family: Arial, sans-serif; 
+    font-family: Arial, sans-serif;
     font-size: 1.3rem;
     border-radius: 10px;
     box-shadow: 0 0 20px 15px rgba(0, 0, 0, 0.2);
@@ -1089,7 +1089,6 @@ button:hover, .button:hover {
 
 .form-instructions {
     font-size: larger;
-    margin-top: 5rem;
     max-width: 35rem;
     color: #333;
     text-align: center;
@@ -1105,6 +1104,10 @@ button:hover, .button:hover {
 
 .form-instructions:hover {
     background-color: #e6e6e6;
+}
+
+.login-instruccions {
+    margin-top: 5rem;
 }
 
 .form-label {
@@ -1124,6 +1127,13 @@ button:hover, .button:hover {
     border: 1px solid var(--primary-tone);
     display: block;
     transition: all 0.15s ease-in-out;
+}
+
+textarea.form-input {
+    height: auto;
+    min-height: 2rem;
+    max-height: 20rem;
+    resize: vertical;
 }
 
 .form-input {

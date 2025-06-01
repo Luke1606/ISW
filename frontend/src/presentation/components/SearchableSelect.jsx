@@ -17,19 +17,11 @@ const SearchableSelect = ({
     useEffect(() => {
         setRemainingElements(elements)
         changedRef.current = null
-        console.log('cambiazote');
     }, [elements])
 
     useEffect(() => {
-        if (!Array.isArray(selectedOption) && 
-            defaultValue.value !== selectedOption?.value && 
-            !changedRef.current) {
+        if (defaultValue.value !== selectedOption?.value && !changedRef.current) {
                 setSelectedOption(defaultValue)
-            }
-        if (Array.isArray(selectedOption) && 
-            !selectedOption?.some(option => option.value === defaultValue.value) && 
-            !changedRef.current) {
-                setSelectedOption([])
             }
     }, [defaultValue, selectedOption])
 
