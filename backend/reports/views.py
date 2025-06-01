@@ -11,7 +11,16 @@ from users.models import Student, Professor
 from users.serializers import StudentSerializer, ProfessorSerializer
 
 
+CATEGORY_MAPPING = {
+    Datatypes.request: "Solicitudes",
+    Datatypes.evidence: "Evidencias",
+    Datatypes.defense_act: "Actas de defensa",
+    Datatypes.defense_tribunal: "Tribunal y defensa"
+}
+
+
 class ReportView(APIView):
+
     def post(self, request, *args, **kwargs):
         user_role = request.user.user_role  # Extrae el rol del usuario autenticado
         user_type = request.data.get("type")
@@ -44,6 +53,7 @@ class ReportView(APIView):
         categories_to_report = [
             category for category in selected_users_info if category in allowed_categories
         ]
+        spanish_categories_to_report = [CATEGORY_MAPPING[category] for category in categories_to_report]
 
         # Obtener datos de estudiantes o profesores según `userType`
         if user_type == Datatypes.User.student:
@@ -57,7 +67,7 @@ class ReportView(APIView):
                     status=status.HTTP_403_FORBIDDEN
                 )
             if user_role == Datatypes.User.professor:
-                professor = Professor.objects.get(id=request.user)
+                professor = request.user.professor
                 if queryset.values_list("id", flat=True) not in professor.get_related_students_ids():
                     return Response(
                         {"error": "Los profesores solo pueden reportar la información de sus estudiantes relacionados."},
@@ -83,13 +93,29 @@ class ReportView(APIView):
         pdf = canvas.Canvas(buffer, pagesize=letter)
         pdf.setTitle("Reporte de Usuarios")
 
-        pdf.drawString(100, 750, f"Reporte de {user_type}s")
-        pdf.drawString(100, 730, f"Categorías incluidas: {', '.join(categories_to_report)}")
+        spanish_usertype = 'estudiantes' if user_type == Datatypes.User.student else 'profesores'
+
+        pdf.drawString(100, 750, f"Reporte de {spanish_usertype}")
+        pdf.drawString(100, 730, f"Categorías incluidas: {', '.join(spanish_categories_to_report)}")
 
         y_position = 700
         for user in serialized_data:
-            pdf.drawString(100, y_position, f"ID: {user['id']}, Nombre: {user['name']}")
+            pdf.drawString(100, y_position, f" Usuario: {str(user)}")
             y_position -= 20
+
+            # Recorrer todas las categorías relacionadas del usuario
+            for category in categories_to_report:
+                category_attr = category.lower().replace(" ", "_")  # Convertir nombre de categoría en atributo válido
+                related_objects = getattr(user.role_user, category_attr, None)
+
+                if related_objects is None:
+                    user_category_data = "No disponible"
+                else:
+                    # Serializar los objetos relacionados
+                    user_category_data = [str(obj) for obj in related_objects.all()]
+
+                pdf.drawString(120, y_position, f"{CATEGORY_MAPPING.get(category)}: {';\n '.join(user_category_data)}")
+                y_position -= 20 * (len(user_category_data) + 1)  # Ajustar espacio
 
         pdf.showPage()
         pdf.save()

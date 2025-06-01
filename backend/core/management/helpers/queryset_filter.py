@@ -65,7 +65,6 @@ class QuerysetFilter:
         if search_term:
             for field, lookup in self.model.SEARCHABLE_FIELDS.items():
                 if lookup == "date_range":
-                    print('asdadasaaaaaaaaaaa')
                     date_condition = self._build_date_condition(field, search_term)
                     if date_condition:
                         combined_conditions |= date_condition

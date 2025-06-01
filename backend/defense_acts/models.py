@@ -3,7 +3,7 @@ Modelos de la aplicacion defense_acts.
 """
 from django.db import models
 from core.models import BaseModel
-from users.models import Student
+from users.models import Student, Professor
 
 
 class DefenseAct(BaseModel):
@@ -12,6 +12,12 @@ class DefenseAct(BaseModel):
     """
     student = models.ForeignKey(
         to=Student, editable=False,
+        blank=False, null=False,
+        related_name="defense_acts",
+        on_delete=models.CASCADE,
+    )
+    author = models.ForeignKey(
+        to=Professor, editable=False,
         blank=False, null=False,
         related_name="defense_acts",
         on_delete=models.CASCADE,
@@ -31,3 +37,12 @@ class DefenseAct(BaseModel):
     }
 
     DB_INDEX = 6
+
+    def __str__(self) -> str:
+        return f"""Acta de defensa:\n
+                 \tAutor: {self.author.id.name}\n
+                 \tEstudiante asociado: {self.student.id.name}\n
+                 \tNombre del acta: {self.name}\n
+                 \tDescripción: {self.description}\n
+                 \tDirección del adjunto: {self.attachment}\n
+                 \t{super().__str__()}"""

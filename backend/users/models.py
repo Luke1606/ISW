@@ -89,14 +89,14 @@ class CustomUser(BaseModel, AbstractUser):
         '''
         Retorna True si el usuario es estudiante.
         '''
-        return hasattr(self, 'student_user')
+        return hasattr(self, 'student')
 
     @property
     def is_professor(self):
         '''
         Retorna True si el usuario es profesor
         '''
-        return hasattr(self, 'professor_user')
+        return hasattr(self, 'professor')
 
     @property
     def user_role(self):
@@ -106,7 +106,7 @@ class CustomUser(BaseModel, AbstractUser):
         if self.is_student:
             return 'student'
         if self.is_professor:
-            return self.professor_user.role
+            return self.professor.role
         return 'unknown'
 
     def change_password(self, new_password):
@@ -115,23 +115,28 @@ class CustomUser(BaseModel, AbstractUser):
         self.password_changed = True
         self.save()
 
+    def __str__(self):
+        return f"""Usuario:\n
+                 \tTipo: {"Estudiante" if self.is_student else "Docente"}\n
+                 \tNombre de usuario: {self.username}\n
+                 \tNombre completo: {self.name}"""
+
 
 class Student(BaseModel):
     '''
     Modelo para estudiantes.
     '''
     id = models.OneToOneField(
-                        CustomUser,
-                        on_delete=models.CASCADE,
-                        related_name='student_user',
-                        primary_key=True
-        )
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='student',
+        primary_key=True
+    )
 
     class Faculties(models.TextChoices):
         '''
         Clase para definir las distintas facultades a las que puede pertenecer un estudiante.
         '''
-        NONE = 'None', 'Ninguno'
         FTI = 'FTI', 'Facultad de Tecnologías Interactivas'
         FTE = 'FTE', 'Facultad de Tecnologías Educativas'
         CITEC = 'CITEC', 'Facultad de Ciencias y Tecnologías Computacionales'
@@ -139,8 +144,9 @@ class Student(BaseModel):
         FCS = 'FCS', 'Facultad de Ciberseguridad'
         FIO = 'FIO', 'Facultad de Información Organizacional'
 
-    faculty = models.CharField(max_length=50, choices=Faculties.choices, default=Faculties.NONE)
+    faculty = models.CharField(max_length=50, choices=Faculties.choices)
     group = models.PositiveIntegerField()
+
     SEARCHABLE_FIELDS = {
         **BaseModel.SEARCHABLE_FIELDS,
         'id__username': 'icontains',
@@ -151,28 +157,34 @@ class Student(BaseModel):
 
     DB_INDEX = 1
 
+    def __str__(self):
+        return f"""{str(self.id)}\n
+                 \tGrupo: {self.group}\n
+                 \tFacultad: {self.get_faculty_display()}\n
+                 \t{super().__str__()}"""
+
 
 class Professor(BaseModel):
     '''
     Modelo para profesores.
     '''
     id = models.OneToOneField(
-                        CustomUser,
-                        on_delete=models.CASCADE,
-                        related_name='professor_user',
-                        primary_key=True
-        )
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='professor',
+        primary_key=True
+    )
 
     class Roles(models.TextChoices):
         '''
         Clase para definir los roles de un profesor.
         '''
-        NONE = 'None', 'Ninguno'
         PROFESSOR = Datatypes.User.professor, 'Profesor'
         DPTO_INF = Datatypes.User.dptoInf, 'Departamento de Informática'
         DECAN = Datatypes.User.decan, 'Decano'
 
-    role = models.CharField(max_length=20, choices=Roles.choices, default=Roles.NONE)
+    role = models.CharField(max_length=20, choices=Roles.choices, default=Roles.PROFESSOR)
+
     SEARCHABLE_FIELDS = {
         **BaseModel.SEARCHABLE_FIELDS,
         'id__username': 'icontains',
@@ -199,3 +211,8 @@ class Professor(BaseModel):
             tribunal_queryset = tribunal_queryset.filter(state=DefenseTribunal.State.APPROVED)
             return list(tribunal_queryset.values_list('student_id', flat=True))
         return []
+
+    def __str__(self) -> str:
+        return f"""{str(self.id)}\n
+                  \tCargo: {self.get_role_display()}\n
+                  \t{super().__str__()}"""

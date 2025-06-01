@@ -89,14 +89,8 @@ class Request(BaseModel):
         if not self.state:
             raise ValidationError("El estado de la solicitud no puede estar vacío.")
 
-
-# class Template(models.Model):
-#     id = models.AutoField(primary_key=True,
-#                           editable=False,
-#                           unique=True,
-#                           blank=False,
-#                           null=False,
-#                           auto_created=True,
-#                           verbose_name="ID")
-
-#     template_attachment = models.FileField(upload_to='document_templates/')
+    def __str__(self) -> str:
+        return f"""Solicitud de ECE:\n
+                 \tECE seleccionado: {str(self.selected_ece)}\n
+                 \tEstado actual: {self.get_state_display()}\n
+                 \t{super().__str__()}"""

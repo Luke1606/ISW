@@ -5,6 +5,7 @@ from django.db import models
 from core.models import BaseModel
 from core.management.utils.constants import Datatypes
 from users.models import Student, Professor
+from requests.models import Request
 from notifications.views import send_notification
 
 
@@ -22,6 +23,12 @@ class DefenseTribunal(BaseModel):
         on_delete=models.CASCADE,
     )
     defense_date = models.DateField(blank=True, null=True)
+    selected_ece = models.CharField(
+        max_length=20,
+        choices=Request.ECE.choices,
+        default=Request.ECE.TD,
+        verbose_name="Selected ECE"
+    )
 
     president = models.ForeignKey(
         to=Professor,
@@ -141,3 +148,15 @@ class DefenseTribunal(BaseModel):
             )
 
         super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        tutors_names = "\n\t".join(tutor.id.name for tutor in self.tutors.all())
+        return f"""Tribunal y Defensa:\n
+                 \tPresidente: {self.president.id.name}\n
+                 \tSecretario: {self.secretary.id.name}\n
+                 \tVocal: {self.vocal.id.name}\n
+                 \tOponente: {self.opponent.id.name}\n
+                 \tFecha de defensa: {str(self.defense_date)}
+                 \tEstado actual: {self.get_state_display()}
+                 \tTutores: {tutors_names if tutors_names else "No asignados"}
+                 \t{super().__str__()}"""

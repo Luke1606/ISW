@@ -92,3 +92,6 @@ class BaseModel(models.Model):
         """
         abstract = True
         ordering = ['id']
+
+    def __str__(self) -> str:
+        return f"Fecha de registro: {str(self.created_at)}"

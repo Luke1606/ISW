@@ -210,6 +210,15 @@ class ProfessorViewSet(BaseModelViewSet):
         'retrieve': [permissions.IsAuthenticated, IsProfessor | IsDecano],
     }
 
+    def get_permissions(self):
+        '''
+        Asigna permisos según la acción.
+        '''
+        return [
+            permission()
+            for permission in self.permission_classes_by_action.get(self.action, self.permission_classes)
+        ]
+
     def create(self, request, *args, **kwargs):
         '''
         Personaliza la creación para usar create_user_by_role.

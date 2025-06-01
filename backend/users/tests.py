@@ -1,118 +1,9 @@
 import pytest
 # from rest_framework.test import APITestCase
 # from rest_framework import status
-from users.models import CustomUser, Student, Professor
+from users.models import CustomUser, Student
 from core.management.utils.constants import Datatypes
 from users.serializers import CustomUserSerializer, StudentSerializer, ProfessorSerializer
-
-
-# Views
-# class AuthTestCase(APITestCase):
-#     def setUp(self):
-#         self.user = CustomUser.objects.create_user_by_role(
-#             role=Datatypes.User.professor,
-#             username="testuser",
-#             name="Usuario Prueba",
-#             password="Password1.",
-#         )
-#         self.login_url = "/users/token/"
-
-#     def test_token_obtain(self):
-#         """Verificar si se obtiene el token correctamente."""
-#         response = self.client.post(
-#             self.login_url,
-#             {"username": "testuser", "password": "Password1."}
-#         )
-#         assert response.status_code == status.HTTP_200_OK
-#         assert "access" in response.data
-
-#     def test_invalid_token(self):
-#         """Probar credenciales incorrectas."""
-#         response = self.client.post(
-#             self.login_url,
-#             {"username": "wronguser", "password": "wrongpassword"}
-#         )
-#         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-#     def test_cookie_token_obtain(self):
-#         response = self.client.post(
-#             self.login_url,
-#             {"username": "testuser", "password": "Password1."}
-#         )
-
-#         assert response.status_code == status.HTTP_200_OK
-#         assert "access" in response.data
-#         assert response.cookies["refresh_token"].value is not None
-
-
-# class TokenRefreshTestCase(APITestCase):
-#     def setUp(self):
-#         self.user = CustomUser.objects.create_user_by_role(
-#             role=Datatypes.User.professor,
-#             username="testuser",
-#             name="Usuario Prueba",
-#             password="Password1.",
-#         )
-#         self.login_url = "/users/token/"
-#         self.refresh_url = f"{self.login_url}refresh/"
-
-#         # Obtener tokens
-#         response = self.client.post(
-#             self.login_url,
-#             {"username": "testuser", "password": "Password1."}
-#         )
-#         self.access_token = response.data["access"]
-#         self.refresh_token = response.cookies["refresh_token"].value
-
-#         # Configurar cookie manualmente para las siguientes peticiones
-#         self.client.cookies["refresh_token"] = self.refresh_token
-
-#     def test_refresh_token_valid(self):
-#         response = self.client.post(self.refresh_url)
-#         assert response.status_code == status.HTTP_200_OK
-#         assert "access" in response.data
-#         assert response.cookies["refresh_token"].value is not None
-
-#     def test_refresh_token_invalid(self):
-#         self.client.cookies["refresh_token"] = "invalid_token"
-#         response = self.client.post(self.refresh_url)
-#         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-#         assert response.data == {'error': 'Error al refrescar el token, el token de refresh no es válido.'}
-
-
-# class TokenBlacklistTestCase(APITestCase):
-#     def setUp(self):
-#         self.user = CustomUser.objects.create_user_by_role(
-#             role=Datatypes.User.professor,
-#             username="testuser",
-#             name="Usuario Prueba",
-#             password="Password1.",
-#         )
-#         self.login_url = "/users/token/"
-#         self.blacklist_url = f"{self.login_url}blacklist/"
-
-#         # Obtener tokens
-#         response = self.client.post(
-#             self.login_url,
-#             {"username": "testuser", "password": "Password1."}
-#         )
-#         self.access_token = response.data["access"]
-#         self.refresh_token = response.cookies["refresh_token"].value
-
-#         # Configurar cookie manualmente para las siguientes peticiones
-#         self.client.cookies["refresh_token"] = self.refresh_token
-
-#     def test_logout_success(self):
-#         response = self.client.post(self.blacklist_url)
-#         assert response.status_code == status.HTTP_200_OK
-#         assert response.data == {"message": "Cierre de sesión exitoso."}
-#         assert "refresh_token" not in response.cookies
-
-#     def test_logout_no_token(self):
-#         del self.client.cookies["refresh_token"]
-#         response = self.client.post(self.blacklist_url)
-#         assert response.status_code == status.HTTP_400_BAD_REQUEST
-#         assert response.data == {"error": "No se encontró una sesión abierta."}
 
 
 # Models
@@ -257,3 +148,112 @@ def test_professor_serializer():
 
     assert serializer.data["username"] == "professor1"
     assert serializer.data["role"] == "professor"
+
+
+# Views (Pruebas de APIs)
+# class AuthTestCase(APITestCase):
+#     def setUp(self):
+#         self.user = CustomUser.objects.create_user_by_role(
+#             role=Datatypes.User.professor,
+#             username="testuser",
+#             name="Usuario Prueba",
+#             password="Password1.",
+#         )
+#         self.login_url = "/users/token/"
+
+#     def test_token_obtain(self):
+#         """Verificar si se obtiene el token correctamente."""
+#         response = self.client.post(
+#             self.login_url,
+#             {"username": "testuser", "password": "Password1."}
+#         )
+#         assert response.status_code == status.HTTP_200_OK
+#         assert "access" in response.data
+
+#     def test_invalid_token(self):
+#         """Probar credenciales incorrectas."""
+#         response = self.client.post(
+#             self.login_url,
+#             {"username": "wronguser", "password": "wrongpassword"}
+#         )
+#         assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+#     def test_cookie_token_obtain(self):
+#         response = self.client.post(
+#             self.login_url,
+#             {"username": "testuser", "password": "Password1."}
+#         )
+
+#         assert response.status_code == status.HTTP_200_OK
+#         assert "access" in response.data
+#         assert response.cookies["refresh_token"].value is not None
+
+
+# class TokenRefreshTestCase(APITestCase):
+#     def setUp(self):
+#         self.user = CustomUser.objects.create_user_by_role(
+#             role=Datatypes.User.professor,
+#             username="testuser",
+#             name="Usuario Prueba",
+#             password="Password1.",
+#         )
+#         self.login_url = "/users/token/"
+#         self.refresh_url = f"{self.login_url}refresh/"
+
+#         # Obtener tokens
+#         response = self.client.post(
+#             self.login_url,
+#             {"username": "testuser", "password": "Password1."}
+#         )
+#         self.access_token = response.data["access"]
+#         self.refresh_token = response.cookies["refresh_token"].value
+
+#         # Configurar cookie manualmente para las siguientes peticiones
+#         self.client.cookies["refresh_token"] = self.refresh_token
+
+#     def test_refresh_token_valid(self):
+#         response = self.client.post(self.refresh_url)
+#         assert response.status_code == status.HTTP_200_OK
+#         assert "access" in response.data
+#         assert response.cookies["refresh_token"].value is not None
+
+#     def test_refresh_token_invalid(self):
+#         self.client.cookies["refresh_token"] = "invalid_token"
+#         response = self.client.post(self.refresh_url)
+#         assert response.status_code == status.HTTP_401_UNAUTHORIZED
+#         assert response.data == {'error': 'Error al refrescar el token, el token de refresh no es válido.'}
+
+
+# class TokenBlacklistTestCase(APITestCase):
+#     def setUp(self):
+#         self.user = CustomUser.objects.create_user_by_role(
+#             role=Datatypes.User.professor,
+#             username="testuser",
+#             name="Usuario Prueba",
+#             password="Password1.",
+#         )
+#         self.login_url = "/users/token/"
+#         self.blacklist_url = f"{self.login_url}blacklist/"
+
+#         # Obtener tokens
+#         response = self.client.post(
+#             self.login_url,
+#             {"username": "testuser", "password": "Password1."}
+#         )
+#         self.access_token = response.data["access"]
+#         self.refresh_token = response.cookies["refresh_token"].value
+
+#         # Configurar cookie manualmente para las siguientes peticiones
+#         self.client.cookies["refresh_token"] = self.refresh_token
+
+#     def test_logout_success(self):
+#         response = self.client.post(self.blacklist_url)
+#         assert response.status_code == status.HTTP_200_OK
+#         assert response.data == {"message": "Cierre de sesión exitoso."}
+#         assert "refresh_token" not in response.cookies
+
+#     def test_logout_no_token(self):
+#         del self.client.cookies["refresh_token"]
+#         response = self.client.post(self.blacklist_url)
+#         assert response.status_code == status.HTTP_400_BAD_REQUEST
+#         assert response.data == {"error": "No se encontró una sesión abierta."}

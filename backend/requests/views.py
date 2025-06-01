@@ -44,7 +44,7 @@ class RequestViewSet(BaseModelViewSet):
         user = request.user
         # Obtener la última solicitud del estudiante
         student = get_object_or_404(Student, id=user)
-        last_request = Request.objects.filter(student=student).order_by('-created_at').first()
+        last_request = student.requests.order_by('-created_at').first()
 
         # Restringir creación si una solicitud previa está pendiente o aprobada
         if last_request and last_request.state in {Request.State.PENDING, Request.State.APPROVED}:
@@ -81,7 +81,7 @@ class RequestViewSet(BaseModelViewSet):
                 raise ValidationError("Ya existe un tribunal asociado a este estudiante.")
 
             # Crear tribunal automáticamente
-            DefenseTribunal.objects.create(student=instance.student)
+            DefenseTribunal.objects.create(student=instance.student, selected_ece=instance.selected_ece)
 
         # Actualizar el estado de la solicitud
         return super().update(request, *args, **kwargs)
@@ -94,7 +94,7 @@ class RequestViewSet(BaseModelViewSet):
         student = get_object_or_404(Student, id=student_id)
 
         # Encuentra la última solicitud asociada al estudiante
-        last_request = Request.objects.filter(student=student).order_by('-created_at').first()
+        last_request = student.requests.order_by('-created_at').first()
 
         if not last_request:
             return Response("No se encontró ninguna solicitud para este estudiante.", status=status.HTTP_404_NOT_FOUND)

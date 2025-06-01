@@ -44,30 +44,33 @@ class DefenseTribunalViewSet(BaseModelViewSet):
         """
         student_id = kwargs.get("pk")
         student = get_object_or_404(Student, id=student_id)
-        tribunal = DefenseTribunal.objects.filter(student_id=student_id).first()
+        try:
+            tribunal = student.defense_tribunal
 
-        user = request.user
-        non_permission = "No tienes permiso para acceder a este tribunal."
+            user = request.user
+            non_permission = "No tienes permiso para acceder a este tribunal."
 
-        if user.is_student and student.id != user:
-            # Restringir a estudiantes su propio tribunal
-            raise PermissionDenied(non_permission)
-
-        elif user.is_professor:
-            if user.user_role == Professor.Roles.PROFESSOR:
-                # Profesores solo tienen acceso a tribunales relacionados
-                professor = Professor.objects.get(id=user)
-                related_students_ids = professor.get_related_students_ids()
-
-                if student.id.id not in related_students_ids:
-                    raise PermissionDenied(non_permission)
-
-            elif user.user_role not in {Professor.Roles.DECAN, Professor.Roles.DPTO_INF}:
-                # Decanos y Dpto Inf tienen acceso completo
+            if user.is_student and student.id != user:
+                # Restringir a estudiantes su propio tribunal
                 raise PermissionDenied(non_permission)
 
-        serializer = self.get_serializer(tribunal)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            elif user.is_professor:
+                if user.user_role == Professor.Roles.PROFESSOR:
+                    # Profesores solo tienen acceso a tribunales relacionados
+                    professor = user.professor
+                    related_students_ids = professor.get_related_students_ids()
+
+                    if student.id.id not in related_students_ids:
+                        raise PermissionDenied(non_permission)
+
+                elif user.user_role not in {Professor.Roles.DECAN, Professor.Roles.DPTO_INF}:
+                    # Decanos y Dpto Inf tienen acceso completo
+                    raise PermissionDenied(non_permission)
+
+            serializer = self.get_serializer(tribunal)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except DefenseTribunal.DoesNotExist:
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
     def update(self, request, *args, **kwargs):
         """
