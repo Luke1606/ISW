@@ -1,21 +1,21 @@
 import PropTypes from 'prop-types'
 import { CheckCheck } from 'lucide-react'
 import { datatypes } from '@/data'
-import { FilePreviewer, FormButtons, SearchableSelect, CheckeableListItem } from '@/presentation'
+import { FilePreviewer, FormButtons, MultiSearchableSelect, CheckeableListItem } from '@/presentation'
 import { useReportForm } from '@/logic'
 
 const ReportForm = ({ closeFunc }) => {
-    const { 
+    const {
         user, 
         users,
         formik,
-        sended, 
-        reportPDF, 
-        selectAll, 
-        translate, 
+        sended,
+        selectAll,
+        translate,
+        reportPDFRef,
         selectedUsers,
-        setSelectedUsers,
-        handleInfoTypeChange, 
+        handleSelectUser,
+        handleUserTypeChange, 
         AVAILABLE_USER_INFO_MAPPING,
     } = useReportForm()
 
@@ -49,47 +49,46 @@ const ReportForm = ({ closeFunc }) => {
                                 <>  
                                     <label 
                                         className='form-label'
-                                        htmlFor='user-type'
+                                    
                                         >
                                         Tipo de usuario a reportar:
-                                    </label>
 
-                                    <div 
-                                        className='form-radio-container'
-                                        id='user-type'
-                                        >
-                                        <label 
-                                            className='form-radio-option'
+                                        <div 
+                                            className='form-radio-container'
                                             >
-                                            <input
-                                                className='form-input'
-                                                type='radio'
-                                                name='userType'
-                                                value={datatypes.user.student}
-                                                checked={formik.values.userType === datatypes.user.student}
-                                                onChange={handleInfoTypeChange}
-                                                />
-                                            Estudiantes
-                                        </label>
-                                        
-                                        <label 
-                                            className='form-radio-option'
-                                            >
-                                            <input
-                                                className='form-input'
-                                                type='radio'
-                                                name='userType'
-                                                value={datatypes.user.professor}
-                                                checked={formik.values.userType === datatypes.user.professor}
-                                                onChange={handleInfoTypeChange}
-                                                />
-                                            Profesores
-                                        </label>
-                                    </div>
+                                            <label 
+                                                className='form-radio-option'
+                                                >
+                                                <input
+                                                    className='form-input'
+                                                    type='radio'
+                                                    name='userType'
+                                                    value={datatypes.user.student}
+                                                    checked={formik.values.userType === datatypes.user.student}
+                                                    onChange={handleUserTypeChange}
+                                                    />
+                                                Estudiantes
+                                            </label>
+                                            
+                                            <label 
+                                                className='form-radio-option'
+                                                >
+                                                <input
+                                                    className='form-input'
+                                                    type='radio'
+                                                    name='userType'
+                                                    value={datatypes.user.professor}
+                                                    checked={formik.values.userType === datatypes.user.professor}
+                                                    onChange={handleUserTypeChange}
+                                                    />
+                                                Profesores
+                                            </label>
+                                        </div>
+                                    </label>
                                 </>}
-                        
+                            
                             <span
-                                className={`error ${formik.errors.userType && formik.touched.userType && 'hidden'}`}
+                                className={`error ${!formik.errors.userType && 'hidden'}`}
                                 >
                                 {formik.errors.userType}
                             </span>
@@ -98,22 +97,22 @@ const ReportForm = ({ closeFunc }) => {
                                 className='form-label' 
                                 htmlFor='elements-info'
                                 >
-                                Datos de los usuarios a reportar:
+                                Categorías de los usuarios a reportar:
                             </label>
                         
-                            <SearchableSelect 
+                            <MultiSearchableSelect 
                                 id='elements-info'
                                 title='Datos a reportar de los usuarios seleccionados'
-                                defaultValue={formik.values.selectedElementsInfo?.map((info) => ({ value: info, label: translate(info)}))}
-                                elements={AVAILABLE_USER_INFO_MAPPING.map((info) => ({ value: info, label: translate(info)}))}
-                                onChange={(value) => formik.setFieldValue('selectedElementsInfo', value)}
-                                isMulti={true}
+                                elements={AVAILABLE_USER_INFO_MAPPING.map(
+                                    (info) => ({ value: info, label: translate(info) }
+                                ))}
+                                onChange={(value) => formik.setFieldValue('selectedUsersInfo', value)}
                                 />
                     
                             <span
-                                className={`error ${formik.errors.selectedElementsInfo && formik.touched.selectedElementsInfo && 'hidden'}`}
+                                className={`error ${!formik.errors.selectedUsersInfo && 'hidden'}`}
                                 >
-                                {formik.errors.description}
+                                {formik.errors.selectedUsersInfo}
                             </span>
                         </section>
 
@@ -122,7 +121,6 @@ const ReportForm = ({ closeFunc }) => {
                             >
                             <label 
                                 className='form-label' 
-                                htmlFor='users'
                                 >
                                 Usuarios a reportar:
                             </label>
@@ -145,7 +143,7 @@ const ReportForm = ({ closeFunc }) => {
                                             key={`${user.id}-${index}`} 
                                             item={user}
                                             checked={selectedUsers.includes(user.id)}
-                                            setSelectedItems={setSelectedUsers}
+                                            setSelectedItems={handleSelectUser}
                                             />)
                                         )
                                     :
@@ -155,9 +153,9 @@ const ReportForm = ({ closeFunc }) => {
                             </div>
 
                             <span
-                                className={`error ${!(formik.errors.selectedElements && formik.touched.selectedElements && 'hidden')}`}
+                                className={`error ${!formik.errors.selectedUsers && 'hidden'}`}
                                 >
-                                {formik.errors.description}
+                                {formik.errors.selectedUsers}
                             </span>
                         </section>
                     </section>
@@ -175,9 +173,9 @@ const ReportForm = ({ closeFunc }) => {
                             Reporte generado en pdf
                         </h2>
 
-                        {reportPDF?
+                        {reportPDFRef.current?
                             <FilePreviewer 
-                                source={reportPDF}
+                                source={reportPDFRef.current}
                                 />
                         :
                         'Esperando respuesta...'}

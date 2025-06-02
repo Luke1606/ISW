@@ -1,22 +1,29 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import * as Yup from 'yup'
 import { datatypes } from '@/data'
-import { ManagementService, NotificationService, useGenericForm, useAuth, useTranslateToSpanish } from '@/logic'
+import { 
+    useAuth, 
+    useGenericForm, 
+    ManagementService, 
+    NotificationService, 
+    useTranslateToSpanish 
+} from '@/logic'
 
 const useReportForm = () => {
     const [ sended, setSended ] = useState(false)
-    const [ reportPDF, setReportPDF ] = useState(null)
+    const reportPDFRef = useRef(null)
     const [ userType, setUserType ] = useState(datatypes.user.student)
     const { user } = useAuth()
 
     const initialValues = {
-        userType: userType,
+        userType: datatypes.user.student,
         selectedUsers: [],
         selectedUsersInfo: [],
     }
 
     const AVAILABLE_USER_INFO_MAPPING = useMemo(() => {
         const role = user.user_role
+
         if (role === datatypes.user.student) 
             return [datatypes.evidence, datatypes.request, datatypes.defense_tribunal]
         if (role === datatypes.user.decan) {
@@ -59,32 +66,48 @@ const useReportForm = () => {
                 }
             }
         }
-        setSelectedUsers([])
-        fetchUsers()
-    }, [userType])
+        if (!sended) {
+            setSelectedUsers([])
+            fetchUsers()
+        }
+    }, [userType, sended])
+
+    const handleSelectUser = (updateFn) => {
+        setSelectedUsers((prev) => {
+            const updatedUsers = typeof updateFn === "function" ? updateFn(prev) : updateFn
+            formik.setFieldValue("selectedUsers", updatedUsers)
+            return updatedUsers
+        })
+    }
 
     const validationSchema = useMemo(() => Yup.object().shape({
         userType: Yup.string()
-            .required('La información a reportar es obligatoria')
+            .required('El tipo de usuario a reportar reportar es obligatorio')
             .oneOf(
                 user.user_role === datatypes.user.decan?
                     [datatypes.user.student, datatypes.user.professor]
                     :
                     [datatypes.user.student]
-                ),
+                , 'El tipo de usuario a reportar solo puede ser de las opciones mostradas'),
         
-        selectedElements: Yup.array()
-            .of(Yup.object().shape({
-                id: Yup.string().required(),
-                name: Yup.string().required(),
-            })),
+        selectedUsers: Yup.array()
+            .min(1, 'Debe seleccionar al menos un usuario')
+            .max(users.length || 0, 'No puede seleccionar más usuarios de los existentes')
+            .of(Yup.string()
+                .oneOf(users.map((user) => user.id), 'Solo puede seleccionar los usuarios existentes')
+            ),
     
         
-        selectedElementsInfo: Yup.array()
-            .required('La información a reportar de los elementos seleccionados es obligatoria')
-            .oneOf(AVAILABLE_USER_INFO_MAPPING),
-    }), [user.user_role, AVAILABLE_USER_INFO_MAPPING])
-
+        selectedUsersInfo: Yup.array()
+            .required('La información a reportar de los usuarios seleccionados es obligatoria')
+            .min(1, 'Debe seleccionar al menos una categoría')
+            .max(AVAILABLE_USER_INFO_MAPPING.length, 'No puede seleccionar más categorías que las permitidas')
+            .of(Yup.string()
+                    .oneOf(AVAILABLE_USER_INFO_MAPPING
+                        , 'Las categorias a reportar solo pueden ser de las opciones mostradas')
+            ),
+    }), [user.user_role, AVAILABLE_USER_INFO_MAPPING, users])
+    
     const submitFunction = async (values) => {
         const newValues = {
             type: user.user_role === datatypes.user.student?
@@ -97,13 +120,14 @@ const useReportForm = () => {
                 values.selectedUsers,
             infos: values.selectedUsersInfo,
         }
+        
         const { success, data, message } = await ManagementService.generateReport(newValues)
 
-        setSended(true)
-
         if (success) {
-            setReportPDF(data)
+            reportPDFRef.current = data
         }
+
+        setSended(true)
 
         return {
             success,
@@ -113,7 +137,7 @@ const useReportForm = () => {
 
     const formik = useGenericForm(submitFunction, initialValues, validationSchema)
 
-    const handleInfoTypeChange = (e) => {
+    const handleUserTypeChange = (e) => {
         const userType = e.target.value
 
         if (formik.values.userType !== userType) {
@@ -138,12 +162,12 @@ const useReportForm = () => {
         users,
         formik,
         sended, 
-        reportPDF, 
         selectAll, 
         translate, 
+        reportPDFRef, 
         selectedUsers,
-        setSelectedUsers,
-        handleInfoTypeChange, 
+        handleSelectUser,
+        handleUserTypeChange, 
         AVAILABLE_USER_INFO_MAPPING,
     }
 }

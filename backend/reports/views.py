@@ -106,7 +106,7 @@ class ReportView(APIView):
             # Recorrer todas las categorías relacionadas del usuario
             for category in categories_to_report:
                 category_attr = category.lower().replace(" ", "_")  # Convertir nombre de categoría en atributo válido
-                related_objects = getattr(user.role_user, category_attr, None)
+                related_objects = user.get(category_attr, None)
 
                 if related_objects is None:
                     user_category_data = "No disponible"

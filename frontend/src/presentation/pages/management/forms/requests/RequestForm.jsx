@@ -98,7 +98,7 @@ const RequestForm = ({ isEdition, closeFunc, prevValues }) => {
                             </div>
                             
                             <span
-                                className={`error ${!(formik.errors.state && formik.touched.state && 'hidden')}`}
+                                className={`error ${!(formik.errors.state && formik.touched.state) && 'hidden'}`}
                                 >
                                 {formik.errors.state}
                             </span>
@@ -128,7 +128,7 @@ const RequestForm = ({ isEdition, closeFunc, prevValues }) => {
                                 />
                             
                             <span
-                                className={`error ${!(formik.errors.selectedECE && formik.touched.selectedECE && 'hidden')}`}
+                                className={`error ${!(formik.errors.selectedECE && formik.touched.selectedECE) && 'hidden'}`}
                                 >
                                 {formik.errors.selectedECE}
                             </span>

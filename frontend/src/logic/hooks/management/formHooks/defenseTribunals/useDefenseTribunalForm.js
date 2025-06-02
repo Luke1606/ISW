@@ -36,7 +36,7 @@ const useDefenseTribunalForm = (isDefenseTribunal, closeFunc, prevValues) => {
             Yup.object().shape({
                 defenseDate: Yup.string()
                     .matches(/^\d{4}-\d{2}-\d{2}$/, 'Formato de fecha incorrecto') // Valida formato YYYY-MM-DD
-                    .test('valid-date', 'La fecha no puede ser en el pasado', value => {
+                    .test('valid-date', 'La fecha debe ser después de hoy', value => {
                         if (!value) return false
                         const selectedDate = new Date(value)
                         const today = new Date()
@@ -63,7 +63,7 @@ const useDefenseTribunalForm = (isDefenseTribunal, closeFunc, prevValues) => {
                 
                 tutors: Yup.array()
                     .of(Yup.string().required('Debe seleccionar un tutor'))
-                    .min(Yup.ref('tutorCant'), 'Debe seleccionar todos los tutores')
+                    .min(Yup.ref('tutorCant'), 'Debe seleccionar todos los tutores especificados')
                     .max(Yup.ref('tutorCant'), 'No debe seleccionar más tutores de los especificados')
             })
             :

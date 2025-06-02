@@ -167,7 +167,7 @@ const List = ({ datatype, relatedUserId }) => {
                                         title='Más opciones'
                                         defaultValue={'default'}
                                         onChange={(e) => handleOptionChange(e, () => setChanged(true))}
-                                        onClick={() => setSelectedItemId(item.id)}
+                                        onMouseEnter={() => setSelectedItemId(item.id)}
                                         >
                                         <option 
                                             className='option-element' 

@@ -7,10 +7,9 @@ const SearchableSelect = ({
     title, 
     elements,
     onChange,
-    isMulti=false,
     defaultValue = { value: '', label: 'Seleccione una opción '}
 }) => {
-    const [ selectedOption, setSelectedOption ] = useState(isMulti? [] : defaultValue)
+    const [ selectedOption, setSelectedOption ] = useState(defaultValue)
     const [ remainingElements, setRemainingElements ] = useState(elements)
     const changedRef = useRef(null)
 
@@ -26,29 +25,34 @@ const SearchableSelect = ({
     }, [defaultValue, selectedOption])
 
     const handleElementChange = (selected) => {
-        changedRef.current = true
-        setSelectedOption(selected)
-        setRemainingElements(elements.filter((element) => element.value !== selected.value))
-
+        changedRef.current = true;
+        setSelectedOption(selected);
+        
+        if (!selected) {
+            setRemainingElements(elements)
+        } else {
+            setRemainingElements(elements.filter((element) => element.value !== selected.value))
+        }
+    
         if (onChange) {
-            onChange(selected.value)
+            onChange(selected ? selected.value : '')
         }
     }
 
     return (
         <Select
-            className='form-input'
+            isClearable
+            isSearchable
             inputId={id}
             title={title}
-            options={remainingElements}
+            className='form-input'
             value={selectedOption}
+            options={remainingElements}
             defaultValue={defaultValue}
             onChange={handleElementChange}
-            isMulti={isMulti}
             placeholder='Seleccione una opción...'
-            isSearchable
-            noOptionsMessage={() => 'No se encontraron coincidencias'}
-        />
+            noOptionsMessage={() => 'No hay opciones'}
+            />
     )
 }
 
@@ -64,7 +68,78 @@ SearchableSelect.propTypes = {
         label: PropTypes.string,
     }),
     onChange: PropTypes.func,
-    isMulti: PropTypes.bool,
 }
 
 export default SearchableSelect
+
+export const MultiSearchableSelect = ({ 
+    id='', 
+    title='', 
+    elements,
+    onChange,
+    defaultValue = []
+}) => {
+    const [ selectedOptions, setSelectedOptions ] = useState(defaultValue)
+    const [ remainingElements, setRemainingElements ] = useState(elements)
+
+    useEffect(() => {
+        setRemainingElements(elements)
+    }, [elements])
+
+    useEffect(() => {
+        const isMissingFromDefault = defaultValue.some(
+            value => !elements.some(element => element.value === value.value)
+        )
+        
+        const isMissingFromSelected = selectedOptions.some(
+            option => !elements.some(element => element.value === option.value)
+        )
+
+        if (((defaultValue.length > 0 && isMissingFromDefault) || 
+            (selectedOptions.length > 0 && isMissingFromSelected))) {
+            setSelectedOptions(defaultValue || [])
+        }
+    }, [defaultValue, elements, selectedOptions])
+
+    const handleElementChange = (selected) => {
+        setSelectedOptions(selected || [])
+        
+        const selectedValues = selected? selected.map(opt => opt.value) : []
+        setRemainingElements(elements.filter(element => !selectedValues.includes(element.value)))
+    
+        if (onChange) {
+            onChange(selectedValues)
+        }
+    }
+
+    return (
+        <Select
+            isMulti
+            inputId={id}
+            isSearchable
+            title={title}
+            className='form-input'
+            value={selectedOptions}
+            defaultValue={defaultValue}
+            options={remainingElements}
+            onChange={handleElementChange}
+            placeholder='Seleccione una opción...'
+            noOptionsMessage={() => 'No hay opciones'}
+        />
+    )
+}
+
+MultiSearchableSelect.propTypes = {
+    id: PropTypes.string,
+    title: PropTypes.string,
+    elements: PropTypes.arrayOf(PropTypes.shape({
+        value: PropTypes.string.isRequired,
+        label: PropTypes.string.isRequired,
+    })).isRequired,
+    defaultValue: PropTypes.arrayOf(PropTypes.shape({
+        value: PropTypes.string.isRequired,
+        label: PropTypes.string.isRequired,
+    })),
+    onChange: PropTypes.func,
+}
+

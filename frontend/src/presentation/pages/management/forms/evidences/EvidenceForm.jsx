@@ -52,7 +52,7 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
                         />
                     
                     <span
-                        className={`error ${!(formik.errors.name && formik.touched.name && 'hidden')}`}
+                        className={`error ${!(formik.errors.name && formik.touched.name) && 'hidden'}`}
                         >
                         {formik.errors.name}
                     </span>
@@ -71,7 +71,7 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
                         />
                 
                     <span
-                        className={`error ${!(formik.errors.description && formik.touched.description && 'hidden')}`}
+                        className={`error ${!(formik.errors.description && formik.touched.description) && 'hidden'}`}
                         >
                         {formik.errors.description}
                     </span>
@@ -117,7 +117,7 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
                     </div>
 
                     <span
-                        className={`error ${!(formik.errors.attachmentType && formik.touched.attachmentType && 'hidden')}`}
+                        className={`error ${!(formik.errors.attachmentType && formik.touched.attachmentType) && 'hidden'}`}
                         >
                         {formik.errors.attachmentType}
                     </span>
@@ -184,9 +184,9 @@ const EvidenceForm = ({ isEdition, closeFunc, studentId, prevValues}) => {
                         <span
                             className={`error ${
                                 formik.values.attachmentType === 'url'?
-                                    !(formik.errors.url && formik.touched.url && 'hidden')
+                                    !(formik.errors.url && formik.touched.url) && 'hidden'
                                     :
-                                    !(formik.errors.file && formik.touched.file && 'hidden')
+                                    !(formik.errors.file && formik.touched.file) && 'hidden'
                             }`}
                             >
                             {formik.values.attachmentType === 'url'?

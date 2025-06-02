@@ -1102,6 +1102,7 @@ button:hover, .button:hover {
     cursor: default;
 }
 
+
 .form-instructions:hover {
     background-color: #e6e6e6;
 }
@@ -1311,9 +1312,11 @@ textarea.form-input {
 }
 
 .report-list {
-    max-height: 300px; /* Ajusta la altura según tu necesidad */
-    overflow-y: auto; /* Agrega scroll vertical solo cuando sea necesario */
-    overflow-x: hidden; /* Evita scroll horizontal */
-    border: 1px solid #ccc; /* Opcional, para visualizar mejor el área */
+    max-height: 300px;
+    width: 600px;
+    margin-right: 1000px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #ccc;
     padding: 10px;    
 }

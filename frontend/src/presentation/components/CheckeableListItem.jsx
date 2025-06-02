@@ -33,7 +33,7 @@ const CheckeableListItem = ({item, children, checked, setSelectedItems}) => {
             </div>
 
             <div onClick={(event) => event.stopPropagation()}>
-                {children}
+                {children && children}
             </div>
         </div>
     )
@@ -44,7 +44,7 @@ CheckeableListItem.propTypes = {
         id: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
     }),
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node,
     checked: PropTypes.bool.isRequired,
     setSelectedItems: PropTypes.func.isRequired,
 }

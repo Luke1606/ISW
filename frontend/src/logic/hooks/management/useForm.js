@@ -10,7 +10,7 @@ const useForm = (datatype, idData, relatedUserId) => {
 
     useEffect(() => {
         if (datatype === datatypes.request)
-            setIsEdition(user.user_role !== datatypes.user.student)
+            setIsEdition(user?.user_role !== datatypes.user.student)
         else 
             setIsEdition(Boolean(idData))
     }, [idData, datatype, user])
@@ -22,7 +22,7 @@ const useForm = (datatype, idData, relatedUserId) => {
                 return
             }
             else if (datatype === datatypes.request && !idData) {
-                setPrevValues({ student: user.id })
+                setPrevValues({ student: user?.id })
                 return
             }
 
@@ -56,13 +56,9 @@ const useForm = (datatype, idData, relatedUserId) => {
         }
 
         initializePrevValues()
-    }, [datatype, idData, relatedUserId, setLoading, user.id])
+    }, [datatype, idData, relatedUserId, setLoading, user?.id])
     
     return { prevValues, isEdition }
 }
 
 export default useForm 
-
-
-
-

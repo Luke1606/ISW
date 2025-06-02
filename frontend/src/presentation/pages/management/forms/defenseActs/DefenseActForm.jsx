@@ -137,7 +137,7 @@ const DefenseActForm = ({ isEdition, closeFunc, studentId, prevValues }) => {
                             />
                         
                         <span
-                            className={`error ${!(formik.errors.attachment && formik.touched.attachment && 'hidden')}`}
+                            className={`error ${!(formik.errors.attachment && formik.touched.attachment) && 'hidden'}`}
                             >
                             {formik.errors.attachment}
                         </span>

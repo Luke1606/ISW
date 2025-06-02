@@ -12,7 +12,7 @@ import { useGenericForm, ManagementService } from '@/logic'
  * @param {Object} `prevValues`- Contiene toda la información del usuario a mostrar.
  * @returns Estructura de los campos a mostrar con la información del usuario contenida en `prevValues`.
  */
-const useUserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
+const useUserForm = (isStudent, isEdition, closeFunc, prevValues) => {
     let specificInitialValues 
 
     if (isStudent)
@@ -135,10 +135,10 @@ const useUserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
      */
     const docentRoleOptions = [
         { value: datatypes.user.professor, label: 'Profesor' },
-        { value: datatypes.user.dptoInf, label: 'Profesor miembro del Departamento de Informática' },
+        { value: datatypes.user.dptoInf, label: 'Miembro del Dpto de Informática' },
         { value: datatypes.user.decan, label: 'Miembro del Decanato ' },
     ]
-
+    
     return { facultyOptions, docentRoleOptions, formik}
 }
 

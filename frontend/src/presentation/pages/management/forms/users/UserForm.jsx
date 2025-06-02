@@ -40,7 +40,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                 />
             
             <span
-                className={`error ${!(formik.errors.name && formik.touched.name && 'hidden')}`}
+                className={`error ${!(formik.errors.name && formik.touched.name) && 'hidden'}`}
                 >
                 {formik.errors.name}
             </span>
@@ -62,7 +62,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                 />
 
             <span
-                className={`error ${!(formik.errors.username && formik.touched.username && 'hidden')}`}
+                className={`error ${!(formik.errors.username && formik.touched.username) && 'hidden'}`}
                 >
                 {formik.errors.username}
             </span>
@@ -85,7 +85,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                         />
 
                     <span
-                        className={`error ${!(formik.errors.faculty && formik.touched.faculty && 'hidden')}`}
+                        className={`error ${!(formik.errors.faculty && formik.touched.faculty) && 'hidden'}`}
                         >
                         {formik.errors.faculty}
                     </span>
@@ -107,7 +107,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                         />
 
                     <span
-                        className={`error ${!(formik.errors.group && formik.touched.group && 'hidden')}`}
+                        className={`error ${!(formik.errors.group && formik.touched.group) && 'hidden'}`}
                         >
                         {formik.errors.group}
                     </span>
@@ -130,7 +130,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                         />
 
                     <span
-                        className={`error ${!(formik.errors.role && formik.touched.role && 'hidden')}`}
+                        className={`error ${!(formik.errors.role && formik.touched.role) && 'hidden'}`}
                         >
                         {formik.errors.role}
                     </span>

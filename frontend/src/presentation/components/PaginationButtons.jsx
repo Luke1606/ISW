@@ -30,6 +30,7 @@ const PaginationButtons = ({paginationParams, optionalButtonClassName = ''}) => 
 
             { pageControl &&
                 <select 
+                    name='page-control'
                     title="Ir a página..."
                     onChange={(e) => handlePageChange(Number(e.target.value))}
                     value={currentPage}
