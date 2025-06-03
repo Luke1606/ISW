@@ -4,7 +4,7 @@ const ToastNotification = () =>
     <ToastContainer
         position="top-center"
         theme= "colored"
-        autoClose={7000}
+        autoClose={2000}
         hideProgressBar={false}
         closeOnClick
         pauseOnHover

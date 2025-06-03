@@ -44,7 +44,7 @@ class RequestViewSet(BaseModelViewSet):
         user = request.user
         # Obtener la última solicitud del estudiante
         student = get_object_or_404(Student, id=user)
-        last_request = student.requests.order_by('-created_at').first()
+        last_request = student.request.order_by('-created_at').first()
 
         # Restringir creación si una solicitud previa está pendiente o aprobada
         if last_request and last_request.state in {Request.State.PENDING, Request.State.APPROVED}:
@@ -94,7 +94,7 @@ class RequestViewSet(BaseModelViewSet):
         student = get_object_or_404(Student, id=student_id)
 
         # Encuentra la última solicitud asociada al estudiante
-        last_request = student.requests.order_by('-created_at').first()
+        last_request = student.request.order_by('-created_at').first()
 
         if not last_request:
             return Response("No se encontró ninguna solicitud para este estudiante.", status=status.HTTP_404_NOT_FOUND)

@@ -116,10 +116,10 @@ class CustomUser(BaseModel, AbstractUser):
         self.save()
 
     def __str__(self):
-        return f"""Usuario:\n
-                 \tTipo: {"Estudiante" if self.is_student else "Docente"}\n
-                 \tNombre de usuario: {self.username}\n
-                 \tNombre completo: {self.name}"""
+        return f"""Usuario:
+                        Tipo: {"Estudiante" if self.is_student else "Docente"}
+                        Nombre de usuario: {self.username}
+                        Nombre completo: {self.name}"""
 
 
 class Student(BaseModel):
@@ -158,10 +158,11 @@ class Student(BaseModel):
     DB_INDEX = 1
 
     def __str__(self):
-        return f"""{str(self.id)}\n
-                 \tGrupo: {self.group}\n
-                 \tFacultad: {self.get_faculty_display()}\n
-                 \t{super().__str__()}"""
+        return f"""{str(self.id)}
+                        Grupo: {self.group}
+                        Facultad: {self.get_faculty_display()}
+                        {super().__str__()}
+                """
 
 
 class Professor(BaseModel):
@@ -213,6 +214,7 @@ class Professor(BaseModel):
         return []
 
     def __str__(self) -> str:
-        return f"""{str(self.id)}\n
-                  \tCargo: {self.get_role_display()}\n
-                  \t{super().__str__()}"""
+        return f"""{str(self.id)}
+                        Cargo: {self.get_role_display()}
+                        {super().__str__()}
+                """

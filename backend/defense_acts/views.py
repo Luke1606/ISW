@@ -15,3 +15,7 @@ class DefenseActViewSet(BaseModelViewSet):
     serializer_class = DefenseActFullSerializer
     list_serializer_class = DefenseActListSerializer
     permission_classes = [IsProfessor]
+
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        return super().create(request, *args, **kwargs)

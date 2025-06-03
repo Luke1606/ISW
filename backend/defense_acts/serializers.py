@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from core.serializers import BaseListSerializer
-from users.models import Student
+from users.models import Student, Professor
 from .models import DefenseAct
 
 
@@ -24,6 +24,7 @@ class DefenseActFullSerializer(serializers.ModelSerializer):
     Serializador de todos los datos de un acta de defensa.
     """
     student = serializers.PrimaryKeyRelatedField(queryset=Student.objects.all())
+    author = serializers.PrimaryKeyRelatedField(queryset=Professor.objects.all())
 
     class Meta:
         model = DefenseAct

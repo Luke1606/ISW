@@ -108,8 +108,8 @@ const RequestForm = ({ isEdition, closeFunc, prevValues }) => {
                             <p className='form-instructions'>
                                 Tenga en cuenta que para seleccionar un ejercicio de culminación de estudios 
                                 debe haber almacenado las evidencias necesarias para solicitarlo, si desea
-                                investigar más puede acceder al manual {'"Evidencias necesarias para cada ECE"'} 
-                                en la sección manuales de la pantalla principal. 
+                                investigar más puede acceder al manual {'"Evidencias necesarias para cada ECE"'} en 
+                                la sección manuales de la pantalla principal. 
                             </p>
 
                             <label 

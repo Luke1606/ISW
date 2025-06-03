@@ -13,13 +13,13 @@ class DefenseAct(BaseModel):
     student = models.ForeignKey(
         to=Student, editable=False,
         blank=False, null=False,
-        related_name="defense_acts",
+        related_name="defense_act",
         on_delete=models.CASCADE,
     )
     author = models.ForeignKey(
         to=Professor, editable=False,
         blank=False, null=False,
-        related_name="defense_acts",
+        related_name="defense_act",
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=255)
@@ -39,10 +39,11 @@ class DefenseAct(BaseModel):
     DB_INDEX = 6
 
     def __str__(self) -> str:
-        return f"""Acta de defensa:\n
-                 \tAutor: {self.author.id.name}\n
-                 \tEstudiante asociado: {self.student.id.name}\n
-                 \tNombre del acta: {self.name}\n
-                 \tDescripción: {self.description}\n
-                 \tDirección del adjunto: {self.attachment}\n
-                 \t{super().__str__()}"""
+        return f"""Acta de defensa:
+                        Autor: {self.author.id.name}
+                        Estudiante asociado: {self.student.id.name}
+                        Nombre del acta: {self.name}
+                        Descripción: {self.description}
+                        Dirección del adjunto: {self.attachment}
+                        {super().__str__()}
+                """

@@ -7,7 +7,7 @@ from rest_framework import permissions, status
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenBlacklistView
 
 from core.views import BaseModelViewSet
-from core.management.utils.permissions import IsDecano, IsProfessor
+from core.management.utils.permissions import IsDecano, IsProfessor, IsStudent
 from core.management.utils.constants import Datatypes
 from .serializers import CustomUserSerializer, StudentSerializer, ProfessorSerializer, UserListSerializer
 from .models import Student, Professor, CustomUser
@@ -203,7 +203,7 @@ class ProfessorViewSet(BaseModelViewSet):
     serializer_class = ProfessorSerializer
     list_serializer_class = UserListSerializer
     permission_classes_by_action = {
-        'list': [permissions.IsAuthenticated, IsProfessor | IsDecano],
+        'list': [permissions.IsAuthenticated, IsProfessor | IsDecano | IsStudent],
         'create': [permissions.IsAuthenticated, IsDecano],
         'update': [permissions.IsAuthenticated, IsDecano],
         'destroy': [permissions.IsAuthenticated, IsDecano],

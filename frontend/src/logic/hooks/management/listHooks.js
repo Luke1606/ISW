@@ -164,7 +164,8 @@ const useItemTouchControl = (datatype) => {
             
                     const defenseTribunal = await (await ManagementService.getData(datatypes.defense_tribunal, selectedItemId)).data
                     
-                    if (user?.user_role === datatypes.user.dptoInf && defenseTribunal?.state === 'I')
+                    if (user?.user_role === datatypes.user.dptoInf && 
+                        (defenseTribunal?.state === 'I' || defenseTribunal?.state === 'D'))
                         options.push({ 
                             action: () => openManageForm(datatypes.defense_tribunal, { idData: selectedItemId}), 
                             usesForm: true,

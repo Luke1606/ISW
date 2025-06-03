@@ -11,7 +11,11 @@ import { useDefenseTribunalForm } from '@/logic'
  * @returns Estructura de los campos a mostrar con la información del acta de defensa contenida en prevValues.
  */
 const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
-    const { professors, selectedProfessors, formik } = useDefenseTribunalForm(isDefenseTribunal, closeFunc, prevValues)
+    const { 
+        professors, 
+        selectedProfessors, 
+        formik 
+    } = useDefenseTribunalForm(isDefenseTribunal, closeFunc, prevValues)
     
     return (
         <form
@@ -111,7 +115,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             className='form-label' 
                             htmlFor='opponent'
                             >
-                            Vocal del tribunal:
+                            Oponente del tribunal:
                         </label>
                         
                         <SearchableSelect 

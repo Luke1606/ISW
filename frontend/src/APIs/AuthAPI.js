@@ -125,18 +125,11 @@ const changePassword = async (userFormData) => {
     let success = false
     try {
         const response = await authApiInstance.post('session/', userFormData)
-        console.log(response)
+
         if (response.status === 200) {
             setAccessToken(response.data.access)
             message = 'Cuenta confirmada con éxito'
-            const authResponse = await authenticate(userFormData)
-
-            message += authResponse.success? 
-                ' e ' + authResponse.message
-                :
-                ' pero ' + authResponse.message
-
-            success = authResponse.success
+            success = true
         }
     } catch (error) {
         message = error.response?.data?.message || error?.message

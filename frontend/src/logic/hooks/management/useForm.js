@@ -18,7 +18,7 @@ const useForm = (datatype, idData, relatedUserId) => {
     useEffect(() => {
         const initializePrevValues = async () => {
             if (datatype !== datatypes.request && !idData) {
-                setPrevValues({})
+                setPrevValues(undefined)
                 return
             }
             else if (datatype === datatypes.request && !idData) {

@@ -11,8 +11,8 @@ import { useDefenseActForm } from '@/logic'
  * @returns Estructura de los campos a mostrar con la información del acta de defensa contenida en prevValues.
  */
 const DefenseActForm = ({ isEdition, closeFunc, studentId, prevValues }) => {
-    const { authorName, user, formik } = useDefenseActForm(isEdition, studentId, closeFunc, prevValues)
-
+    const { authorName, user, formik } = useDefenseActForm(isEdition, closeFunc, studentId, prevValues)
+    
     return (
         <form
             className='form-container'
@@ -137,7 +137,7 @@ const DefenseActForm = ({ isEdition, closeFunc, studentId, prevValues }) => {
                             />
                         
                         <span
-                            className={`error ${!(formik.errors.attachment && formik.touched.attachment) && 'hidden'}`}
+                            className={`error ${!(formik.errors.attachment) && 'hidden'}`}
                             >
                             {formik.errors.attachment}
                         </span>

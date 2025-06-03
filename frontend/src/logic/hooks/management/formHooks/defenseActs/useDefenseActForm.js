@@ -30,28 +30,29 @@ const useDefenseActForm = (isEdition, closeFunc, studentId, prevValues) => {
         
         description: Yup.string(),
             
-        attachment: Yup.mixed().required('El archivo es obligatorio')
-                .test(
-                    'is-file',
-                    'El adjunto debe ser un archivo',
-                    (value) => value instanceof File
-                )
-                .test(
-                    'fileSize',
-                    'El archivo debe ser menor a 100MB',
-                    (file) => file && file.size <= MAX_FILE_SIZE
-                )
-                .test(
-                    'fileType',
-                    'Formato no permitido',
-                    (file) => file && [
-                        'image/jpg', 'image/jpeg', 'image/png', 'image/gif', 
-                        'application/pdf', 'application/msword', 
-                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        'application/vnd.ms-excel', 'application/vnd.ms-powerpoint', 
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                    ].includes(file.type)
+        attachment: Yup.mixed()
+            .required('El archivo es obligatorio')
+            .test(
+                'is-file',
+                'El adjunto debe ser un archivo',
+                (value) => value instanceof File
+            )
+            .test(
+                'fileSize',
+                'El archivo debe ser menor a 100MB',
+                (file) => file && file.size <= MAX_FILE_SIZE
+            )
+            .test(
+                'fileType',
+                'Formato no permitido',
+                (file) => file && [
+                    'image/jpg', 'image/jpeg', 'image/png', 'image/gif', 
+                    'application/pdf', 'application/msword', 
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.ms-excel', 'application/vnd.ms-powerpoint', 
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                ].includes(file.type)
             )
             .required('El archivo adjunto es requerido')
     }), [MAX_FILE_SIZE])
@@ -66,6 +67,7 @@ const useDefenseActForm = (isEdition, closeFunc, studentId, prevValues) => {
             description: values?.description || prevValues?.description,
             attachment: values?.attachment || prevValues?.attachment,
         }
+        console.log(newValues);
         let success = false
         let message = ''
 

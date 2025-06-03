@@ -43,7 +43,8 @@ class DefenseTribunalViewSet(BaseModelViewSet):
         - Estudiantes solo pueden acceder a su propio tribunal.
         """
         student_id = kwargs.get("pk")
-        student = get_object_or_404(Student, id=student_id)
+        student = get_object_or_404(Student, id_id=student_id)
+
         try:
             tribunal = student.defense_tribunal
 
@@ -112,7 +113,7 @@ class DefenseTribunalViewSet(BaseModelViewSet):
         if new_state in {
                 DefenseTribunal.State.APPROVED,
                 DefenseTribunal.State.DISAPPROVED
-                }:
+                } and new_state != tribunal.state:
             if not request.user or request.user.user_role != Professor.Roles.DECAN:
                 raise ValidationError("Solo el decano puede cambiar el estado a aprobado o desaprobado.")
         if tribunal.state == DefenseTribunal.State.APPROVED and new_state != DefenseTribunal.State.PENDING:

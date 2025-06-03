@@ -110,7 +110,7 @@ class DefenseTribunal(BaseModel):
             except DefenseTribunal.DoesNotExist:
                 previous_state = None
 
-        if is_complete and self.state == self.State.INCOMPLETE:
+        if is_complete and (self.state == self.State.INCOMPLETE or self.state == self.State.DISAPPROVED):
             self.state = self.State.PENDING
             super().save(*args, **kwargs)
 
@@ -150,13 +150,23 @@ class DefenseTribunal(BaseModel):
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
-        tutors_names = "\n\t".join(tutor.id.name for tutor in self.tutors.all())
-        return f"""Tribunal y Defensa:\n
-                 \tPresidente: {self.president.id.name}\n
-                 \tSecretario: {self.secretary.id.name}\n
-                 \tVocal: {self.vocal.id.name}\n
-                 \tOponente: {self.opponent.id.name}\n
-                 \tFecha de defensa: {str(self.defense_date)}
-                 \tEstado actual: {self.get_state_display()}
-                 \tTutores: {tutors_names if tutors_names else "No asignados"}
-                 \t{super().__str__()}"""
+        # Verificar si cada atributo existe antes de acceder a sus propiedades
+        president_name = self.president.id.name if self.president else "Sin presidente"
+        secretary_name = self.secretary.id.name if self.secretary else "Sin secretario"
+        vocal_name = self.vocal.id.name if self.vocal else "Sin vocal"
+        opponent_name = self.opponent.id.name if self.opponent else "Sin oponente"
+        defense_date_str = str(self.defense_date) if self.defense_date else "Fecha no definida"
+        state_str = self.get_state_display() if self.get_state_display() else "Estado no definido"
+
+        # Obtener nombres de tutores con verificación
+        tutors_names = "\n\t".join(tutor.id.name for tutor in self.tutors.all()) if self.tutors.exists() else "No asignados"
+
+        return f"""Presidente: {president_name}
+                   Secretario: {secretary_name}
+                   Vocal: {vocal_name}
+                   Oponente: {opponent_name}
+                   Fecha de defensa: {defense_date_str}
+                   Estado actual: {state_str}
+                   Tutores: {tutors_names}
+                   {super().__str__()}
+                """

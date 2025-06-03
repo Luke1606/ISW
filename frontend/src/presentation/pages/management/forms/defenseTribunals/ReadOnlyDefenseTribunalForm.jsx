@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { exerciseOptions } from '@/data'
-import { useReadOnlyDefenseActForm } from '@/logic'
+import { useReadOnlyDefenseTribunalForm } from '@/logic'
 
 /**
  * @description Ventana para mostrar detalles de un acta de defensa.
@@ -9,8 +9,8 @@ import { useReadOnlyDefenseActForm } from '@/logic'
  * @returns Estructura de los campos a mostrar con la información del tribunal contenido en `values`.
  */
 const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
-    const professors = useReadOnlyDefenseActForm(values)
-
+    const professors = useReadOnlyDefenseTribunalForm(values)
+    
     return (
         <section
             className='form-container'
@@ -52,7 +52,7 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                             className='form-input'
                             id='president'
                             type='text'
-                            value={professors.find(option => option?.value === values?.president)?.label || ''}
+                            value={professors?.find(option => option?.value === values?.president)?.label || ''}
                             readOnly
                             />
 
@@ -66,7 +66,7 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                             className='form-input'
                             id='secretary'
                             type='text'
-                            value={professors.find(option => option?.value === values?.secretary)?.label || ''}
+                            value={professors?.find(option => option?.value === values?.secretary)?.label || ''}
                             readOnly
                         />
 
@@ -81,7 +81,7 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                             className='form-input'
                             id='vocal'
                             type='text'
-                            value={professors.find(option => option?.value === values?.vocal)?.label || ''}
+                            value={professors?.find(option => option?.value === values?.vocal)?.label || ''}
                             readOnly
                             />
 
@@ -96,7 +96,7 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                             className='form-input'
                             id='opponent'
                             type='text'
-                            value={professors.find(option => option?.value === values?.opponent)?.label || ''}
+                            value={professors?.find(option => option?.value === values?.opponent)?.label || ''}
                             readOnly
                             />
                     </section>
@@ -121,7 +121,7 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                             className='form-input'
                             id='selected-ece'
                             type='text'
-                            value={exerciseOptions.find((exercise) => exercise.value === values?.selected_ece).label}
+                            value={exerciseOptions?.find((exercise) => exercise.value === values?.selected_ece).label}
                             readOnly
                             />
                         
@@ -154,7 +154,7 @@ const ReadOnlyDefenseTribunalForm = ({ closeFunc, values }) => {
                                 key={index}
                                 className='form-input'
                                 type='text'
-                                value={professors.find(option => option?.value === tutor)?.label || ''}
+                                value={professors?.find(option => option?.value === tutor)?.label || ''}
                                 readOnly
                                 />
                         ))}

@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useRef } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import * as Yup from 'yup'
 import { datatypes } from '@/data'
 import { 
@@ -6,24 +6,25 @@ import {
     useGenericForm, 
     ManagementService, 
     NotificationService, 
-    useTranslateToSpanish 
+    useTranslateToSpanish,
 } from '@/logic'
 
-const useReportForm = () => {
-    const [ sended, setSended ] = useState(false)
-    const reportPDFRef = useRef(null)
+const useReportForm = (closeFunc) => {
     const [ userType, setUserType ] = useState(datatypes.user.student)
     const { user } = useAuth()
-
+    
     const initialValues = {
         userType: datatypes.user.student,
-        selectedUsers: [],
         selectedUsersInfo: [],
+        selectedUsers: user.user_role === datatypes.user.student?
+            [user.id]
+            :
+            []
     }
 
     const AVAILABLE_USER_INFO_MAPPING = useMemo(() => {
         const role = user.user_role
-
+        
         if (role === datatypes.user.student) 
             return [datatypes.evidence, datatypes.request, datatypes.defense_tribunal]
         if (role === datatypes.user.decan) {
@@ -35,8 +36,18 @@ const useReportForm = () => {
             return [datatypes.evidence, datatypes.request, datatypes.defense_tribunal, datatypes.defense_act]
     }, [user.user_role, userType])
 
-    const [ users, setUsers ] = useState([])
-    const [ selectedUsers, setSelectedUsers ] = useState([])
+    const [ users, setUsers ] = useState(
+        user.user_role === datatypes.user.student?
+            [{ id: user.id, name: user.name }] 
+            :
+            []
+    )
+    const [ selectedUsers, setSelectedUsers ] = useState(
+        user.user_role === datatypes.user.student?
+            [user.id]
+            :
+            []
+    )
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -66,11 +77,12 @@ const useReportForm = () => {
                 }
             }
         }
-        if (!sended) {
+
+        if (user.user_role !== datatypes.user.student) {
             setSelectedUsers([])
             fetchUsers()
         }
-    }, [userType, sended])
+    }, [userType, user])
 
     const handleSelectUser = (updateFn) => {
         setSelectedUsers((prev) => {
@@ -79,7 +91,7 @@ const useReportForm = () => {
             return updatedUsers
         })
     }
-
+    
     const validationSchema = useMemo(() => Yup.object().shape({
         userType: Yup.string()
             .required('El tipo de usuario a reportar reportar es obligatorio')
@@ -97,7 +109,6 @@ const useReportForm = () => {
                 .oneOf(users.map((user) => user.id), 'Solo puede seleccionar los usuarios existentes')
             ),
     
-        
         selectedUsersInfo: Yup.array()
             .required('La información a reportar de los usuarios seleccionados es obligatoria')
             .min(1, 'Debe seleccionar al menos una categoría')
@@ -114,20 +125,19 @@ const useReportForm = () => {
                 datatypes.user.student 
                 : 
                 values.userType,
-            users: user.user_role === datatypes.user.student?
-                user.id
-                : 
-                values.selectedUsers,
+            users: values.selectedUsers,
             infos: values.selectedUsersInfo,
         }
-        
+
         const { success, data, message } = await ManagementService.generateReport(newValues)
 
         if (success) {
-            reportPDFRef.current = data
+            const blob = new Blob([data], { type: 'application/pdf' })
+            const fileURL = URL.createObjectURL(blob)
+            window.open(fileURL, '_blank')
         }
 
-        setSended(true)
+        closeFunc()
 
         return {
             success,
@@ -141,9 +151,11 @@ const useReportForm = () => {
         const userType = e.target.value
 
         if (formik.values.userType !== userType) {
-            formik.setFieldValue('selectedUsers', [])
-            formik.setFieldValue('selectedUsersInfo', [])
-            formik.setFieldValue('userType', userType)
+            formik.setValues({
+                'selectedUsers': [],
+                'selectedUsersInfo': [],
+                'userType': userType
+            })
             setUserType(userType)
         }
     }
@@ -151,20 +163,19 @@ const useReportForm = () => {
     const translate = useTranslateToSpanish()
 
     const selectAll = () => {
-        const ids = Object.values(users).map(user => user.id)
+        const ids = Array.from(users.map(user => user.id))
         const allSelected = selectedUsers.length === ids.length && 
                             selectedUsers.every(id => ids.includes(id))
         setSelectedUsers(allSelected? [] : ids)
+        formik.setFieldValue("selectedUsers", allSelected? [] : ids)
     }
-
+    
     return { 
         user, 
         users,
         formik,
-        sended, 
         selectAll, 
         translate, 
-        reportPDFRef, 
         selectedUsers,
         handleSelectUser,
         handleUserTypeChange, 

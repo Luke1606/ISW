@@ -18,7 +18,7 @@ class Request(BaseModel):
         editable=False,
         blank=False,
         null=False,
-        related_name='requests',
+        related_name='request',
         on_delete=models.CASCADE,
         verbose_name="Student",
     )
@@ -90,7 +90,8 @@ class Request(BaseModel):
             raise ValidationError("El estado de la solicitud no puede estar vacío.")
 
     def __str__(self) -> str:
-        return f"""Solicitud de ECE:\n
-                 \tECE seleccionado: {str(self.selected_ece)}\n
-                 \tEstado actual: {self.get_state_display()}\n
-                 \t{super().__str__()}"""
+        return f"""Solicitud de ECE:
+                        ECE seleccionado: {str(self.get_selected_ece_display())}
+                        Estado actual: {self.get_state_display()}
+                        {super().__str__()}
+                """

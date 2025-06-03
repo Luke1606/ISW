@@ -16,7 +16,7 @@ class Evidence(BaseModel):
         editable=False,
         blank=False,
         null=False,
-        related_name='evidences',
+        related_name='evidence',
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=255, db_index=True, verbose_name="Name")
@@ -59,11 +59,12 @@ class Evidence(BaseModel):
             raise ValidationError('URL field must be empty when attachment type is FILE.')
 
     def __str__(self) -> str:
-        return f"""Evidencia:\n
-                 \tNombre: {str(self.name)}\n
-                 \tDescripción: {self.description}\n
-                 \tTipo de adjunto: {self.get_attachment_type_display()}\n
-                 \tDirección de adjunto: {self.attachment_url
-                                          if self.attachment_type == self.Type.URL
-                                          else self.attachment_file}\n
-                 \t{super().__str__()}"""
+        return f"""Evidencia:
+                        Nombre: {str(self.name)}
+                        Descripción: {self.description}
+                        Tipo de adjunto: {self.get_attachment_type_display()}
+                        Dirección de adjunto: {self.attachment_url
+                                               if self.attachment_type == self.Type.URL
+                                               else self.attachment_file}
+                        {super().__str__()}
+                """

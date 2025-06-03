@@ -7,9 +7,9 @@ import useFetchProfessors from './useFetchProfessors'
  * @returns Estructura de los campos a mostrar con la información del tribunal contenido en `values`.
  */
 const useReadOnlyDefenseTribunalForm = (values) => {
-    const { professors } = useFetchProfessors()
-    
-    const filteredProfessors = professors.filter(professor => {
+    const professors = useFetchProfessors()
+        
+    const filteredProfessors = professors?.filter(professor => {
         return [
             values?.president,
             values?.secretary,
@@ -17,7 +17,7 @@ const useReadOnlyDefenseTribunalForm = (values) => {
             values?.opponent
         ].includes(professor.value) || values?.tutors.includes(professor.value)
     })
-    
+
     return filteredProfessors
 }
 

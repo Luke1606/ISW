@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import Select from 'react-select'
 
 const SearchableSelect = ({ 
@@ -82,9 +82,25 @@ export const MultiSearchableSelect = ({
     const [ selectedOptions, setSelectedOptions ] = useState(defaultValue)
     const [ remainingElements, setRemainingElements ] = useState(elements)
 
+    const SELECT_ALL_OPTION = useMemo(() => { 
+        const allSelected =
+            elements.length > 0 &&
+            elements.every((el) =>
+            selectedOptions.some((opt) => opt.value === el.value))
+
+        return {
+            value: 'SELECT_ALL', 
+            label: allSelected? 'Deseleccionar todo' : 'Seleccionar todo'
+        }
+    }, [elements, selectedOptions])
+    
+    const options = useMemo(() => {
+        return [SELECT_ALL_OPTION, ...elements]
+      }, [elements, SELECT_ALL_OPTION])
+    
     useEffect(() => {
-        setRemainingElements(elements)
-    }, [elements])
+        setRemainingElements(options)
+    }, [options])
 
     useEffect(() => {
         const isMissingFromDefault = defaultValue.some(
@@ -102,14 +118,34 @@ export const MultiSearchableSelect = ({
     }, [defaultValue, elements, selectedOptions])
 
     const handleElementChange = (selected) => {
-        setSelectedOptions(selected || [])
-        
-        const selectedValues = selected? selected.map(opt => opt.value) : []
-        setRemainingElements(elements.filter(element => !selectedValues.includes(element.value)))
-    
-        if (onChange) {
-            onChange(selectedValues)
-        }
+        selected = selected || []
+
+        // Verificamos si se seleccionó la opción especial de "Seleccionar todo"
+        const hasSelectAll = selected.some(
+            (option) => option.value === SELECT_ALL_OPTION.value
+        )
+
+        if (hasSelectAll) {
+            // Calculamos la selección actual sin contar la opción "Seleccionar todo"
+            const currentSelection = selected.filter(
+              (option) => option.value !== SELECT_ALL_OPTION.value
+            )
+      
+            // Si no se tienen ya todos los elementos seleccionados, seleccionamos todos.
+            if (currentSelection.length !== elements.length) {
+                setRemainingElements([])
+                setSelectedOptions(elements)
+                onChange && onChange(elements.map((opt) => opt.value))
+            } else {
+                // Si ya están todos seleccionados, al pulsar "Seleccionar todo" lo interpretamos como un toggle para deseleccionar todos.
+                setSelectedOptions([])
+                onChange && onChange([])
+            }
+        } else {
+            // Normalmente actualizamos la selección con lo elegido por el usuario.
+            setSelectedOptions(selected)
+            onChange && onChange(selected.map((opt) => opt.value))
+        }      
     }
 
     return (

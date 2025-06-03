@@ -37,7 +37,7 @@ class BaseModelViewSet(ModelViewSet):
 
         if related_user_id:
             if self.request.user.user_role != Datatypes.User.professor:
-                queryset = queryset.filter(student=related_user_id)
+                queryset = queryset.filter(student_id=related_user_id)
             if self.request.user.user_role == Datatypes.User.professor and datatype == Datatypes.User.student:
                 professor = Professor.objects.get(id_id=related_user_id)
                 student_ids = professor.get_related_students_ids()
