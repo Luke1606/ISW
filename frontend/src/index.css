@@ -1314,9 +1314,74 @@ textarea.form-input {
 .report-list {
     max-height: 300px;
     width: 600px;
-    margin-right: 1000px;
     overflow-y: auto;
     overflow-x: hidden;
     border: 1px solid #ccc;
     padding: 10px;    
 }
+
+.notification-list {
+    height: 70vh;
+    width: 80%;
+    border-radius: 30px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+.notification-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid black;
+    border-radius: 40px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-item.read {
+    background-color: #fffce5; 
+}
+
+.notification-item.unread {
+    background-color: #ffec9f;
+}
+
+.notification-item:hover {
+    background: #ffdb86;
+    transform: scale(1.01);
+}
+  
+  /* Opcional: si quieres que el párrafo dentro de notification-item se alinee sin margen extra */
+.notification-item p {
+    margin: 0 0 10px 0;
+    font-size: 2rem;
+}
+  
+.notification-button {
+    padding: 5px 10px;
+    font-size: 2rem;
+}
+  
+.notification-button.mark-read {
+    background-color: #28a745;
+}
+  
+.notification-button.mark-read:hover {
+    background-color: #218838;
+}
+  
+.notification-button.remove {
+    background-color: #dc3545;
+}
+  
+.notification-button.remove:hover {
+    background-color: #c82333;
+}
+  
+.notification-item .notification-buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+  

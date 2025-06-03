@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { NotificationService } from '@/logic'
 
 const useNotifications = () => {
-    const [notifications, setNotifications] = useState([])
-    const [pendingOperations, setPendingOperations] = useState([])
+    const [ notifications, setNotifications ] = useState([])
+    const [ pendingOperations, setPendingOperations ] = useState([])
 
     const getNotifications = useCallback( async () => {
         const response = await NotificationService.get()
@@ -32,17 +32,19 @@ const useNotifications = () => {
     }, [getNotifications])
 
     const syncPendingOperations = useCallback( async () => {
-        try {
-            for (const operation of pendingOperations) {
-                if (operation.type === 'markAsRead') {
-                    await NotificationService.markAsRead(operation.id)
-                } else if (operation.type === 'remove') {
-                    await NotificationService.delete(operation.id)
+        if (pendingOperations.length > 0) {
+            try {
+                for (const operation of pendingOperations) {
+                    if (operation.type === 'markAsRead') {
+                        await NotificationService.markAsRead(operation.id)
+                    } else if (operation.type === 'remove') {
+                        await NotificationService.delete(operation.id)
+                    }
                 }
+                setPendingOperations([])
+            } catch (error) {
+                console.error('Error al sincronizar las operaciones pendientes:', error)
             }
-            setPendingOperations([])
-        } catch (error) {
-            console.error('Error al sincronizar las operaciones pendientes:', error)
         }
     }, [pendingOperations])
 

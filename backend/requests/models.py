@@ -3,8 +3,10 @@ Modelos de la aplicacion solicitudes.
 """
 from django.db import models
 from django.core.exceptions import ValidationError
-from users.models import Student
 from core.models import BaseModel
+from core.management.utils.constants import Datatypes
+from users.models import Student, Professor
+from notifications.views import send_notification
 
 
 class Request(BaseModel):
@@ -74,9 +76,33 @@ class Request(BaseModel):
 
             if (self.student != original.student or self.selected_ece != original.selected_ece or self.created_at != original.created_at):
                 raise ValidationError("No está permitido modificar los datos de la solicitud, excepto el estado.")
+
+            notification_message = f"""El tribunal del estudiante {self.student.id.name} ya está listo para ser revisado."""
+
+            notification_url = f"form//{self.id}"
+            send_notification(
+                notification_title='Su solicitud ha sido revisada',
+                notification_message=notification_message,
+                notification_url=notification_url,
+                users=self.student
+            )
         else:
-            # Al crear, forzar el estado a "Pendiente"
-            self.state = self.State.PENDING
+            self.state = self.State.PENDING  # Al crear, forzar el estado a "Pendiente"
+
+            # Notificar a los miembros del departamento de informatica
+            dpto_inf_professors = Professor.objects.search(role=Datatypes.User.dptoInf)
+            dpto_inf_professor_users = [dpto_inf.id for dpto_inf in dpto_inf_professors]
+
+            notification_message = f"""El estudiante {self.student.id.name} envió una solicitud de ECE
+                                       para optar por la categoría {self.get_selected_ece_display()}."""
+
+            notification_url = f"form//{self.id}"
+            send_notification(
+                notification_title='Cambio de estado de tribunal',
+                notification_message=notification_message,
+                notification_url=notification_url,
+                users=dpto_inf_professor_users
+            )
 
         super().save(*args, **kwargs)
 

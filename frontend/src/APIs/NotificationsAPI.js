@@ -5,6 +5,7 @@ const notificationsApiInstance = createApiInstance('http://localhost:8000/notifi
 const handleRequest = async (method, url='', options = {}) => {
     try {
         const response = await notificationsApiInstance[method](url, options)
+        console.log(response);
         return response.data
     } catch (error) {
         const errorStatus = error.request.status
@@ -23,5 +24,9 @@ const markNotificationAsRead = (id) =>
 const deleteNotification = (id) =>
     handleRequest('delete', `${id}/`)
 
-const notificationsApi = {getNotifications, markNotificationAsRead, deleteNotification}
+const notificationsApi = {
+    getNotifications, 
+    markNotificationAsRead, 
+    deleteNotification
+}
 export default notificationsApi
