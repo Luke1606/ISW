@@ -1,12 +1,12 @@
 import { NavLink } from 'react-router-dom'
-import { User } from 'lucide-react'
+import { User, UserRoundCog } from 'lucide-react'
 import { Modal } from '../'
 import { 
     useAuth, 
     useModal, 
     useDropPopup,
     useHeaderOptions,
-    useTranslateToSpanish 
+    useTranslateToSpanish, 
 } from '@/logic'
 
 /**
@@ -15,7 +15,7 @@ import {
  * @returns Estructura del header de la aplicación con un perfil popup que contiene la información del usuario y las opciones correspondientes. Además del botón de `login/logout`.
  */
 const Header = () => {
-    const options = useHeaderOptions()
+    const { options, hasUnread } = useHeaderOptions()
     const { user, logout } = useAuth()
 
     /**
@@ -48,7 +48,11 @@ const Header = () => {
                             ref={triggerRef} 
                             title='Mostrar perfil y opciones'
                             >
+                            { hasUnread?
+                            <UserRoundCog size={40} color='white' />
+                            :
                             <User size={40} color='white' />
+                            }
                         </button>
                             
                         <Modal

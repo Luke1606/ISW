@@ -120,11 +120,9 @@ class DefenseTribunal(BaseModel):
 
             notification_message = f"""El tribunal del estudiante {self.student.id.name} ya está listo para ser revisado."""
 
-            notification_url = f"form/{Datatypes.tribunal}/{self.id}"
             send_notification(
                 notification_title='Tribunal configurado',
                 notification_message=notification_message,
-                notification_url=notification_url,
                 users=decan_users
             )
 
@@ -139,11 +137,9 @@ class DefenseTribunal(BaseModel):
 
             notification_message = f"""El tribunal del estudiante {self.student.id.name} cambió su estado a {self.get_state_display()}."""
 
-            notification_url = f"form/{Datatypes.tribunal}/{self.id}"
             send_notification(
                 notification_title='Cambio de estado de tribunal',
                 notification_message=notification_message,
-                notification_url=notification_url,
                 users=dpto_inf_professor_users
             )
 

@@ -2,10 +2,12 @@ import { createApiInstance } from './'
 
 const notificationsApiInstance = createApiInstance('http://localhost:8000/notifications/')
 
-const handleRequest = async (method, url='', options = {}) => {
+const handleRequest = async ({method, url='', data = null, params = {}}) => {
     try {
-        const response = await notificationsApiInstance[method](url, options)
-        console.log(response);
+        const response = data?
+            await notificationsApiInstance[method](url, data, { params })
+            :
+            await notificationsApiInstance[method](url, { params })   
         return response.data
     } catch (error) {
         const errorStatus = error.request.status
@@ -15,18 +17,25 @@ const handleRequest = async (method, url='', options = {}) => {
     }
 }
 
-const getNotifications = () =>
-    handleRequest('get')
+const getNotifications = async () =>
+    await handleRequest({ method: 'get' })
 
-const markNotificationAsRead = (id) =>
-    handleRequest('put', `${id}/mark_as_read/`)
+const toggleNotificationAsRead = async (ids) =>
+    await handleRequest({
+        method:'put',
+        url: 'toggle_as_read/',
+        data: { ids }
+    })
 
-const deleteNotification = (id) =>
-    handleRequest('delete', `${id}/`)
+const deleteNotification = async (ids) =>
+    await handleRequest({
+        method: 'delete',
+        data: { data: { ids } }
+    })
 
 const notificationsApi = {
     getNotifications, 
-    markNotificationAsRead, 
-    deleteNotification
+    deleteNotification,
+    toggleNotificationAsRead, 
 }
 export default notificationsApi

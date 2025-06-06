@@ -77,14 +77,12 @@ class Request(BaseModel):
             if (self.student != original.student or self.selected_ece != original.selected_ece or self.created_at != original.created_at):
                 raise ValidationError("No está permitido modificar los datos de la solicitud, excepto el estado.")
 
-            notification_message = f"""El tribunal del estudiante {self.student.id.name} ya está listo para ser revisado."""
+            notification_message = f"""Su solicitud ha sido revisada y el veredicto fue {self.get_state_display()}."""
 
-            notification_url = f"form//{self.id}"
             send_notification(
                 notification_title='Su solicitud ha sido revisada',
                 notification_message=notification_message,
-                notification_url=notification_url,
-                users=self.student
+                users=[self.student.id]
             )
         else:
             self.state = self.State.PENDING  # Al crear, forzar el estado a "Pendiente"
@@ -96,11 +94,9 @@ class Request(BaseModel):
             notification_message = f"""El estudiante {self.student.id.name} envió una solicitud de ECE
                                        para optar por la categoría {self.get_selected_ece_display()}."""
 
-            notification_url = f"form//{self.id}"
             send_notification(
-                notification_title='Cambio de estado de tribunal',
+                notification_title='Envío de solicitud',
                 notification_message=notification_message,
-                notification_url=notification_url,
                 users=dpto_inf_professor_users
             )
 

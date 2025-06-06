@@ -6,15 +6,11 @@ const useNotifications = () => {
     const [ pendingOperations, setPendingOperations ] = useState([])
 
     const getNotifications = useCallback( async () => {
-        const response = await NotificationService.get()
+        const { data } = await NotificationService.get()
+        const flattedData = Object.values(data).flat()
 
-        if (response) {
-            const sortedNotifications = response.sort((a, b) => {
-                return new Date(b.created_at) - new Date(a.created_at) // Ordenar de más reciente a más antiguo
-            })
-            
-            setNotifications(sortedNotifications)
-        }
+        if (data)            
+            setNotifications(flattedData)
     }, [])
 
     useEffect(() => {
@@ -34,13 +30,20 @@ const useNotifications = () => {
     const syncPendingOperations = useCallback( async () => {
         if (pendingOperations.length > 0) {
             try {
+                const markAsReadIds = []
+                const deleteIds = []
+
                 for (const operation of pendingOperations) {
-                    if (operation.type === 'markAsRead') {
-                        await NotificationService.markAsRead(operation.id)
-                    } else if (operation.type === 'remove') {
-                        await NotificationService.delete(operation.id)
-                    }
+                    if (operation.type === 'toggleAsRead')
+                        markAsReadIds.push(operation.id)
+                    else if (operation.type === 'delete')
+                        deleteIds.push(operation.id)
                 }
+                
+                if (markAsReadIds.length > 0)
+                    await NotificationService.toggleAsRead(markAsReadIds)
+                if (deleteIds.length > 0)
+                    await NotificationService.delete(deleteIds)
                 setPendingOperations([])
             } catch (error) {
                 console.error('Error al sincronizar las operaciones pendientes:', error)
@@ -58,22 +61,22 @@ const useNotifications = () => {
         }
     }, [pendingOperations, syncPendingOperations])
 
-    const markAsRead = (id) => {
+    const toggleAsRead = (id) => {
         setNotifications((prev) =>
             prev.map((notification) =>
-                notification.id === id ? { ...notification, is_read: true } : notification
+                notification.id === id ? { ...notification, is_read: !notification.is_read } : notification
             )
         )
     
-        setPendingOperations((prev) => [...prev, { type: 'read', id }])
+        setPendingOperations((prev) => [...prev, { type: 'toggleAsRead', id }])
     }
     
-    const removeNotification = (id) => {
+    const deleteNotification = (id) => {
         setNotifications((prev) => prev.filter((notification) => notification.id !== id))
         setPendingOperations((prev) => [...prev, { type: 'delete', id }])
     }
 
-    return { notifications, markAsRead, removeNotification }
+    return { notifications, toggleAsRead, deleteNotification }
 }
 
 export default useNotifications

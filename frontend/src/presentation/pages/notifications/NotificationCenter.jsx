@@ -1,14 +1,9 @@
-import { useNavigate } from 'react-router-dom'
 import { useNotifications } from '@/logic'
+import { Trash2 } from 'lucide-react'
 
 const NotificationCenter = () => {
-    const { notifications, markAsRead, removeNotification } = useNotifications()
-    const navigate = useNavigate()
+    const { notifications, toggleAsRead, deleteNotification } = useNotifications()
 
-    const handleNotificationClick = (notification) => {
-        navigate(notification.url)
-    }
-    console.log(notifications);
     return (
         <div
             className='manage-list notification-list'
@@ -18,34 +13,33 @@ const NotificationCenter = () => {
                     <div
                         key={notification.id}
                         className={`notification-item ${notification.is_read? 'read' : 'unread'}`}
-                        onClick={() => handleNotificationClick(notification)}
+                        onClick={(e) => {
+                                e.stopPropagation()
+                                toggleAsRead(notification.id)
+                        }}
                         >
-                        <p>{notification.message}</p>
-                        
-                        <div 
-                            className='button-container notification-buttons'
-                            >
-                            { !notification.is_read &&
-                                <button 
-                                    className='notification-button mark-read'
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        markAsRead(notification.id)
-                                    }}
-                                    >
-                                    Marcar como leída
-                                </button>}
-                                
-                            <button 
-                                className='notification-button remove'
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    removeNotification(notification.id)
-                                }}
+                        <div className='notification-text'>
+                            <h2 
+                                className='list-item-header notification-header'
                                 >
-                                Eliminar
-                            </button>
+                                {notification.title}
+                            </h2>
+                            <p 
+                                className='notification-message'
+                                >
+                                {notification.message}
+                            </p>
                         </div>
+                                
+                        <button 
+                            className='notification-button delete-button'
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                deleteNotification(notification.id)
+                            }}
+                            >
+                            <Trash2 color='white' size={35}/>
+                        </button>
                     </div>))
                 :
                     <h3 className='list-item-title'>

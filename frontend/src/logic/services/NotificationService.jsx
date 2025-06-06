@@ -15,12 +15,12 @@ class NotificationService {
         return await notificationsApi.getNotifications()
     }
 
-    async markAsRead (id) {
-        return await notificationsApi.markNotificationAsRead(id)
+    async toggleAsRead (ids) {
+        return await notificationsApi.toggleNotificationAsRead(ids)
     }
 
-    async delete (id) {
-        return await notificationsApi.deleteNotification(id)
+    async delete (ids) {
+        return await notificationsApi.deleteNotification(ids)
     }
 
     showToast (newNotification, type='info') {

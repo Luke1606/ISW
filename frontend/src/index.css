@@ -1331,13 +1331,31 @@ textarea.form-input {
   }
   
 .notification-item {
-    padding: 10px;
+    padding: 1.5rem 5rem;
     margin-bottom: 10px;
     border-bottom: 1px solid black;
     border-radius: 40px;
     transition: all 0.3s ease;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.notification-text {
+    padding: 0;
+}
+
+.notification-header, .notification-message {
+    margin: .2rem;
+    cursor: default;
+}
+
+.notification-header {
+    font-size: 2.3rem;
+}
+
+.notification-message {
+    font-size: 2rem;
 }
 
 .notification-item.read {
@@ -1352,36 +1370,3 @@ textarea.form-input {
     background: #ffdb86;
     transform: scale(1.01);
 }
-  
-  /* Opcional: si quieres que el párrafo dentro de notification-item se alinee sin margen extra */
-.notification-item p {
-    margin: 0 0 10px 0;
-    font-size: 2rem;
-}
-  
-.notification-button {
-    padding: 5px 10px;
-    font-size: 2rem;
-}
-  
-.notification-button.mark-read {
-    background-color: #28a745;
-}
-  
-.notification-button.mark-read:hover {
-    background-color: #218838;
-}
-  
-.notification-button.remove {
-    background-color: #dc3545;
-}
-  
-.notification-button.remove:hover {
-    background-color: #c82333;
-}
-  
-.notification-item .notification-buttons {
-    display: flex;
-    justify-content: flex-end;
-}
-  

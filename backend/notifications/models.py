@@ -7,7 +7,6 @@ class Notification(BaseModel):
     users = models.ManyToManyField(settings.AUTH_USER_MODEL)
     title = models.CharField(max_length=255, db_index=True)
     message = models.TextField(db_index=True)
-    url = models.URLField()
     is_read = models.BooleanField(default=False)
 
     SEARCHABLE_FIELDS = {

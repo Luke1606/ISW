@@ -37,7 +37,7 @@ describe('NotificationService', () => {
     it('should mark a notification as read', async () => {
         notificationsApi.markNotificationAsRead.mockResolvedValue({ success: true })
 
-        const response = await NotificationService.markAsRead(1)
+        const response = await NotificationService.toggleAsRead(1)
 
         expect(notificationsApi.markNotificationAsRead).toHaveBeenCalledWith(1)
         expect(response.success).toBe(true)

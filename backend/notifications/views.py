@@ -1,23 +1,20 @@
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from rest_framework import permissions, status
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.db.models import F
+from core.views import BaseModelViewSet
 from .models import Notification
 from .serializers import NotificationSerializer
 
 
-def send_notification(notification_title, notification_message, notification_url, users, important=False):
+def send_notification(notification_title, notification_message, users, important=False):
     channel_layer = get_channel_layer()
-
-    if not notification_url:
-        notification_url = 'http://localhost:8000/'
 
     notification = Notification.objects.create(
         title=notification_title,
         message=notification_message,
-        url=notification_url,
     )
 
     notification.users.set(users)
@@ -39,19 +36,28 @@ def send_notification(notification_title, notification_message, notification_url
         )
 
 
-class NotificationViewSet(ModelViewSet):
+class NotificationViewSet(BaseModelViewSet):
     serializer_class = NotificationSerializer
     permission_classes = [permissions.IsAuthenticated]
-    queryset = Notification.objects.all()
+    queryset = Notification.objects.all().order_by('-created_at')
 
     def get_queryset(self):
         # Filtrar notificaciones solo para el usuario autenticado
         return Notification.objects.filter(users=self.request.user)
 
-    @action(detail=True, methods=['put'])
-    def mark_as_read(self, request, pk=None):
-        """Marcar una notificación como leída"""
-        notification = self.get_object()
-        notification.is_read = True
-        notification.save()
-        return Response(status=status.HTTP_200_OK)
+    @action(detail=False, methods=['put'])
+    def toggle_as_read(self, request, *args, **kwargs):
+        """
+        Método destroy personalizado para poder eliminar un conjunto de elementos a partir de una lista de ids.
+        """
+        super().invalidate_cache()
+
+        ids = request.data.get("ids", [])
+
+        if not ids or not isinstance(ids, list):
+            return Response({"error": "Debe proporcionar una lista de IDs"}, status=status.HTTP_400_BAD_REQUEST)
+
+        queryset = self.get_queryset()
+        marked_count, _ = queryset.filter(id__in=ids).update(is_read=~F('is_read'))
+
+        return Response({"message": f"Sincronización exitosa, {marked_count} elementos editados"}, status=status.HTTP_200_OK)
