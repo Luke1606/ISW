@@ -58,9 +58,9 @@ class NotificationViewSet(BaseModelViewSet):
             return Response({"error": "Debe proporcionar una lista de IDs"}, status=status.HTTP_400_BAD_REQUEST)
 
         queryset = self.get_queryset()
-        marked_count, _ = queryset.filter(id__in=ids).update(is_read=~F('is_read'))
+        queryset.filter(id__in=ids).update(is_read=~F('is_read'))
 
-        return Response({"message": f"Sincronización exitosa, {marked_count} elementos editados"}, status=status.HTTP_200_OK)
+        return Response({"message": "Sincronización exitosa"}, status=status.HTTP_200_OK)
 
     def list(self, request, *args, **kwargs):
         """Sobrescribe el método 'list' para asegurarse de que no se usa caché."""

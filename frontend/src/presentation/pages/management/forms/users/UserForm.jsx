@@ -85,10 +85,16 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                         />
 
                     <span
-                        className={`error ${!(formik.errors.faculty && formik.touched.faculty) && 'hidden'}`}
+                        className={`error ${!formik.errors.faculty && 'hidden'}`}
                         >
                         {formik.errors.faculty}
                     </span>
+
+                    <p
+                        className='form-instructions'
+                        >
+                        {'El grupo debe tener la forma "Año, 0, Grupo"'}
+                    </p>
 
                     <label 
                         className='form-label' 
@@ -101,6 +107,7 @@ const UserForm = ({ isStudent, isEdition, closeFunc, prevValues }) => {
                         className='form-input' 
                         type='number' 
                         id='group'
+                        min={1}
                         title='Grupo del estudiante'
                         placeholder='Introduzca el grupo del estudiante'
                         {...formik.getFieldProps('group')}

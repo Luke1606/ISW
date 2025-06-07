@@ -30,17 +30,45 @@ const useUserForm = (isStudent, isEdition, closeFunc, prevValues) => {
     if (isStudent)
         specificSchema = {
             faculty: Yup.string()
-                .when('role', (role, schema) => {
-                    return role === datatypes.user.student? 
+                .when('$isStudent', (isStudent, schema) => {
+                    return isStudent?    
                         schema.required('La facultad es obligatoria')
                         :
                         schema.notRequired()
                 }),
             group: Yup.number()
-                .when('role', (role, schema) => {
-
-                    return role === datatypes.user.student? 
+                .when('$isStudent', (isStudent, schema) => {
+                    return isStudent?
                         schema.required('El grupo es obligatorio')
+                        .test(
+                            'is-group-valid',
+                            'El grupo debe tener 3 dígitos y ser positivo',
+                            (value) => value.toString().length === 3 && value > 0
+                        )
+                        .test(
+                            'is-year-valid',
+                            'El dígito del año debe ser un número entre 1 y 4',
+                            (value) => {
+                                const strValue = value.toString()
+                                const yearValid = ['1', '2', '3', '4'].some(digit => strValue.startsWith(digit))
+                                return yearValid
+                        })
+                        .test(
+                            'is-year-valid',
+                            'El dígito del medio debe ser 0',
+                            (value) => {
+                                const strValue = value.toString()
+                                const middleValid = strValue[1] === '0'
+                                return middleValid
+                        })
+                        .test(
+                            'is-group-valid',
+                            'El dígito del grupo debe corresponder a un grupo válido',
+                            (value) => {
+                                const strValue = value.toString()
+                                const groupValid = ['1', '2', '3', '4', '5'].some(digit => strValue.endsWith(digit))
+                                return groupValid
+                        })
                         : 
                         schema.notRequired()
                 })
@@ -65,7 +93,7 @@ const useUserForm = (isStudent, isEdition, closeFunc, prevValues) => {
         username: Yup.string()
             .required('El nombre de usuario es obligatorio')
             .min(3, 'El nombre de usuario debe tener al menos 3 caracteres')
-            .matches(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]*$/, 'El nombre no puede contener caracteres especiales'),
+            .matches(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]*$/, 'El nombre de usuario no puede contener caracteres especiales'),
         ...specificSchema   
     }), [specificSchema])
 

@@ -1094,7 +1094,7 @@ button:hover, .button:hover {
     text-align: center;
     margin-bottom: 0;
     padding: 12px;
-    background-color: #f1f1f1;
+    background-color: #ffffff;
     border-radius: 8px;
     border-left: 4px solid var(--primary-tone);
     font-weight: 500;
@@ -1104,7 +1104,7 @@ button:hover, .button:hover {
 
 
 .form-instructions:hover {
-    background-color: #e6e6e6;
+    background-color: #e7e2db;
 }
 
 .login-instruccions {
