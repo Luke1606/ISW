@@ -61,3 +61,8 @@ class NotificationViewSet(BaseModelViewSet):
         marked_count, _ = queryset.filter(id__in=ids).update(is_read=~F('is_read'))
 
         return Response({"message": f"Sincronización exitosa, {marked_count} elementos editados"}, status=status.HTTP_200_OK)
+
+    def list(self, request, *args, **kwargs):
+        """Sobrescribe el método 'list' para asegurarse de que no se usa caché."""
+        self.invalidate_cache()
+        return super().list(request, *args, **kwargs)

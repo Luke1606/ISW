@@ -21,7 +21,7 @@ class DefenseActViewSet(BaseModelViewSet):
     permission_classes = [IsProfessor]
 
     def create(self, request, *args, **kwargs):
-        student = get_object_or_404(Student, id_id=request.data.student)
+        student = get_object_or_404(Student, id_id=request.data.get('student'))
         notification_message = f"""El tribunal del estudiante {student.id.name} ha registrado una nueva acta de defensa."""
 
         dpto_inf_professors = Professor.objects.search(role=Datatypes.User.dptoInf)

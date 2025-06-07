@@ -33,7 +33,6 @@ const useDefenseTribunalForm = (isDefenseTribunal, closeFunc, prevValues) => {
 
     const validationSchema = useMemo(() => {
         const profs = professors.map((prof) => prof.value)
-
         return isDefenseTribunal?
             Yup.object().shape({
                 defenseDate: Yup.string()

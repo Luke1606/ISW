@@ -143,6 +143,15 @@ class DefenseTribunal(BaseModel):
                 users=dpto_inf_professor_users
             )
 
+            if self.state == self.State.APPROVED:
+                notification_message = "Los datos de su tribunal y de su defensa han sido decididos, recuerde consultarlos."
+
+            send_notification(
+                notification_title='Tribunal y defensa definidos',
+                notification_message=notification_message,
+                users=self.student.id
+            )
+
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:

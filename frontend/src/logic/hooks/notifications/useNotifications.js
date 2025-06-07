@@ -1,31 +1,34 @@
 import { useCallback, useEffect, useState } from 'react'
-import { NotificationService } from '@/logic'
+import { NotificationService, useAuth } from '@/logic'
 
 const useNotifications = () => {
     const [ notifications, setNotifications ] = useState([])
     const [ pendingOperations, setPendingOperations ] = useState([])
 
-    const getNotifications = useCallback( async () => {
-        const { data } = await NotificationService.get()
-        const flattedData = Object.values(data).flat()
-
-        if (data)            
-            setNotifications(flattedData)
-    }, [])
-
+    const { user } = useAuth()
+    
     useEffect(() => {
+        const getNotifications = async () => {
+            const { data } = await NotificationService.get()
+            const flattedData = Object.values(data).flat()
+    
+            if (data)            
+                setNotifications(flattedData)
+        }
         const handleNewNotification = (notification) =>
             setNotifications((prev) => [notification, ...prev])
-
-        getNotifications()        
-        NotificationService.connect()
-        NotificationService.addListener(handleNewNotification)
+        
+        if (user) {
+            getNotifications()        
+            NotificationService.connect()
+            NotificationService.addListener(handleNewNotification)
+        }
         
         return () => {
             NotificationService.removeListener(handleNewNotification)
             NotificationService.disconnect()
         }
-    }, [getNotifications])
+    }, [user])
 
     const syncPendingOperations = useCallback( async () => {
         if (pendingOperations.length > 0) {
