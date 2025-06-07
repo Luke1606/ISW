@@ -135,7 +135,7 @@ class DefenseTribunal(BaseModel):
             dpto_inf_professors = Professor.objects.search(role=Datatypes.User.dptoInf)
             dpto_inf_professor_users = [dpto_inf.id for dpto_inf in dpto_inf_professors]
 
-            notification_message = f"""El tribunal del estudiante {self.student.id.name} cambió su estado a {self.get_state_display()}."""
+            notification_message = f"""El tribunal del estudiante {self.student.id.name} fue declarado {self.get_state_display()}."""
 
             send_notification(
                 notification_title='Cambio de estado de tribunal',

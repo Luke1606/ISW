@@ -54,7 +54,7 @@ const useDefenseActForm = (isEdition, closeFunc, studentId, prevValues) => {
                     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
                 ].includes(file.type)
             )
-            .required('El archivo adjunto es requerido')
+            .required('El archivo adjunto es obligatorio')
     }), [MAX_FILE_SIZE])
 
     const { user } = useAuth()
