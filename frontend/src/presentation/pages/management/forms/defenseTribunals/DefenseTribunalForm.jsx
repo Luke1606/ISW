@@ -16,7 +16,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
         selectedProfessors, 
         formik 
     } = useDefenseTribunalForm(isDefenseTribunal, closeFunc, prevValues)
-    console.log(formik.errors);
+
     return (
         <form
             className='form-container'
