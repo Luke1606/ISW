@@ -32,6 +32,8 @@ const useDefenseTribunalForm = (isDefenseTribunal, closeFunc, prevValues) => {
     const professors = useFetchProfessors()
 
     const validationSchema = useMemo(() => {
+        const profs = professors.map((prof) => prof.value)
+
         return isDefenseTribunal?
             Yup.object().shape({
                 defenseDate: Yup.string()
@@ -45,16 +47,20 @@ const useDefenseTribunalForm = (isDefenseTribunal, closeFunc, prevValues) => {
                     }),
         
                 president: Yup.string()
-                    .required('El presidente es requerido'),
+                    .required('El presidente es obligatorio')
+                    .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados'),
             
                 secretary: Yup.string()
-                    .required('El secretario es requerido'),
-                
+                    .required('El secretario es obligatorio')
+                    .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados'),
+
                 vocal: Yup.string()
-                    .required('El vocal es requerido'),
+                    .required('El vocal es obligatorio')
+                    .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados'),
 
                 opponent: Yup.string()
-                    .required('El vocal es requerido'),
+                    .required('El oponente es obligatorio')
+                    .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados'),
 
                 tutorCant: Yup.number()
                     .required('La cantidad de tutor(es) es obligatoria')
@@ -62,17 +68,20 @@ const useDefenseTribunalForm = (isDefenseTribunal, closeFunc, prevValues) => {
                     .max(4, 'El estudiante debe tener como máximo cuatro(4) tutores'),
                 
                 tutors: Yup.array()
-                    .of(Yup.string().required('Debe seleccionar un tutor'))
+                    .of(Yup.string()
+                        .required('Debe seleccionar un tutor')
+                        .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados')
+                    )
                     .min(Yup.ref('tutorCant'), 'Debe seleccionar todos los tutores especificados')
-                    .max(Yup.ref('tutorCant'), 'No debe seleccionar más tutores de los especificados')
+                    // .max(Yup.ref('tutorCant'), 'No debe seleccionar más tutores de los especificados')
             })
             :
             Yup.object().shape({
                 state: Yup.string()
-                    .required('Debe seleccionar "Aprobar" o "Desaprobar".')
-                    .oneOf(['A', 'D'])
+                    .required('Debe seleccionar un veredicto')
+                    .oneOf(['A', 'D'], 'Debe seleccionar "Aprobar" o "Desaprobar".')
             })
-    }, [isDefenseTribunal])
+    }, [isDefenseTribunal, professors])
 
     const submitFunction = async (values) => {
         const newValues = {

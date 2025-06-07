@@ -16,7 +16,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
         selectedProfessors, 
         formik 
     } = useDefenseTribunalForm(isDefenseTribunal, closeFunc, prevValues)
-    
+    console.log(formik.errors);
     return (
         <form
             className='form-container'
@@ -64,7 +64,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             />
                         
                         <span
-                            className={`error ${!(formik.errors.president && formik.touched.president) && 'hidden'}`}
+                            className={`error ${!formik.errors.president && 'hidden'}`}
                             >
                             {formik.errors.president}
                         </span>
@@ -85,7 +85,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             />
 
                         <span
-                            className={`error ${!(formik.errors.secretary && formik.touched.secretary) && 'hidden'}`}
+                            className={`error ${!formik.errors.secretary && 'hidden'}`}
                             >
                             {formik.errors.secretary}
                         </span>
@@ -106,7 +106,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             />
                         
                         <span
-                            className={`error ${!(formik.errors.vocal && formik.touched.vocal) && 'hidden'}`}
+                            className={`error ${!formik.errors.vocal && 'hidden'}`}
                             >
                             {formik.errors.vocal}
                         </span>
@@ -127,7 +127,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             />
                         
                         <span
-                            className={`error ${!(formik.errors.opponent && formik.touched.opponent) && 'hidden'}`}
+                            className={`error ${!formik.errors.opponent && 'hidden'}`}
                             >
                             {formik.errors.opponent}
                         </span>
@@ -158,7 +158,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             />
 
                         <span
-                            className={`error ${!(formik.errors.defenseDate && formik.touched.defenseDate) && 'hidden'}`}
+                            className={`error ${!formik.errors.defenseDate && 'hidden'}`}
                             >
                             {formik.errors.defenseDate}
                         </span>
@@ -182,7 +182,7 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                             />
 
                         <span
-                            className={`error ${!(formik.errors.tutorCant && formik.touched.tutorCant) && 'hidden'}`}
+                            className={`error ${!formik.errors.tutorCant && 'hidden'}`}
                             >
                             {formik.errors.tutorCant}
                         </span>
@@ -219,12 +219,16 @@ const DefenseTribunalForm = ({ isDefenseTribunal, closeFunc, prevValues }) => {
                                     title={`Profesor a ocupar el cargo de tutor ${index}`}
                                     elements={professors?.filter((option) => !selectedProfessors?.includes(option.value))}
                                     defaultValue={prevValues?.tutors && professors?.find(option => option.value === formik.values.tutors[index])}
-                                    onChange={(value) => formik.setFieldValue('tutors', [...(formik.values.tutors || []), value])}
+                                    onChange={(value) => {
+                                        const tutors = [...formik.values.tutors]
+                                        tutors[index] = value
+                                        formik.setFieldValue('tutors', tutors)
+                                    }}
                                     />
                             </div>))}
 
                         <span
-                            className={`error ${!(formik.errors.tutors && formik.touched.tutors) && 'hidden'}`}
+                            className={`error ${!formik.errors.tutors && 'hidden'}`}
                             >
                             {formik.errors.tutors}
                         </span>
