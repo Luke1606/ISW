@@ -49,16 +49,25 @@ const useDefenseTribunalForm = (isDefenseTribunal, closeFunc, prevValues) => {
                 president: Yup.string()
                     .required('El presidente es obligatorio')
                     .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados'),
+                    .required('El presidente es obligatorio')
+                    .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados'),
             
                 secretary: Yup.string()
+                    .required('El secretario es obligatorio')
+                    .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados'),
+
                     .required('El secretario es obligatorio')
                     .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados'),
 
                 vocal: Yup.string()
                     .required('El vocal es obligatorio')
                     .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados'),
+                    .required('El vocal es obligatorio')
+                    .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados'),
 
                 opponent: Yup.string()
+                    .required('El oponente es obligatorio')
+                    .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados'),
                     .required('El oponente es obligatorio')
                     .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados'),
 
@@ -72,6 +81,10 @@ const useDefenseTribunalForm = (isDefenseTribunal, closeFunc, prevValues) => {
                         .required('Debe seleccionar un tutor')
                         .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados')
                     )
+                    .of(Yup.string()
+                        .required('Debe seleccionar un tutor')
+                        .oneOf(profs, 'Solo puede seleccionar de los profesores mostrados')
+                    )
                     .min(Yup.ref('tutorCant'), 'Debe seleccionar todos los tutores especificados')
                     // .max(Yup.ref('tutorCant'), 'No debe seleccionar más tutores de los especificados')
             })
@@ -80,7 +93,10 @@ const useDefenseTribunalForm = (isDefenseTribunal, closeFunc, prevValues) => {
                 state: Yup.string()
                     .required('Debe seleccionar un veredicto')
                     .oneOf(['A', 'D'], 'Debe seleccionar "Aprobar" o "Desaprobar".')
+                    .required('Debe seleccionar un veredicto')
+                    .oneOf(['A', 'D'], 'Debe seleccionar "Aprobar" o "Desaprobar".')
             })
+    }, [isDefenseTribunal, professors])
     }, [isDefenseTribunal, professors])
 
     const submitFunction = async (values) => {
