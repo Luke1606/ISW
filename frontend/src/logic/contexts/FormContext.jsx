@@ -3,8 +3,16 @@ import { createContext, useState, useEffect, useRef } from 'react'
 import { useModal } from '../'
 import { datatypes } from '@/data'
 
+/**
+ * @description Contexto diseñado para manejo centralizado de formularios.
+ */
 const FormContext = createContext()
 
+/**
+ * @description Provider diseñado para manejo del {@link FormContext}
+ * @param {React.ReactNode} children
+ * @returns Provider que permite a los componentes hijos acceder a los estados {@link manageFormParams} y para abrir los formularios con las funciones {@link openManageForm}, {@link closeManageForm} y con {@link isManageFormOpen}.
+ */
 const FormProvider = ({ children }) => {
     const [ manageFormParams, setManageFormParams ] = useState({ datatype: null, relatedUserId: null })
     
