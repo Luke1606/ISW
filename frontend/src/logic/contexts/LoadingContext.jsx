@@ -12,7 +12,7 @@ const LoadingContext = createContext()
  * @returns Provider que permite a los componentes hijos acceder al estado {@link loading} y la función de manejo {@link setLoading}.
  */
 const LoadingProvider = ({ children }) => {
-    const [loading, setLoading] = useState(false)
+    const [ loading, setLoading ] = useState(false)
 
     return (
         <LoadingContext.Provider value={{ loading, setLoading }}>

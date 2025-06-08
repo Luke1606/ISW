@@ -7,7 +7,7 @@ import { AuthProvider, useUserActivity, ModalProvider, LoadingProvider, FormProv
 /**
  * @description Crea un enrutador basado en las rutas del sitio.
  *
- * @param {Array} routes - Arreglo que contiene todas las rutas del sitio:
+ * @param {Array} `routes` - Arreglo que contiene todas las rutas del sitio:
  *  - `path`: Ruta del sitio (string).
  *  - `element`: Componente asociado a la ruta (React.ReactNode).
  *  - `children`: Sub-rutas opcionales (array).
@@ -44,6 +44,8 @@ const UserActivityMonitor = () => {
  * - {@link AuthProvider}- Provider para la autenticación de usuarios.
  * - {@link LoadingProvider}- Provider para manejo centralizado de estados de carga.
  * - {@link ModalProvider}- Provider para funcionalidad de abrir y cerrar modales dentro de la aplicación.
+ * - {@link FormProvider}- Provider para manejo centralizado de formularios.
+ * - {@link UserActivityMonitor}- Componente para vigilar la actividad del usuario.
  * - {@link RouterProvider}- Gestiona el enrutamiento utilizando la configuración definida en {@link router}.
  */
 const App = () => {

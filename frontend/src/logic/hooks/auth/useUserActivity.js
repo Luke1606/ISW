@@ -16,7 +16,7 @@ const useUserActivity = (timeoutDuration = 10 * 60 * 1000, events = ['mousemove'
     const { logout, isAuthorized } = useAuth()
 
     const resetActivityTimeout = useCallback(() => {
-        clearTimeout(timeoutRef.current) // Limpia el timeout anterior
+        if (timeoutRef.current) clearTimeout(timeoutRef.current) // Limpia el timeout anterior
 
         timeoutRef.current = setTimeout(async () =>  {
                 if (isAuthorized) {
@@ -24,17 +24,17 @@ const useUserActivity = (timeoutDuration = 10 * 60 * 1000, events = ['mousemove'
                     await logout()
                 }
             }, timeoutDuration)
-    }, [isAuthorized, logout, timeoutDuration])
+    }, [ isAuthorized, logout, timeoutDuration ])
 
     useEffect(() => {
         if (isAuthorized) {
-            events.forEach(event => {
+            events.forEach((event) => {
                 window.addEventListener(event, resetActivityTimeout, { passive: true })
             })
         }
         return () => {
             clearTimeout(timeoutRef.current)
-            events.forEach(event => {
+            events.forEach((event) => {
                 window.removeEventListener(event, resetActivityTimeout)
             })
         }

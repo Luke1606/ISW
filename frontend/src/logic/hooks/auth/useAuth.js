@@ -28,7 +28,7 @@ const useAuth = () => {
             }
         }
         checkAuthorized()
-    }, [authStatusChanged, setLoading])
+    }, [ authStatusChanged, setLoading ])
 
     return { isAuthorized, user, login, logout }
 }

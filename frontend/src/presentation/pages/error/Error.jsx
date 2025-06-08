@@ -1,6 +1,12 @@
 import PropTypes from 'prop-types'
 import error from '/error.png'
 
+/**
+ * 
+ * @param {string} `errorTitle` - Título o etiqueta del error.
+ * @param {string} `errorDescription` - Descripción o explicación de la causa del error.
+ * @returns Estructura del componente de error genérico.
+ */
 const Error = ({ errorTitle, errorDescription='' }) => {
     return (
         <div className='error-container'>

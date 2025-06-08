@@ -12,7 +12,7 @@ const ModalContext = createContext()
  * @returns Provider que permite a los componentes hijos acceder a {@link isOpen}, {@link openModal} y {@link closeModal} para verificar si un modal está abierto, abrirlo y cerrarlo, todas a partir de un `modalId`.
  */
 const ModalProvider = ({ children }) => {
-	const [modals, setModals] = useState({})
+	const [ modals, setModals ] = useState({})
 
 	const openModal = (id) => {
 		if (!id) {
@@ -27,12 +27,12 @@ const ModalProvider = ({ children }) => {
 
 	const closeModal = (id) => {
 		if (!id) {
-			console.warn('Se intentó abrir un modal sin proporcionar un id')
+			console.warn('Se intentó cerrar un modal sin proporcionar un id')
 			return
 		}
 		setModals((prev) => {
 			if (!prev[id])
-				console.warn(`No existe un modal con el id ${id}`)
+				console.warn(`No existe un modal con el id ${id} y si existe no está abierto`)
 			else
 				return { ...prev, [id]: false }
 		})
@@ -40,7 +40,7 @@ const ModalProvider = ({ children }) => {
 
 	const isOpen = (id) => {
 		if (!id) {
-			console.warn('Se intentó abrir un modal sin proporcionar un id')
+			console.warn('Se intentó verificar la apertura un modal sin proporcionar un id')
 			return
 		}
 		return !!(modals && modals[id])
@@ -48,7 +48,7 @@ const ModalProvider = ({ children }) => {
 
 	return (
 		<ModalContext.Provider value={{ openModal, closeModal, isOpen }}>
-		{children}
+			{children}
 		</ModalContext.Provider>
 	)
 }

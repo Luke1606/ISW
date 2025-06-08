@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { createContext, useState, useEffect } from 'react'
+import { createContext, useState, useEffect, useCallback } from 'react'
 import { AuthService } from '@/logic'
 
 /**
@@ -15,7 +15,7 @@ const AuthContext = createContext()
 const AuthProvider = ({ children }) => {
     const [ user, setUser ] = useState(null)
     const [ authStatusChanged, setAuthStatusChanged ] = useState(true)
-
+    
     useEffect(() => {
         /**
          * @description Obtiene la información del usuario siempre que su estatus cambia ({@link authStatusChanged} es `true`).
@@ -33,26 +33,26 @@ const AuthProvider = ({ children }) => {
     }, [authStatusChanged])
 
     /**
-     * @description Intenta autenticar al usuario de información userFormData a través de {@link AuthService.login}
+     * @description Intenta autenticar al usuario de información {@link userFormData} a través de {@link AuthService.login}
      * @param {Object} `userFormData` - Usuario y contraseña asociados al usuario que se pretende autenticar
      * @returns {Object} Objeto con la información asociada al resultado de la operación.
      * - {boolean} `success` - Propiedad que define si la operación fue exitosa o fallida. El valor `true` indica éxito y `false` indica fallo.
      * - {string} `message` - Dependiendo de la propiedad `success` será su valor. Puede ser un mensaje de que el usuario se autenticó correctamente (`success`===`true`) o una pista de cual fue la causa del error (`success`===`false`).
      */
-    const login = async (userFormData) => {
+    const login = useCallback( async (userFormData) => {
         const response = await AuthService.login(userFormData)
         setAuthStatusChanged(true)
         return response
-    }
+    }, [])
 
     /**
      * @description Intenta cerrar la sesión activa a través de {@link AuthService.logout}
      */
-    const logout = async () => {
+    const logout = useCallback( async () => {
         await AuthService.logout()
         setUser(null)
         setAuthStatusChanged(true)
-    }
+    }, [])
 
     return (
         <AuthContext.Provider value={{ user, login, logout, authStatusChanged }}>
