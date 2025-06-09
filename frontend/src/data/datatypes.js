@@ -13,7 +13,6 @@ const datatypes = {
     defense_tribunal: 'defense_tribunal',
     defense_act: 'defense_act',
     report: 'report',
-    default: 'none'
 }
 
 /**
@@ -27,10 +26,8 @@ const spanishTranslationMap = {
     evidence: 'Evidencia',
     request: 'Solicitud',
     defense_tribunal: 'Defensa y Tribunal',
-    tribunal: 'Tribunal',
     defense_act: 'Acta de defensa',
     report: 'Reporte',
-    default: 'Ninguno'
 }
 
 export { datatypes, spanishTranslationMap }

@@ -5,7 +5,9 @@ import { LoginForm, Modal, CardCarousel } from '@/presentation'
 
 /**
  * @description Componente que renderiza la página principal de la aplicación.
- * @returns Componente principal compuesto por un hero que que contiene un mensaje de bienvenida (variante dependiendo del usuario autenticado, si hay uno) y un carousel de características del sistema y el botón `acceder/comenzar` para autenticarse.
+ * @returns Componente principal compuesto por un hero que que contiene un mensaje de bienvenida (variante
+ * dependiendo del usuario autenticado, si hay uno) y un carousel de características del sistema y el botón 
+ * `acceder/comenzar` para autenticarse.
  */
 const Home = () => {
     const navigate = useNavigate()

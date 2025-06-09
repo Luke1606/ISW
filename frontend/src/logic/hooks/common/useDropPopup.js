@@ -8,9 +8,9 @@ import { useState, useRef, useEffect } from 'react'
  * 
  * @example
  * const {
+ *     isVisible,
  *     triggerRef,
  *     dropPopupRef,
- *     isVisible,
  *     toggleVisible
  * } = useDropPopup()
  * 
@@ -31,10 +31,10 @@ import { useState, useRef, useEffect } from 'react'
  *     </Modal>
  * )
  * @returns {Object} Objeto con propiedades necesarias para el manejo de un `drop popup`. Contiene:
- * - {@link isVisible}- Estado de visibilidad del popup. El valor `true` indica visible y `false` indica no visible.
- * - {@link toggleVisible}
- * - {@link triggerRef}
- * - {@link dropPopupRef}
+ * - {@link isVisible} - Estado de visibilidad del popup. El valor `true` indica visible y `false` indica no visible.
+ * - {@link triggerRef} - `Ref` destinado a asociarse al componente detonador, el que al clickear abre o cierra el `popup`.
+ * - {@link dropPopupRef} - `Ref` destinado a asociarse al contenedor `popup` dentro del `modal`, de forma que si se toca fuera de este se cierre el `popup`.
+ * - {@link toggleVisible} - Función para abrir o cerrar el `popup` dependiendo del estado anterior. Si está cerrado se abre y viceversa.
  */
 const useDropPopup = (onClose = () => {}) => {
     const [isVisible, setVisible] = useState(false)
@@ -74,19 +74,19 @@ const useDropPopup = (onClose = () => {}) => {
             }
         }
 
-        if (isVisible) {
+        if (isVisible)
             document.addEventListener('mousedown', handleClickOutside)
-        }
+        
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
         }
-    }, [isVisible, onClose])
+    }, [ isVisible, onClose ])
 
     return {
+        isVisible,
         triggerRef,
         dropPopupRef,
-        isVisible,
-        toggleVisible,
+        toggleVisible
     }
 }
 

@@ -1,10 +1,10 @@
 import { 
-    NotificationCenter, 
-    ProtectedRoutes, 
-    ListWrapper, 
-    Layout, 
     Home, 
-    Error
+    Error,
+    Layout, 
+    ListWrapper, 
+    ProtectedRoutes, 
+    NotificationCenter
 } from './'
 
 const routes = [

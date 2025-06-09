@@ -9,7 +9,8 @@ const LoadingContext = createContext()
 /**
  * @description Provider diseñado para manejo del {@link LoadingContext}
  * @param {React.ReactNode} children
- * @returns Provider que permite a los componentes hijos acceder al estado {@link loading} y la función de manejo {@link setLoading}.
+ * @returns Provider que permite a los componentes hijos acceder al estado {@link loading} y la 
+ * función de manejo {@link setLoading}.
  */
 const LoadingProvider = ({ children }) => {
     const [ loading, setLoading ] = useState(false)

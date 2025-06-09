@@ -2,7 +2,13 @@ import { Suspense } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import routes from './presentation'
 import { ErrorBoundary, ToastNotification } from './presentation'
-import { AuthProvider, useUserActivity, ModalProvider, LoadingProvider, FormProvider } from './logic'
+import { 
+    AuthProvider, 
+    FormProvider,
+    ModalProvider, 
+    LoadingProvider, 
+    useUserActivity
+} from './logic'
 
 /**
  * @description Crea un enrutador basado en las rutas del sitio.
@@ -35,18 +41,21 @@ const UserActivityMonitor = () => {
 }
 
 /**
- * @description Estructura principal de providers de la aplicación. Tambien ejecuta el {@link useUserActivity}.
+ * @description Estructura principal de providers de la aplicación. Tambien ejecuta el 
+ * {@link useUserActivity}.
  * 
  * @returns Estructura de la aplicación compuesta por los siguientes componentes:
  * - {@link ErrorBoundary}- Para manejo personalizado de errores.
  * - {@link ToastNotification}- Para notificaciones emergentes en la interfaz.
- * - {@link Suspense}- Suspende la carga de componentes hijos hasta que estén disponibles, mostrando un spinner (<span className="spin"/>) mientras tanto.
+ * - {@link Suspense}- Suspende la carga de componentes hijos hasta que estén disponibles,
+ * mostrando un spinner (<span className="spin"/>) mientras tanto.
  * - {@link AuthProvider}- Provider para la autenticación de usuarios.
  * - {@link LoadingProvider}- Provider para manejo centralizado de estados de carga.
  * - {@link ModalProvider}- Provider para funcionalidad de abrir y cerrar modales dentro de la aplicación.
  * - {@link FormProvider}- Provider para manejo centralizado de formularios.
  * - {@link UserActivityMonitor}- Componente para vigilar la actividad del usuario.
- * - {@link RouterProvider}- Gestiona el enrutamiento utilizando la configuración definida en {@link router}.
+ * - {@link RouterProvider}- Gestiona el enrutamiento utilizando la configuración definida en 
+ * {@link router}.
  */
 const App = () => {
     return (
