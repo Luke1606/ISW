@@ -1,6 +1,6 @@
 import pytest
-# from rest_framework.test import APITestCase
-# from rest_framework import status
+from rest_framework.test import APITestCase
+from rest_framework import status
 from users.models import CustomUser, Student
 from core.management.utils.constants import Datatypes
 from users.serializers import CustomUserSerializer, StudentSerializer, ProfessorSerializer
@@ -36,6 +36,36 @@ def test_create_user_by_role_professor():
     assert user.username == "professor100"
     assert user.is_professor is True
     assert user.user_role == Datatypes.User.professor
+
+
+@pytest.mark.django_db
+def test_create_user_by_role_dpto_inf():
+    """Verifica que se pueda crear un usuario con rol 'dptoInf' correctamente"""
+    professor = CustomUser.objects.create_user_by_role(
+        role=Datatypes.User.dptoInf,
+        username="professor100",
+        name="Profesor Prueba"
+    )
+
+    user = professor.id
+    assert user.username == "professor100"
+    assert user.is_professor is True
+    assert user.user_role == Datatypes.User.dptoInf
+
+
+@pytest.mark.django_db
+def test_create_user_by_role_decan():
+    """Verifica que se pueda crear un usuario con rol 'decan' correctamente"""
+    professor = CustomUser.objects.create_user_by_role(
+        role=Datatypes.User.decan,
+        username="professor100",
+        name="Profesor Prueba"
+    )
+
+    user = professor.id
+    assert user.username == "professor100"
+    assert user.is_professor is True
+    assert user.user_role == Datatypes.User.decan
 
 
 @pytest.mark.django_db
@@ -151,42 +181,42 @@ def test_professor_serializer():
 
 
 # Views (Pruebas de APIs)
-# class AuthTestCase(APITestCase):
-#     def setUp(self):
-#         self.user = CustomUser.objects.create_user_by_role(
-#             role=Datatypes.User.professor,
-#             username="testuser",
-#             name="Usuario Prueba",
-#             password="Password1.",
-#         )
-#         self.login_url = "/users/token/"
+class AuthTestCase(APITestCase):
+    def setUp(self):
+        self.user = CustomUser.objects.create_user_by_role(
+            role=Datatypes.User.professor,
+            username="testuser",
+            name="Usuario Prueba",
+            password="Password1.",
+        )
+        self.login_url = "/users/token/"
 
-#     def test_token_obtain(self):
-#         """Verificar si se obtiene el token correctamente."""
-#         response = self.client.post(
-#             self.login_url,
-#             {"username": "testuser", "password": "Password1."}
-#         )
-#         assert response.status_code == status.HTTP_200_OK
-#         assert "access" in response.data
+    def test_token_obtain(self):
+        """Verificar si se obtiene el token correctamente."""
+        response = self.client.post(
+            self.login_url,
+            {"username": "testuser", "password": "Password1."}
+        )
+        assert response.status_code == status.HTTP_200_OK
+        assert "access" in response.data
 
-#     def test_invalid_token(self):
-#         """Probar credenciales incorrectas."""
-#         response = self.client.post(
-#             self.login_url,
-#             {"username": "wronguser", "password": "wrongpassword"}
-#         )
-#         assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    def test_invalid_token(self):
+        """Probar credenciales incorrectas."""
+        response = self.client.post(
+            self.login_url,
+            {"username": "wronguser", "password": "wrongpassword"}
+        )
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-#     def test_cookie_token_obtain(self):
-#         response = self.client.post(
-#             self.login_url,
-#             {"username": "testuser", "password": "Password1."}
-#         )
+    def test_cookie_token_obtain(self):
+        response = self.client.post(
+            self.login_url,
+            {"username": "testuser", "password": "Password1."}
+        )
 
-#         assert response.status_code == status.HTTP_200_OK
-#         assert "access" in response.data
-#         assert response.cookies["refresh_token"].value is not None
+        assert response.status_code == status.HTTP_200_OK
+        assert "access" in response.data
+        assert response.cookies["refresh_token"].value is not None
 
 
 # class TokenRefreshTestCase(APITestCase):
