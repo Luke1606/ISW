@@ -58,7 +58,8 @@ class Request(BaseModel):
 
     SEARCHABLE_FIELDS = {
         **BaseModel.SEARCHABLE_FIELDS,
-        "student__username": "icontains",
+        "student__user__username": "icontains",
+        "student__user__name": "icontains",
         "selected_ece": "exact",
         "state": "exact",
     }

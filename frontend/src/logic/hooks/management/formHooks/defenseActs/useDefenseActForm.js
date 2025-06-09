@@ -18,10 +18,8 @@ const useDefenseActForm = (isEdition, closeFunc, studentId, prevValues) => {
         description: prevValues?.description || '',
         attachment: prevValues?.attachment || null
     }
-    
-    const authorName = useAuthorName(isEdition, prevValues)
 
-    const MAX_FILE_SIZE = 50 * 1024 * 1024
+    const authorName = useAuthorName(isEdition, prevValues)
 
     const validationSchema = useMemo(() => Yup.object().shape({
         name: Yup.string()
@@ -40,7 +38,7 @@ const useDefenseActForm = (isEdition, closeFunc, studentId, prevValues) => {
             .test(
                 'fileSize',
                 'El archivo debe ser menor a 100MB',
-                (file) => file && file.size <= MAX_FILE_SIZE
+                (file) => file && file.size <= 50 * 1024 * 1024
             )
             .test(
                 'fileType',
@@ -55,7 +53,7 @@ const useDefenseActForm = (isEdition, closeFunc, studentId, prevValues) => {
                 ].includes(file.type)
             )
             .required('El archivo adjunto es obligatorio')
-    }), [MAX_FILE_SIZE])
+    }), [])
 
     const { user } = useAuth()
 
@@ -67,7 +65,7 @@ const useDefenseActForm = (isEdition, closeFunc, studentId, prevValues) => {
             description: values?.description || prevValues?.description,
             attachment: values?.attachment || prevValues?.attachment,
         }
-        console.log(newValues);
+
         let success = false
         let message = ''
 

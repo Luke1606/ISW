@@ -17,7 +17,7 @@ import {
 const Header = () => {
     const { options, hasUnread } = useHeaderOptions()
     const { user, logout } = useAuth()
-
+    
     /**
      * @description Id asociado al modal encargado de renderizar el {@link LoginForm}, se utiliza en las funciones `openModal`, `isOpen` y `closeModal`.
      */
@@ -25,14 +25,15 @@ const Header = () => {
     const { openModal } = useModal()
 
     const {
+        isVisible,
         triggerRef,
         dropPopupRef,
-        isVisible,
         toggleVisible
     } = useDropPopup()
 
     const translate = useTranslateToSpanish()
     const spanishRole = user? translate(user?.user_role) : ''
+
     return (
         <header 
             className='header'
@@ -49,10 +50,15 @@ const Header = () => {
                             title='Mostrar perfil y opciones'
                             >
                             { hasUnread?
-                            <UserRoundCog size={40} color='white' />
-                            :
-                            <User size={40} color='white' />
-                            }
+                                <UserRoundCog 
+                                    size={40} 
+                                    color='white' 
+                                    />
+                                :
+                                <User 
+                                    size={40} 
+                                    color='white'
+                                    />}
                         </button>
                             
                         <Modal
@@ -66,27 +72,42 @@ const Header = () => {
                                 <ul 
                                     className='header-ul'
                                     >
-                                    {options && options.map((option, index) => (
-                                        <li 
-                                            key={index} 
-                                            className='header-li'
-                                            >
-                                            <NavLink 
-                                                to={option.action}
+                                    { options &&
+                                        options.map((option, index) => (
+                                            <li 
+                                                key={index} 
+                                                className='header-li'
                                                 >
-                                                <option.icon size={40} color='white'/>
-                                            </NavLink>
-                                            <span>{option.title}</span>
-                                        </li>
-                                    ))}
+                                                <NavLink
+                                                    to={option.action}
+                                                    >
+                                                    <option.icon 
+                                                        size={40} 
+                                                        color='white'
+                                                        />
+                                                </NavLink>
+                                                <span>{option.title}</span>
+                                            </li>
+                                        ))}
                                 </ul>
 
-                                <figure className='profile-figure'>
-                                    {user?.pic?
-                                        <img className='profile-picture' src={user?.pic} alt='profile-picture' />
+                                <figure 
+                                    className='profile-figure'
+                                    >
+                                    { user?.pic?
+                                        <img 
+                                            className='profile-picture' 
+                                            src={user?.pic} 
+                                            alt='profile-picture' 
+                                            />
                                         :
-                                        <div className='profile-picture'>
-                                            <User size={150} color='rgb(166, 105, 0)' />
+                                        <div 
+                                            className='profile-picture'
+                                            >
+                                            <User 
+                                                size={150} 
+                                                color='rgb(166, 105, 0)' 
+                                                />
                                         </div>
                                     }
                                     <h2>
@@ -115,9 +136,7 @@ const Header = () => {
                         onClick={() => openModal(loginModalId)}
                         > 
                         Autenticar
-                    </button>}
-
-                
+                    </button>}                
             </nav>
         </header>
     )

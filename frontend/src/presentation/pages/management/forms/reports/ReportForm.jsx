@@ -16,7 +16,7 @@ const ReportForm = ({ closeFunc }) => {
         handleUserTypeChange, 
         AVAILABLE_USER_INFO_MAPPING,
     } = useReportForm(closeFunc)
-    
+
     return (
         <section
             className='form-container'

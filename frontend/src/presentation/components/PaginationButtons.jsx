@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types'
 import { ArrowLeftSquare, ArrowRightSquare } from 'lucide-react'
 
-const PaginationButtons = ({paginationParams, optionalButtonClassName = ''}) => {
-    const totalPages = paginationParams.totalPages
-    const currentPage = paginationParams.currentPage || 0
-    const pageControl = paginationParams.pageControl || false
-    const loop = paginationParams.loop || false
+const PaginationButtons = ({ paginationParams, optionalButtonClassName = '' }) => {
+    const { 
+        loop,
+        totalPages,
+        currentPage, 
+        pageControl
+    } = paginationParams
     
     const handlePageChange = (newPage) => {
         if (newPage < 0 || newPage > totalPages-1) {

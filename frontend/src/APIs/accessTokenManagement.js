@@ -8,7 +8,7 @@ const setAccessToken = (token) => {
 
 /** 
  * @description Verifica si el token proporcionado es válido comprobando su estructura.
- *  @param {string} `token` - Token a validar.
+ * @param {string} `token` - Token a validar.
  * @returns {boolean} `true` si el token tiene una estructura válida, `false` en caso contrario.
  */
 const isTokenValid = (token) => {

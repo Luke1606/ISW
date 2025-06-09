@@ -8,9 +8,9 @@ import { useDropPopup } from '@/logic'
  */
 const Footer = () => {
     const {
+        isVisible,
         triggerRef,
         dropPopupRef,
-        isVisible,
         toggleVisible
     } = useDropPopup()
 
@@ -43,6 +43,7 @@ const Footer = () => {
                         >
                         <img src='/facebook.png' className='social facebook' />
                     </Link>
+
                     <Link 
                         title='X'
                         to='#' 
@@ -50,6 +51,7 @@ const Footer = () => {
                         >
                         <img src='/x.png' className='social x' />
                     </Link>
+
                     <Link 
                         title='Whatsapp'
                         to='#' 
@@ -57,6 +59,7 @@ const Footer = () => {
                         >
                         <img src='/whatsapp.png' className='social whatsapp' />
                     </Link>
+
                     <Link 
                         title='LinkedIn'
                         to='#' 
@@ -64,6 +67,7 @@ const Footer = () => {
                         >
                         <img src='/linkedin.png' className='social linkedin' />
                     </Link>
+
                     <Link 
                         title='Instagram'
                         to='#' 
@@ -71,6 +75,7 @@ const Footer = () => {
                         >
                         <img src='/instagram.png' className='social instagram' />
                     </Link>
+                    
                     <Link 
                         title='Telegram'
                         to='#' 

@@ -80,7 +80,7 @@ const DefenseActForm = ({ isEdition, closeFunc, studentId, prevValues }) => {
                             id='name'
                             type='text'
                             title='Nombre asociado al acta de defensa'
-                            placeholder='Ej: Evaluación del primer corte de tesis'
+                            placeholder='Ej: Primer corte de tesis'
                             {...formik.getFieldProps('name')}
                             />
                         

@@ -116,7 +116,13 @@ const useDefenseTribunalForm = (isDefenseTribunal, closeFunc, prevValues) => {
     
     useEffect(() => {
         const updatedSelections = Object.entries(formik.values)
-            .filter(([key]) => ['president', 'secretary', 'vocal', 'opponent', 'tutors'].includes(key))
+            .filter(([key]) => [
+                'president', 
+                'secretary', 
+                'vocal', 
+                'opponent', 
+                'tutors'
+            ].includes(key))
             .flatMap(([key, value]) => key === 'tutors' && Array.isArray(value) ? value : [value])
             .filter(value => value !== '')
 

@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import { Error } from './'
 
 /**
- * @description Clase interceptora de todo error ocurrido en la aplicación. Busca captar los errores y renderizarlos en el componente {@link Error}.
+ * @description Clase interceptora de todo error ocurrido en la aplicación. Busca captar los errores y 
+ * renderizarlos en el componente {@link Error}.
  */
 class ErrorBoundary extends React.Component {
     constructor(props) {

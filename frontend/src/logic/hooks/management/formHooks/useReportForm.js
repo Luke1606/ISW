@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import * as Yup from 'yup'
 import { datatypes } from '@/data'
 import { 
@@ -7,11 +7,14 @@ import {
     ManagementService, 
     NotificationService, 
     useTranslateToSpanish,
+    useLoading,
 } from '@/logic'
 
 const useReportForm = (closeFunc) => {
     const [ userType, setUserType ] = useState(datatypes.user.student)
     const { user } = useAuth()
+    const userTypeRef = useRef('')
+    const { setLoading } = useLoading()
     
     const initialValues = {
         userType: datatypes.user.student,
@@ -53,6 +56,9 @@ const useReportForm = (closeFunc) => {
         const fetchUsers = async () => {
             let message = ''
             let success = false
+            
+            setLoading(true)
+            
             try {
                 const response = await ManagementService.getAllData(userType)
 
@@ -68,6 +74,8 @@ const useReportForm = (closeFunc) => {
             } catch (error) {
                 message = error.message
             } finally {
+                setLoading(false)
+
                 if (!success) {
                     const notification = {
                         title: 'Error',
@@ -78,11 +86,12 @@ const useReportForm = (closeFunc) => {
             }
         }
 
-        if (user.user_role !== datatypes.user.student) {
+        if (user.user_role !== datatypes.user.student && userType !== userTypeRef.current) {
             setSelectedUsers([])
+            userTypeRef.current = userType
             fetchUsers()
         }
-    }, [userType, user])
+    }, [ userType, user.user_role, setLoading ])
 
     const handleSelectUser = (updateFn) => {
         setSelectedUsers((prev) => {

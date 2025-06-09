@@ -22,25 +22,34 @@ const Layout = () => {
     const { loading } = useLoading()
     return (
             <div
-                className='layout-container'>
-                <Modal isOpen={loading}>
+                className='layout-container'
+                >
+                <Modal isOpen={loading}
+                    >
                     <span className='spinner'/>
                 </Modal>    
                 
                 <Header />
-                    <main className='main-content'
-                        >
-                        { currentPath != '/' &&
-                            <button
-                                className='back-button'
-                                onClick={() => navigate(-1)}
-                                title='Volver'
-                                >
-                                <ArrowUpLeftSquare size={40} color='white' />
-                            </button>}
-                        <Outlet/>
-                    </main>
+
+                <main 
+                    className='main-content'
+                    >
+                    { currentPath != '/' &&
+                        <button
+                            className='back-button'
+                            onClick={() => navigate(-1)}
+                            title='Volver'
+                            >
+                            <ArrowUpLeftSquare 
+                                size={40} 
+                                color='white' 
+                                />
+                        </button>}
+                    <Outlet/>
+                </main>
+                
                 <SideMenu/>
+                
                 <Footer />
             </div>
         )

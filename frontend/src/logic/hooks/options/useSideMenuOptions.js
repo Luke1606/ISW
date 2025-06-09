@@ -32,22 +32,19 @@ const useSideMenuOptions = () => {
             let newOptions = [{
                 title: 'Generar un reporte',
                 icon: File,
-                action: () => {
-                    openManageForm(datatypes.report)
-                }
+                action: () => openManageForm(datatypes.report)
             }]
 
             if(user) {
                 switch (user?.user_role) {
                     case datatypes.user.student: {
                         const lastRequest = await (await ManagementService.getData(datatypes.request, user?.id)).data
-
-                        if ((!lastRequest || lastRequest.state === 'D')) {
+                        
+                        if (!lastRequest || lastRequest.state === 'D') {
                             newOptions.push({
                                 title: 'Enviar solicitud de ECE',
                                 icon: Send,
-                                action: () =>
-                                    openManageForm(datatypes.request)
+                                action: () => openManageForm(datatypes.request)
                             })
                         }
                         const defenseTribunal = await (await ManagementService.getData(datatypes.defense_tribunal, user?.id)).data
@@ -56,8 +53,10 @@ const useSideMenuOptions = () => {
                             newOptions.push({
                                 title: 'Tribunal y defensa',
                                 icon: Gavel,
-                                action: () =>
-                                    openManageForm(datatypes.defense_tribunal, {idData: user.id, view: true})
+                                action: () => openManageForm(
+                                        datatypes.defense_tribunal, 
+                                        {idData: user.id, view: true}
+                                    )
                             })
                         }
                     }
@@ -76,7 +75,7 @@ const useSideMenuOptions = () => {
         }
 
         initializeOptions()
-    }, [user, openManageForm])
+    }, [ user, openManageForm ])
 
     return { options, isVisible}
 }

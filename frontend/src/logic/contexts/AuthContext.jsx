@@ -10,7 +10,8 @@ const AuthContext = createContext()
 /**
  * @description Provider diseñado para manejo del {@link AuthContext}
  * @param {React.ReactNode} children
- * @returns Provider que permite a los componentes hijos acceder a los estados {@link user} con {@link setUser} y a {@link authStatusChanged} con {@link setAuthStatusChanged}, así como a las funciones {@link login} y {@link logout}.
+ * @returns Provider que permite a los componentes hijos acceder a los estados {@link user} con 
+ * {@link setUser} y a {@link authStatusChanged} con {@link setAuthStatusChanged}, así como a las funciones {@link login} y {@link logout}.
  */
 const AuthProvider = ({ children }) => {
     const [ user, setUser ] = useState(null)
@@ -18,7 +19,8 @@ const AuthProvider = ({ children }) => {
     
     useEffect(() => {
         /**
-         * @description Obtiene la información del usuario siempre que su estatus cambia ({@link authStatusChanged} es `true`).
+         * @description Obtiene la información del usuario siempre que su estatus cambia 
+         * ({@link authStatusChanged} es `true`).
          */
         const fetchUser = async () => {
             const userInfo = await AuthService.getSessionInfo()
@@ -33,11 +35,15 @@ const AuthProvider = ({ children }) => {
     }, [authStatusChanged])
 
     /**
-     * @description Intenta autenticar al usuario de información {@link userFormData} a través de {@link AuthService.login}
-     * @param {Object} `userFormData` - Usuario y contraseña asociados al usuario que se pretende autenticar
+     * @description Intenta autenticar al usuario de información {@link userFormData} a través de 
+     * {@link AuthService.login}
+     * @param {Object} `userFormData` - Usuario y contraseña asociados al usuario que se pretende 
+     * autenticar
      * @returns {Object} Objeto con la información asociada al resultado de la operación.
-     * - {boolean} `success` - Propiedad que define si la operación fue exitosa o fallida. El valor `true` indica éxito y `false` indica fallo.
-     * - {string} `message` - Dependiendo de la propiedad `success` será su valor. Puede ser un mensaje de que el usuario se autenticó correctamente (`success`===`true`) o una pista de cual fue la causa del error (`success`===`false`).
+     * - {boolean} `success` - Propiedad que define si la operación fue exitosa o fallida. El valor 
+     * `true` indica éxito y `false` indica fallo.
+     * - {string} `message` - Dependiendo de la propiedad `success` será su valor. Puede ser un mensaje 
+     * de que el usuario se autenticó correctamente (`success`===`true`) o una pista de cual fue la causa del error (`success`===`false`).
      */
     const login = useCallback( async (userFormData) => {
         const response = await AuthService.login(userFormData)

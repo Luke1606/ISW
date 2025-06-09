@@ -22,10 +22,12 @@ const FormWrapper = ({ reloadFunction }) => {
         closeManageForm()
     }
     
-    const datatype = manageFormParams?.datatype
-    const idData = manageFormParams?.idData
-    const relatedUserId = manageFormParams?.relatedUserId
-    const view = manageFormParams?.view
+    const { 
+        view ,
+        idData,
+        datatype,
+        relatedUserId
+    } = manageFormParams
     
     const { loading } = useLoading()
 
