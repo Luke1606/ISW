@@ -23,7 +23,7 @@ class CookieTokenObtainPairView(TokenObtainPairView):
             key='refresh_token',
             value=refresh_token,
             httponly=True,
-            secure=True,
+            # secure=True,
             samesite='Lax',
             expires='',  # Sin fecha de expiración → Se elimina al cerrar el navegador
             max_age=None  # Sin fecha de expiración → Se elimina al cerrar el navegador
@@ -39,7 +39,10 @@ class CookieTokenRefreshView(TokenRefreshView):
         refresh_token = request.COOKIES.get('refresh_token')  # Obtener token desde cookies
 
         if not refresh_token:
-            return Response({'error': 'No valid refresh token found. Please log in again.'}, status=401)
+            return Response(
+                {'error': 'No se encontró token de refresh válido. Inicie sesión nuevamente.'},
+                status=401
+            )
 
         request.data['refresh'] = refresh_token
 
@@ -63,17 +66,19 @@ class CookieTokenBlacklistView(TokenBlacklistView):
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get('refresh_token')
 
-        request.data['refresh'] = refresh_token
+        if refresh_token is not None:
+            request.data['refresh'] = refresh_token
 
-        response = super().post(request, *args, **kwargs)
+            response = super().post(request, *args, **kwargs)
 
-        # Borrar cookie del refresh token
-        if 'refresh_token' in request.COOKIES:
-            response.delete_cookie('refresh_token')
+            # Borrar cookie del refresh token
+            if 'refresh_token' in request.COOKIES:
+                response.delete_cookie('refresh_token')
+            else:
+                return Response({'error': 'No se encontró sesión activa'}, status=400)
+            return Response({'message': 'Sesión cerrada con éxito'}, status=200)
         else:
-            return Response({'error': 'No active session found'}, status=400)
-
-        return Response({'message': 'Logged out successfully'}, status=200)
+            return Response({'error': 'No se encontró sesión activa'}, status=400)
 
 
 class UserAPIView(APIView):

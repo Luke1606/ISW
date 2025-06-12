@@ -1,21 +1,13 @@
 import pytest
-from core.management.utils.constants import Datatypes
-from users.models import Student
-from .models import Evidence
+from evidences.models import Evidence
+from users.tests.tests_users_models import student_user
 
 
 @pytest.mark.django_db
-def test_create_evidence():
+def test_create_evidence(student_user):
     """Verifica que se pueda crear una evidencia correctamente."""
-    student = Student.objects.create_user_by_role(
-        role=Datatypes.User.student,
-        username="student_test",
-        name="Estudiante Prueba",
-        group=1,
-        faculty=Student.Faculties.FTI
-    )
     evidence = Evidence.objects.create(
-        student=student,
+        student=student_user,
         name="Evidencia Test",
         description="Descripción detallada",
         attachment_type=Evidence.Type.URL,
@@ -25,21 +17,14 @@ def test_create_evidence():
     assert evidence.name == "Evidencia Test"
     assert evidence.description == "Descripción detallada"
     assert evidence.attachment_type == Evidence.Type.URL
-    assert evidence.student == student
+    assert evidence.student == student_user
 
 
 @pytest.mark.django_db
-def test_retrieve_evidence():
+def test_retrieve_evidence(student_user):
     """Verifica que se pueda obtener una evidencia existente."""
-    student = Student.objects.create_user_by_role(
-        role=Datatypes.User.student,
-        username="student_test",
-        name="Estudiante Prueba",
-        group=1,
-        faculty=Student.Faculties.FTI
-    )
     evidence = Evidence.objects.create(
-        student=student,
+        student=student_user,
         name="Evidencia Test",
         description="Descripción detallada",
         attachment_type=Evidence.Type.URL,
@@ -51,17 +36,10 @@ def test_retrieve_evidence():
 
 
 @pytest.mark.django_db
-def test_update_evidence():
+def test_update_evidence(student_user):
     """Verifica que se pueda actualizar una evidencia."""
-    student = Student.objects.create_user_by_role(
-        role=Datatypes.User.student,
-        username="student_test",
-        name="Estudiante Prueba",
-        group=1,
-        faculty=Student.Faculties.FTI
-    )
     evidence = Evidence.objects.create(
-        student=student,
+        student=student_user,
         name="Evidencia Test",
         description="Descripción detallada",
         attachment_type=Evidence.Type.URL,
@@ -76,17 +54,10 @@ def test_update_evidence():
 
 
 @pytest.mark.django_db
-def test_destroy_evidence():
+def test_destroy_evidence(student_user):
     """Verifica que se pueda eliminar una evidencia."""
-    student = Student.objects.create_user_by_role(
-        role=Datatypes.User.student,
-        username="student_test",
-        name="Estudiante Prueba",
-        group=1,
-        faculty=Student.Faculties.FTI
-    )
     evidence = Evidence.objects.create(
-        student=student,
+        student=student_user,
         name="Evidencia Test",
         description="Descripción detallada",
         attachment_type=Evidence.Type.URL,
@@ -100,24 +71,17 @@ def test_destroy_evidence():
 
 
 @pytest.mark.django_db
-def test_list_evidence():
+def test_list_evidence(student_user):
     """Verifica que se puedan listar múltiples evidencias."""
-    student = Student.objects.create_user_by_role(
-        role=Datatypes.User.student,
-        username="student_test",
-        name="Estudiante Prueba",
-        group=1,
-        faculty=Student.Faculties.FTI
-    )
     Evidence.objects.create(
-        student=student,
+        student=student_user,
         name="Evidencia 1",
         description="Descripción 1",
         attachment_type=Evidence.Type.URL,
         attachment_url="http://example.com/1"
     )
     Evidence.objects.create(
-        student=student,
+        student=student_user,
         name="Evidencia 2",
         description="Descripción 2",
         attachment_type=Evidence.Type.FILE,
