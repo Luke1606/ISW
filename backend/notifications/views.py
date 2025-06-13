@@ -40,6 +40,22 @@ class NotificationViewSet(BaseModelViewSet):
     serializer_class = NotificationSerializer
     permission_classes = [permissions.IsAuthenticated]
     queryset = Notification.objects.all().order_by('-created_at')
+    permission_classes_by_action = {
+        'retrieve': [],
+        'update': [],
+        'destroy': [permissions.IsAuthenticated],
+        'create': [],
+        'list': [],
+    }
+
+    def get_permissions(self):
+        """
+        Asigna permisos dinámicos según la acción.
+        """
+        return [
+            permission()
+            for permission in self.permission_classes_by_action.get(self.action, self.permission_classes)
+        ]
 
     def get_queryset(self):
         # Filtrar notificaciones solo para el usuario autenticado

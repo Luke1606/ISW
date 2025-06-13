@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from users.views import StudentViewSet, ProfessorViewSet
 from evidences.views import EvidenceViewSet
-from requests.views import RequestViewSet
+from ece_requests.views import RequestViewSet
 from defenses_tribunals.views import DefenseTribunalViewSet
 from defense_acts.views import DefenseActViewSet
 from .management.utils.constants import Datatypes

@@ -22,9 +22,9 @@ class DefenseAct(BaseModel):
         related_name="defense_act",
         on_delete=models.CASCADE,
     )
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=False, null=False)
     description = models.TextField(blank=True, null=True)
-    attachment = models.FileField(upload_to="defense_acts/attachments/")
+    attachment = models.FileField(upload_to="defense_acts/attachments/", blank=False, null=False)
 
     SEARCHABLE_FIELDS = {
         **BaseModel.SEARCHABLE_FIELDS,
