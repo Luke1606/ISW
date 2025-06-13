@@ -20,7 +20,8 @@ def student_user(db):
     assert user.is_student is True
     assert user.is_professor is False
     assert user.user_role == Datatypes.User.student
-    yield student  # Retorna el usuario para usarlo en otras pruebas
+
+    yield student
     student.delete()
 
 
@@ -30,14 +31,16 @@ def professor_user(db):
     professor = CustomUser.objects.create_user_by_role(
         role=Datatypes.User.professor,
         username="professor100",
-        name="Profesor Prueba"
+        name="Profesor Prueba",
+        password="Password1."
     )
     user = professor.id
     assert user.username == "professor100"
     assert user.is_professor is True
     assert user.is_student is False
     assert user.user_role == Datatypes.User.professor
-    yield professor  # Retorna el usuario para usarlo en otras pruebas
+
+    yield professor
     professor.delete()
 
 
@@ -47,10 +50,11 @@ def dpto_inf_user(db):
     professor = CustomUser.objects.create_user_by_role(
         role=Datatypes.User.dptoInf,
         username="dptoInf100",
-        name="Dpto Informatica Prueba"
+        name="Dpto Informatica Prueba",
+        password="Password1."
     )
     user = professor.id
-    assert user.username == "Dpto Informatica Prueba"
+    assert user.name == "Dpto Informatica Prueba"
     assert user.username == "dptoInf100"
     assert user.is_professor is True
     assert user.is_student is False
@@ -63,16 +67,18 @@ def dpto_inf_user(db):
 def decan_user(db):
     """Crea un usuario de prueba con rol 'decan'"""
     professor = CustomUser.objects.create_user_by_role(
-        role=Datatypes.User.dptoInf,
+        role=Datatypes.User.decan,
         username="decan100",
-        name="Decano Prueba"
+        name="Decano Prueba",
+        password="Password1."
     )
     user = professor.id
-    assert user.username == "Decano Prueba"
+    assert user.name == "Decano Prueba"
     assert user.username == "decan100"
     assert user.is_professor is True
     assert user.is_student is False
     assert user.user_role == Datatypes.User.decan
+
     yield professor  # Retorna el usuario para usarlo en otras pruebas
     professor.delete()
 

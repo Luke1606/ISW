@@ -5,7 +5,7 @@ from django.db import models
 from core.models import BaseModel
 from core.management.utils.constants import Datatypes
 from users.models import Student, Professor
-from requests.models import Request
+from ece_requests.models import Request
 from notifications.views import send_notification
 
 
@@ -147,11 +147,11 @@ class DefenseTribunal(BaseModel):
             if self.state == self.State.APPROVED:
                 notification_message = "Los datos de su tribunal y de su defensa han sido decididos, recuerde consultarlos."
 
-            send_notification(
-                notification_title='Tribunal y defensa definidos',
-                notification_message=notification_message,
-                users=self.student.id
-            )
+                send_notification(
+                    notification_title='Tribunal y defensa definidos',
+                    notification_message=notification_message,
+                    users=[self.student.id]
+                )
 
         super().save(*args, **kwargs)
 

@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'core',
     'users',
     'evidences',
-    'requests',
+    'ece_requests',
     'defenses_tribunals',
     'defense_acts',
     'reports',

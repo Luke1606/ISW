@@ -19,7 +19,13 @@ class Evidence(BaseModel):
         related_name='evidence',
         on_delete=models.CASCADE,
     )
-    name = models.CharField(max_length=255, db_index=True, verbose_name="Name")
+    name = models.CharField(
+        max_length=255,
+        blank=False,
+        null=True,
+        db_index=True,
+        verbose_name="Name"
+    )
     description = models.TextField(blank=True, null=True, db_index=True, verbose_name="Description")
 
     class Type(models.TextChoices):
