@@ -3,8 +3,6 @@ import httpx
 from rest_framework import status
 from django.urls import reverse
 from core.management.utils.constants import Datatypes
-from django.urls import reverse
-from core.management.utils.constants import Datatypes
 from .tests_users_models import student_user, professor_user, decan_user, dpto_inf_user
 from users.serializers import CustomUserSerializer
 
@@ -197,8 +195,6 @@ def test_create_user_invalid_data(decan_authenticate_client):
 def test_manage_user_student_unauthorized(professor_user, student_authenticate_client):
     """Verifica que un estudiante no pueda gestionar usuarios."""
     url = get_user_general_url(False)
-    """Verifica que un estudiante no pueda gestionar usuarios."""
-    url = get_user_general_url(False)
     data = {
         'username': 'asafsf',
         'name': 'Test Student',
@@ -207,7 +203,6 @@ def test_manage_user_student_unauthorized(professor_user, student_authenticate_c
     }
 
     create_response = student_authenticate_client.post(url, json=data)
-    assert create_response.status_code == status.HTTP_403_FORBIDDEN
     assert create_response.status_code == status.HTTP_403_FORBIDDEN
 
     update_response = student_authenticate_client.put(
@@ -218,13 +213,11 @@ def test_manage_user_student_unauthorized(professor_user, student_authenticate_c
 
     list_response = student_authenticate_client.get(url)
     assert list_response.status_code == status.HTTP_403_FORBIDDEN
-    assert list_response.status_code == status.HTTP_403_FORBIDDEN
 
     delete_response = student_authenticate_client.delete(
         url,
         params={"ids": [professor_user.id]}
     )
-    assert delete_response.status_code == status.HTTP_403_FORBIDDEN
     assert delete_response.status_code == status.HTTP_403_FORBIDDEN
 
     retrieve_response = student_authenticate_client.get(url)
@@ -233,7 +226,7 @@ def test_manage_user_student_unauthorized(professor_user, student_authenticate_c
 
 @pytest.mark.django_db
 def test_manage_user_professor_semi_authorized(professor_user, professor_authenticate_client):
-    """Verifica que un estudiante no pueda gestionar usuarios."""
+    """Verifica que un profesor tenga permisos de solo lectura"""
     url = get_user_general_url(False)
     data = {
         'username': 'asafsf',
