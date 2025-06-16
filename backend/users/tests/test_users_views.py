@@ -3,6 +3,8 @@ import httpx
 from rest_framework import status
 from django.urls import reverse
 from core.management.utils.constants import Datatypes
+from django.urls import reverse
+from core.management.utils.constants import Datatypes
 from .tests_users_models import student_user, professor_user, decan_user, dpto_inf_user
 from users.serializers import CustomUserSerializer
 
@@ -95,6 +97,7 @@ def test_refresh_access_token(student_authenticate_client):
     response = student_authenticate_client.post("/users/token/refresh/")
     assert response.status_code == status.HTTP_200_OK
 
+
     # Se obtiene el nuevo token de access
     access_token = response.json().get("access")
     assert access_token is not None
@@ -163,9 +166,21 @@ def get_user_general_url(isProfessor):
 
 
 # ********************************CREATE***************************************************************************
+def get_user_url(isProfessor, id):
+    """Obtiene la URL para acceder a un estudiante."""
+    return reverse('gateway-specific', kwargs={'datatype': Datatypes.User.professor if isProfessor else Datatypes.User.student, 'pk': id})
+
+
+def get_user_general_url(isProfessor):
+    """Obtiene la URL para listar y eliminar estudiantes."""
+    return reverse('gateway', kwargs={'datatype': Datatypes.User.professor if isProfessor else Datatypes.User.student})
+
+
+# ********************************CREATE***************************************************************************
 @pytest.mark.django_db
 def test_create_user_invalid_data(decan_authenticate_client):
     """Verifica que no se pueda crear un usuario con datos inválidos."""
+    url = get_user_general_url(False)
     url = get_user_general_url(False)
     data = {
         'username': '',  # Username vacío
@@ -182,6 +197,8 @@ def test_create_user_invalid_data(decan_authenticate_client):
 def test_manage_user_student_unauthorized(professor_user, student_authenticate_client):
     """Verifica que un estudiante no pueda gestionar usuarios."""
     url = get_user_general_url(False)
+    """Verifica que un estudiante no pueda gestionar usuarios."""
+    url = get_user_general_url(False)
     data = {
         'username': 'asafsf',
         'name': 'Test Student',
@@ -190,6 +207,7 @@ def test_manage_user_student_unauthorized(professor_user, student_authenticate_c
     }
 
     create_response = student_authenticate_client.post(url, json=data)
+    assert create_response.status_code == status.HTTP_403_FORBIDDEN
     assert create_response.status_code == status.HTTP_403_FORBIDDEN
 
     update_response = student_authenticate_client.put(
@@ -200,11 +218,13 @@ def test_manage_user_student_unauthorized(professor_user, student_authenticate_c
 
     list_response = student_authenticate_client.get(url)
     assert list_response.status_code == status.HTTP_403_FORBIDDEN
+    assert list_response.status_code == status.HTTP_403_FORBIDDEN
 
     delete_response = student_authenticate_client.delete(
         url,
         params={"ids": [professor_user.id]}
     )
+    assert delete_response.status_code == status.HTTP_403_FORBIDDEN
     assert delete_response.status_code == status.HTTP_403_FORBIDDEN
 
     retrieve_response = student_authenticate_client.get(url)
