@@ -78,7 +78,7 @@ class BaseModelViewSet(ModelViewSet):
         """
         self.invalidate_cache()
 
-        ids = request.data.get("ids", [])
+        ids = request.data.get("ids") or request.query_params.getlist("ids") or request.GET.get("ids")
 
         if not ids or not isinstance(ids, list):
             return Response({"error": "Debe proporcionar una lista de IDs"}, status=status.HTTP_400_BAD_REQUEST)

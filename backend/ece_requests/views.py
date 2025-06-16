@@ -32,10 +32,8 @@ class RequestViewSet(BaseModelViewSet):
         """
         Asigna permisos dinámicos según la acción.
         """
-        return [
-            permission()
-            for permission in self.permission_classes_by_action.get(self.action, self.permission_classes)
-        ]
+        permissions_list = self.permission_classes_by_action.get(self.action, [])
+        return [permission() for permission in permissions_list]
 
     def create(self, request, *args, **kwargs):
         """
@@ -65,11 +63,9 @@ class RequestViewSet(BaseModelViewSet):
         """
         instance = self.get_object()
         if instance.state != Request.State.PENDING:
-            return Response(
-                'No puede darle un veredicto a una solicitud que ya lo tiene.',
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        if 'state' not in request.data:
+            raise ValidationError('No puede darle un veredicto a una solicitud que ya lo tiene.')
+
+        if 'state' not in request.data or 'selected_ece' in request.data:
             raise ValidationError("Solo se permite modificar el estado de la solicitud.")
 
         # Validar y actualizar el estado
@@ -101,3 +97,9 @@ class RequestViewSet(BaseModelViewSet):
 
         serializer = self.get_serializer(last_request)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def list(self, request, *args, **kwargs):
+        return Response({"error": "No se puede listar solicitudes."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response({"error": "No se puede eliminar solicitudes."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)

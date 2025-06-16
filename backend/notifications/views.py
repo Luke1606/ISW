@@ -52,10 +52,8 @@ class NotificationViewSet(BaseModelViewSet):
         """
         Asigna permisos dinámicos según la acción.
         """
-        return [
-            permission()
-            for permission in self.permission_classes_by_action.get(self.action, self.permission_classes)
-        ]
+        permissions_list = self.permission_classes_by_action.get(self.action, [])
+        return [permission() for permission in permissions_list]
 
     def get_queryset(self):
         # Filtrar notificaciones solo para el usuario autenticado

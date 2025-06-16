@@ -43,7 +43,7 @@ const useEvidenceForm = (isEdition, closeFunc, studentId, prevValues) => {
         
         attachmentType: Yup.string()
             .required('El tipo de adjunto es obligatorio')   
-            .oneOf(['url', 'file']),
+            .oneOf(['url', 'file'], 'Solo puede seleccionar las opciones mostradas'),
         
         url: Yup.string()
             .when('attachmentType', {

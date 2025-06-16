@@ -38,14 +38,13 @@ def test_retrieve_request(request_instance):
     assert retrieved_request == request_instance
 
 
-@pytest.mark.django_db
+@pytest.fixture
 def test_update_request_state(request_instance):
     """Verifica que se pueda actualizar el estado de una solicitud."""
     request_instance.state = Request.State.APPROVED
     request_instance.save()
-
-    updated_request = Request.objects.get(id=request_instance.id)
-    assert updated_request.state == Request.State.APPROVED
+    request_instance.refresh_from_db()
+    assert request_instance.state == Request.State.APPROVED
 
     # last_notification = Notification.objects.all().last()
     # assert last_notification.title == 'Su solicitud ha sido revisada'

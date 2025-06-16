@@ -21,6 +21,15 @@ class IsProfessor(permissions.BasePermission):
         return request.user.is_authenticated and request.user.is_professor
 
 
+class IsRegularProfessor(permissions.BasePermission):
+    """
+    Permite acceso solo a profesores.
+    """
+    def has_permission(self, request, view=None):
+        user = request.user
+        return user.is_authenticated and user.is_professor and user.user_role == Professor.Roles.PROFESSOR
+
+
 class IsDptoInfProfessor(permissions.BasePermission):
     """
     Permite acceso solo a profesores del departamento de informática para editar solicitudes.
