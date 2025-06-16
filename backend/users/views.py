@@ -144,13 +144,11 @@ class StudentViewSet(BaseModelViewSet):
     }
 
     def get_permissions(self):
-        '''
-        Asigna permisos según la acción.
-        '''
-        return [
-            permission()
-            for permission in self.permission_classes_by_action.get(self.action, self.permission_classes)
-        ]
+        """
+        Asigna permisos dinámicos según la acción.
+        """
+        permissions_list = self.permission_classes_by_action.get(self.action, [])
+        return [permission() for permission in permissions_list]
 
     def create(self, request, *args, **kwargs):
         '''
@@ -221,7 +219,7 @@ class ProfessorViewSet(BaseModelViewSet):
         '''
         return [
             permission()
-            for permission in self.permission_classes_by_action.get(self.action, self.permission_classes)
+            for permission in self.permission_classes_by_action.get(self.action)
         ]
 
     def create(self, request, *args, **kwargs):

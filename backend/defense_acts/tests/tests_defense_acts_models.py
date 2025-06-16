@@ -1,25 +1,34 @@
 import pytest
 from defense_acts.models import DefenseAct
+from django.core.files.uploadedfile import SimpleUploadedFile
 from users.tests.tests_users_models import student_user, professor_user
+from notifications.models import Notification
 
 
 @pytest.fixture
 def defense_act(db, student_user, professor_user):
     """Verifica que se pueda crear un acto de defensa correctamente."""
+    file_mock = SimpleUploadedFile(
+        "test_file.pdf",
+        b"contenido de prueba del archivo",
+        content_type="application/pdf"
+    )
+
     defense_act = DefenseAct.objects.create(
         student=student_user,
         author=professor_user,
         name="Defensa Test",
         description="Descripción específica",
-        attachment="defense_acts/attachments/test_file.pdf"
+        attachment=file_mock
     )
     defense_act.save()
-
+    defense_act.refresh_from_db()
     assert defense_act.id is not None
     assert defense_act.student == student_user
+    assert defense_act.author == professor_user
     assert defense_act.name == "Defensa Test"
     assert defense_act.description == "Descripción específica"
-    assert defense_act.attachment == "defense_acts/attachments/test_file.pdf"
+    assert defense_act.attachment.name is not None
 
     yield defense_act
     defense_act.delete()

@@ -4,6 +4,8 @@ Modelos de la aplicacion defense_acts.
 from django.db import models
 from core.models import BaseModel
 from users.models import Student, Professor
+from core.management.utils.constants import Datatypes
+from notifications.views import send_notification
 
 
 class DefenseAct(BaseModel):
@@ -37,6 +39,28 @@ class DefenseAct(BaseModel):
     }
 
     DB_INDEX = 6
+
+    def save(self, *args, **kwarg):
+        if not self.pk:
+            student = Student.objects.get(id=self.student)
+            author = Professor.objects.get(id=self.author)
+
+            if not student:
+                raise ValueError("El estudiante no existe.")
+            if not author:
+                raise ValueError("El autor no existe.")
+
+            notification_message = f"El tribunal del estudiante {student.id.name} ha registrado una nueva acta de defensa."
+
+            dpto_inf_professors = Professor.objects.search(role=Datatypes.User.dptoInf)
+            dpto_inf_professor_users = [dpto_inf.id for dpto_inf in dpto_inf_professors]
+
+            send_notification(
+                notification_title='Nueva acta de defensa registrada',
+                notification_message=notification_message,
+                users=dpto_inf_professor_users
+            )
+        return super().save(*args, **kwarg)
 
     def __str__(self) -> str:
         return f"""Acta de defensa:

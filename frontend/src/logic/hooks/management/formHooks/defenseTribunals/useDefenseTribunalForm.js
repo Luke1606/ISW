@@ -36,6 +36,7 @@ const useDefenseTribunalForm = (isDefenseTribunal, closeFunc, prevValues) => {
         return isDefenseTribunal?
             Yup.object().shape({
                 defenseDate: Yup.string()
+                    .required('La fecha es obligatoria')
                     .matches(/^\d{4}-\d{2}-\d{2}$/, 'Formato de fecha incorrecto') // Valida formato YYYY-MM-DD
                     .test('valid-date', 'La fecha debe ser después de hoy', value => {
                         if (!value) return false

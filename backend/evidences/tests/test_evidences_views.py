@@ -111,26 +111,6 @@ def test_evidence_viewset_list(student_user, evidence_url, evidence_file, studen
     pass
 
 
-# Pruebas de validación
-
-@pytest.mark.django_db
-def test_evidence_viewset_create_invalid_data(student_user, student_authenticate_client):
-    """Verifica que no se pueda crear una evidencia con datos inválidos."""
-    # student_authenticate_client.force_authenticate(user=student_user)
-    # url = get_evidence_list_url()
-    # data = {
-    #     'student': student_user.pk,
-    #     'name': "",  # Nombre vacío
-    #     'description': "Descripción nueva",
-    #     'attachment_type': Evidence.Type.URL,
-    #     'attachment_url': "http://example.com/new"
-    # }
-    # response = student_authenticate_client.post(url, data)
-    # assert response.status_code == status.HTTP_400_BAD_REQUEST
-    # assert Evidence.objects.count() == 0
-    pass
-
-
 @pytest.mark.django_db
 def test_evidence_viewset_create_invalid_attachment(student_user, student_authenticate_client):
     """Verifica que no se pueda crear una evidencia con adjuntos inválidos."""
@@ -151,38 +131,4 @@ def test_evidence_viewset_create_invalid_attachment(student_user, student_authen
     # response = student_authenticate_client.post(url, data, format='multipart')
     # assert response.status_code == status.HTTP_400_BAD_REQUEST
     # assert Evidence.objects.count() == 0
-    pass
-
-
-@pytest.mark.django_db
-def test_evidence_viewset_create_invalid_file_type(student_user, student_authenticate_client):
-    """Verifica que no se pueda crear una evidencia con un tipo de archivo inválido."""
-    # student_authenticate_client.force_authenticate(user=student_user)
-    # url = "/evidences/"
-    # file_mock = SimpleUploadedFile(
-    #     "new_file.txt",
-    #     b"contenido de prueba del archivo",
-    #     content_type="text/plain"  # Tipo de archivo inválido
-    # )
-    # data = {
-    #     'student': student_user.pk,
-    #     'name': "Nueva Evidencia FILE",
-    #     'description': "Descripción nueva FILE",
-    #     'attachment_type': Evidence.Type.FILE,
-    #     'attachment_file': file_mock
-    # }
-    # response = student_authenticate_client.post(url, data, format='multipart')
-    # assert response.status_code == status.HTTP_400_BAD_REQUEST
-    # assert 'error' in response.data
-    pass
-
-
-@pytest.mark.django_db
-def test_evidence_viewset_retrieve_unauthorized(student_user, evidence_url, student_authenticate_client):
-    """Verifica que otro estudiante no pueda acceder a la evidencia."""
-    # other_student = Student.objects.create(username='other_student', password='password', name="Other Student")
-    # student_authenticate_client.force_authenticate(user=other_student)
-    # url = f"/evidences/{evidence_url.pk}/"
-    # response = student_authenticate_client.get(url)
-    # assert response.status_code == status.HTTP_404_NOT_FOUND
     pass

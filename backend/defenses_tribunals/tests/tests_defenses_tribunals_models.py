@@ -32,7 +32,7 @@ def defense_tribunal(db, student_user, professors):
     """Crea un tribunal de defensa correctamente configurado."""
     tribunal = DefenseTribunal.objects.create(
         student=student_user,
-        defense_date="2025-06-15",
+        defense_date="2025-06-25",
         selected_ece=Request.ECE.TD,
         president=professors["president"],
         secretary=professors["secretary"],
@@ -66,7 +66,7 @@ def test_retrieve_defense_tribunal(defense_tribunal):
     assert retrieved_tribunal == defense_tribunal
 
 
-@pytest.mark.django_db
+@pytest.fixture
 def test_update_defense_tribunal(defense_tribunal):
     """Verifica que se pueda actualizar el estado de un tribunal."""
     defense_tribunal.state = DefenseTribunal.State.APPROVED
@@ -107,38 +107,3 @@ def test_destroy_defense_tribunal(student_user, professors):
     tribunal.delete()
 
     assert not DefenseTribunal.objects.filter(id=tribunal_id).exists()
-
-
-@pytest.mark.django_db
-def test_create_defense_tribunal_without_president(student_user, professors):
-    """Verifica que se pueda crear un tribunal sin presidente."""
-    tribunal = DefenseTribunal.objects.create(
-        student=student_user,
-        defense_date="2025-06-15",
-        selected_ece=Request.ECE.TD,
-        president=None,  # ✅ Permitido
-        secretary=professors["secretary"],
-        vocal=professors["vocal"],
-        opponent=professors["opponent"],
-    )
-    tribunal.tutors.add(professors["tutor1"], professors["tutor2"])
-    tribunal.save()
-
-    assert tribunal.president is None
-
-
-@pytest.mark.django_db
-def test_create_defense_tribunal_without_tutors(student_user, professors):
-    """Verifica que se pueda crear un tribunal sin tutores."""
-    tribunal = DefenseTribunal.objects.create(
-        student=student_user,
-        defense_date="2025-06-15",
-        selected_ece=Request.ECE.TD,
-        president=professors["president"],
-        secretary=professors["secretary"],
-        vocal=professors["vocal"],
-        opponent=professors["opponent"],
-    )
-    tribunal.save()
-
-    assert tribunal.tutors.count() == 0

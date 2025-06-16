@@ -30,10 +30,8 @@ class DefenseTribunalViewSet(BaseModelViewSet):
         """
         Asigna permisos dinámicos según la acción.
         """
-        return [
-            permission()
-            for permission in self.permission_classes_by_action.get(self.action, self.permission_classes)
-        ]
+        permissions_list = self.permission_classes_by_action.get(self.action, [])
+        return [permission() for permission in permissions_list]
 
     def retrieve(self, request, *args, **kwargs):
         """
@@ -60,7 +58,7 @@ class DefenseTribunalViewSet(BaseModelViewSet):
                     # Profesores solo tienen acceso a tribunales relacionados
                     professor = user.professor
                     related_students_ids = professor.get_related_students_ids()
-
+                    print(student.id.id, professor.id.id, tribunal, related_students_ids)
                     if student.id.id not in related_students_ids:
                         raise PermissionDenied(non_permission)
 
@@ -123,7 +121,7 @@ class DefenseTribunalViewSet(BaseModelViewSet):
         """
         Valida que solo el Departamento de Informática pueda cambiar los integrantes.
         """
-        if not request.user or request.user.user_role not in {Professor.Roles.DPTO_INF, Professor.Roles.DECAN}:
+        if not request.user or request.user.user_role != Professor.Roles.DPTO_INF:
             raise ValidationError("Solo el Departamento de Informática puede cambiar los integrantes.")
 
         member_keys = ['president', 'secretary', 'vocal', 'opponent', 'tutors']
@@ -147,3 +145,12 @@ class DefenseTribunalViewSet(BaseModelViewSet):
 
         if len(set(filtered_member_ids)) != len(filtered_member_ids):
             raise ValidationError("Los integrantes deben ser profesores distintos.")
+
+    def create(self, request, *args, **kwargs):
+        return Response({"error": "No tienes permiso para crear tribunales."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def list(self, request, *args, **kwargs):
+        return Response({"error": "No tienes permiso para listar tribunales."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        return Response({"error": "No tienes permiso para eliminar tribunales."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)

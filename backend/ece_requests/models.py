@@ -32,7 +32,7 @@ class Request(BaseModel):
         TD = 'TD', 'Trabajo de diploma'
         PF = 'PF', 'Portafolio'
         AA = 'AA', 'Defensa de Artículos Científicos'
-        EX = 'EX', 'Exhimición'
+        EX = 'EX', 'Eximición'
 
     selected_ece = models.CharField(
         max_length=20,

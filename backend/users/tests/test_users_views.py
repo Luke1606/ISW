@@ -1,6 +1,8 @@
 import pytest
 import httpx
 from rest_framework import status
+from django.urls import reverse
+from core.management.utils.constants import Datatypes
 from .tests_users_models import student_user, professor_user, decan_user, dpto_inf_user
 from users.serializers import CustomUserSerializer
 
@@ -92,7 +94,7 @@ def decan_authenticate_client(live_server, decan_user):
 def test_refresh_access_token(student_authenticate_client):
     response = student_authenticate_client.post("/users/token/refresh/")
     assert response.status_code == status.HTTP_200_OK
-    print(response.json())
+
     # Se obtiene el nuevo token de access
     access_token = response.json().get("access")
     assert access_token is not None
@@ -150,10 +152,21 @@ def test_blacklist_access_token_without_login(live_server):
     assert response.json() == {'error': 'No se encontró sesión activa'}
 
 
+def get_user_url(isProfessor, id):
+    """Obtiene la URL para acceder a un estudiante."""
+    return reverse('gateway-specific', kwargs={'datatype': Datatypes.User.professor if isProfessor else Datatypes.User.student, 'pk': id})
+
+
+def get_user_general_url(isProfessor):
+    """Obtiene la URL para listar y eliminar estudiantes."""
+    return reverse('gateway', kwargs={'datatype': Datatypes.User.professor if isProfessor else Datatypes.User.student})
+
+
+# ********************************CREATE***************************************************************************
 @pytest.mark.django_db
 def test_create_user_invalid_data(decan_authenticate_client):
     """Verifica que no se pueda crear un usuario con datos inválidos."""
-    url = "/management/student/"
+    url = get_user_general_url(False)
     data = {
         'username': '',  # Username vacío
         'name': 'Test Student',
@@ -167,8 +180,8 @@ def test_create_user_invalid_data(decan_authenticate_client):
 
 @pytest.mark.django_db
 def test_manage_user_student_unauthorized(professor_user, student_authenticate_client):
-    """Verifica que no se pueda crear un usuario con datos inválidos."""
-    url = "/management/student/"
+    """Verifica que un estudiante no pueda gestionar usuarios."""
+    url = get_user_general_url(False)
     data = {
         'username': 'asafsf',
         'name': 'Test Student',
@@ -177,25 +190,58 @@ def test_manage_user_student_unauthorized(professor_user, student_authenticate_c
     }
 
     create_response = student_authenticate_client.post(url, json=data)
-    assert create_response.status_code >= status.HTTP_403_FORBIDDEN
+    assert create_response.status_code == status.HTTP_403_FORBIDDEN
 
     update_response = student_authenticate_client.put(
         url,
         json={**data, "id": str(professor_user.id.id)}
     )
-    assert update_response.status_code >= status.HTTP_403_FORBIDDEN
+    assert update_response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
     list_response = student_authenticate_client.get(url)
-    assert list_response.status_code >= status.HTTP_403_FORBIDDEN
+    assert list_response.status_code == status.HTTP_403_FORBIDDEN
 
     delete_response = student_authenticate_client.delete(
         url,
         params={"ids": [professor_user.id]}
     )
-    assert delete_response.status_code >= status.HTTP_403_FORBIDDEN
+    assert delete_response.status_code == status.HTTP_403_FORBIDDEN
 
     retrieve_response = student_authenticate_client.get(url)
-    assert retrieve_response.status_code >= status.HTTP_403_FORBIDDEN
+    assert retrieve_response.status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.django_db
+def test_manage_user_professor_semi_authorized(professor_user, professor_authenticate_client):
+    """Verifica que un estudiante no pueda gestionar usuarios."""
+    url = get_user_general_url(False)
+    data = {
+        'username': 'asafsf',
+        'name': 'Test Student',
+        'group': 1,
+        'faculty': 'FTI'
+    }
+
+    create_response = professor_authenticate_client.post(url, json=data)
+    assert create_response.status_code == status.HTTP_403_FORBIDDEN
+
+    update_response = professor_authenticate_client.put(
+        url,
+        json={**data, "id": str(professor_user.id.id)}
+    )
+    assert update_response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+
+    list_response = professor_authenticate_client.get(url)
+    assert list_response.status_code == status.HTTP_200_OK
+
+    delete_response = professor_authenticate_client.delete(
+        url,
+        params={"ids": [professor_user.id]}
+    )
+    assert delete_response.status_code == status.HTTP_403_FORBIDDEN
+
+    retrieve_response = professor_authenticate_client.get(url)
+    assert retrieve_response.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
